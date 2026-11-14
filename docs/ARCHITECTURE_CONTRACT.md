@@ -30,6 +30,22 @@ submission until its storage, security, and core flows are implemented and valid
 - AndroidX BiometricPrompt for biometric unlock.
 - Manual dependency injection (`AppContainer`) for Android; no Hilt.
 
+## KMP sharing policy
+
+- Keep Compose and SwiftUI user interfaces native. A shared financial rule belongs in
+  `:shared/commonMain` once both clients need it; both clients call that implementation instead of
+  carrying separate copies of the rule.
+- Keep platform APIs and persistence behind each client boundary. Android Room entities, SQLCipher,
+  Keystore, DataStore, and Android workers stay in `:app`; iOS owns its storage, Keychain, biometric,
+  file, and notification adapters.
+- Map platform persistence models to platform-neutral shared models at each repository boundary.
+  Never expose Room entities, DAOs, or SQLite APIs to `commonMain` or SwiftUI.
+- Before moving existing financial behavior, add common test vectors and compare Android results to
+  the current implementation. Preserve persisted enum names, database meaning, backup JSON fields,
+  rounding, and transaction boundaries.
+- CI builds the Android app and iOS preview in one workflow, and runs the shared test suite on both
+  the Android host and an iOS simulator. Native iOS release readiness remains a separate gate.
+
 ## Platform data boundary
 
 - Existing Android data remains in the encrypted Room database. No Android schema, migration,

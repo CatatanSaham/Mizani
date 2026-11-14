@@ -13,6 +13,7 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ### Changed
 
+- Run Android verification and the iOS preview/shared-rule checks in the same CI workflow.
 - Make the Xcode-to-Gradle framework build portable across Macs and document the currently
   compatible Apple toolchain without pinning a developer-specific JDK path.
 

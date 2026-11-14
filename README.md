@@ -128,9 +128,12 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ### Run checks
 
-The **Build & Tests** badge reports one GitHub Actions run for the debug APK and JVM unit tests.
-It runs on pull requests and pushes to <code>main</code>. Instrumentation tests remain a local
-check because they need a disposable Android emulator and clear its app data.
+The **Build & Tests** workflow runs on pull requests and pushes to <code>main</code>. Its Android
+job tests shared rules on the host, runs Android unit tests and builds the debug APK. Its macOS job
+runs the shared tests on an iOS simulator and builds the SwiftUI preview with the KMP framework.
+Android instrumentation tests remain a local check because they need a disposable emulator and
+clear its app data. The iOS job verifies compilation and shared rules only; the iOS client remains
+a preview, not a financial app ready for distribution.
 
 ```powershell
 .\gradlew.bat :app:testDebugUnitTest

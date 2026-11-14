@@ -125,5 +125,10 @@ shared/src/commonTest/ KMP common money/currency rules, executed by the Android 
 5. Consider sharing UI only after native iOS feature flows are complete and usability requirements
    for both platforms are understood.
 
+When a platform-independent financial rule is needed by both clients, keep one implementation in
+`:shared/commonMain` and test it with common test vectors. Keep locale formatting, secure storage,
+notifications, and file access in native adapters. Before moving a rule, verify its Android output
+against the existing behavior so the KMP migration cannot change saved financial results silently.
+
 Keep `FinanceRepository` as the Android write boundary. iOS requires its own validated repository
 boundary. Do not add modules merely for aesthetics.
