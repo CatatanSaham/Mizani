@@ -1,6 +1,8 @@
 # Product architecture contract (Mizani V1)
 
-This is an offline-first financial application.
+This is an offline-first financial application. Android remains the complete client today; the iOS
+target is an integration preview and must not be treated as ready for financial use or store
+submission until its storage, security, and core flows are implemented and validated.
 
 ## Canonical data and identity
 
@@ -15,13 +17,30 @@ This is an offline-first financial application.
 
 ## Technology
 
-- Kotlin + Jetpack Compose, Material 3, Navigation Compose.
+- Kotlin Multiplatform shared library (`:shared`) for platform-independent financial value types
+  and rules; its first shared contract is `Currency`, `Money`, and `MoneyLimits`.
+- Android application (`:app`) keeps Jetpack Compose, Material 3, Navigation Compose, Room, SQLCipher,
+  DataStore, Android Keystore, AndroidX BiometricPrompt, and manual dependency injection.
+- Native SwiftUI iOS project (`iosApp`) consumes the `MizaniShared` framework. It is currently a
+  preview shell; it does not persist or process financial records.
 - Room for relational local state, with exportable schema and no destructive migrations.
 - SQLCipher (`net.zetetic:sqlcipher-android`) for the encrypted database.
 - Android Keystore, AES-GCM-wrapped random 256-bit database passphrase.
 - DataStore for non-sensitive preferences and the salted PIN hash.
 - AndroidX BiometricPrompt for biometric unlock.
-- Manual dependency injection (`AppContainer`) for V1; no Hilt.
+- Manual dependency injection (`AppContainer`) for Android; no Hilt.
+
+## Platform data boundary
+
+- Existing Android data remains in the encrypted Room database. No Android schema, migration,
+  backup format, or DataStore key changes are part of the KMP foundation.
+- Shared code must remain platform-independent and must not access Android or Apple APIs, storage,
+  UI, or secrets directly.
+- Before iOS can store financial data, define and review its encrypted local database, key storage,
+  biometric/app-lock, backup/restore, and export implementations. Keep iOS data on-device and preserve
+  the existing offline-first and data-minimization rules.
+- Do not share Room entities with common code. Shared domain code consumes platform-neutral value
+  objects and validated snapshots; repository implementations own persistence on each platform.
 
 ## Money and ledger rules
 

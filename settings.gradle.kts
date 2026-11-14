@@ -32,3 +32,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "budgeting-application"
 include(":app")
+include(":shared")

@@ -355,6 +355,56 @@ pixel review.
 The additional `REAR_DISPLAY_MODE` and `CONCURRENT_INNER_DEFAULT` states exposed the launcher on
 this AVD rather than an app window, so they were recorded as state-transition checks only.
 
+### KMP organization and complete More navigation (2026-11-14)
+
+The shared money value types remain in `:shared`; Android currency discovery, conversion, parsing,
+and formatting are split into focused files under `app/core/money`. The country-dependent guest
+journey now selects Uganda explicitly, and the commitments/export tests target the current labels and
+bottom-navigation tab without relying on ambiguous exact-text selectors.
+
+Verified with:
+
+```powershell
+.\gradlew.bat --no-daemon --rerun-tasks :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+```
+
+All 181 shared and Android JVM tests passed; the debug APK and Android test APK rebuilt successfully.
+All 18 existing instrumentation classes (41 test methods) were run separately on emulator-5554 in a
+disposable secondary Android user. The first full pass exposed four stale UI selectors across three
+classes. After making the country test deterministic and updating those selectors, targeted reruns of
+GuestJourney (1), AppearanceAndSecurity (3), Commitments (2), and ForeignCommitments (1) all passed.
+The additional `MoreSectionNavigationTest` passed in landscape: it opens and returns from all eight
+More destinations and checks the two section rows use matching widths. Thus all 42 distinct
+instrumentation methods across 19 classes have a passing run. The initial emulator system ANR was
+resolved by rebooting before the successful suite.
+
+The existing user-0 app data was not cleared; the temporary QA user was removed after verification.
+`FLAG_SECURE` prevents app screenshots, so the More layout was checked through Compose semantics,
+bounds, and navigation assertions rather than pixel screenshots. iOS native build and simulator
+tests remain unverified on Windows because they require macOS and Xcode.
+
+### Mac and iOS build handoff (2026-11-14)
+
+Removed the Windows-specific Java discovery path from `gradle.properties`. The checked-in Gradle
+daemon criteria select JetBrains Runtime 25 across supported platforms. The Xcode framework build
+phase now calls `scripts/ios/build-shared-framework.sh`, which checks `JAVA_HOME`,
+`ANDROID_STUDIO_JDK`, standard Android Studio JBR locations, and the macOS JDK registry; it skips JDKs
+older than 17 and invokes the wrapper through `/bin/sh` so the Xcode build does not rely on the
+wrapper's Git executable bit. README setup instructions now match the Kotlin 2.4.21 / Gradle 9.6.0 /
+AGP 9.3.1 compatibility selection: Xcode 26.4.x on macOS Tahoe 26.2 or later.
+
+Verified on Windows with:
+
+```powershell
+.\gradlew.bat --no-daemon --rerun-tasks :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+```
+
+The build passed. All 6 shared and 175 Android JVM tests passed; the debug APK and Android test APK
+were assembled. The shell helper passed `sh -n`, and `git diff --check` reported no whitespace
+errors. Kotlin/Native iOS simulator tasks were disabled by Gradle because this host is Windows.
+No Xcode project build, iOS simulator launch, or Apple-device test was performed; run the documented
+`xcodebuild` command on a Mac to verify native framework linking and preview runtime behavior.
+
 ## Scope and data compatibility
 
 The active app flow includes Home, Activity, Insights, wallets, categories, data export, user-reviewed

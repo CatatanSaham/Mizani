@@ -2,6 +2,7 @@ package com.mizani.money
 
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
@@ -103,7 +104,7 @@ class CommitmentsEndToEndTest {
         compose.waitUntil(timeoutMillis = 20_000) {
             compose.onAllNodesWithText("Home").fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText("Bills").performClick()
+        compose.onAllNodesWithText("Bills").onLast().performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithText("Choose expense to link").fetchSemanticsNodes().isNotEmpty()
         }
@@ -131,7 +132,7 @@ class CommitmentsEndToEndTest {
         compose.waitUntil(timeoutMillis = 20_000) {
             compose.onAllNodesWithText("Home").fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText("Bills").performClick()
+        compose.onAllNodesWithText("Bills").onLast().performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithText("Recurring").fetchSemanticsNodes().isNotEmpty()
         }

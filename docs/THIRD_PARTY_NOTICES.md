@@ -82,3 +82,11 @@ for Play-installed in-app updates. The library is distributed under the [Play Co
 Software Development Kit Terms of Service](https://developer.android.com/guide/playcore/license),
 and its generated dependency entry is available from **Settings > About & privacy >
 Open-source licenses**.
+
+## Kotlin/Native runtime (iOS)
+
+The iOS framework built from `:shared` includes the Kotlin/Native runtime and Kotlin standard
+library. Kotlin is distributed under the [Apache License, Version 2.0](https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt).
+Include the required license and notice material with the iOS distribution, and review the
+framework's resolved runtime contents before App Store submission. The Kotlin Multiplatform and
+Android KMP Gradle plugins are build-time tools and are not bundled in the iOS app.

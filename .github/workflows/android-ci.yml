@@ -38,6 +38,7 @@ jobs:
             settings.gradle.kts
             build.gradle.kts
             app/build.gradle.kts
+            shared/build.gradle.kts
 
       - name: Set up Android SDK tools
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
@@ -49,4 +50,4 @@ jobs:
         run: android sdk install --canary platforms/android-37.0
 
       - name: Build and test
-        run: bash ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+        run: bash ./gradlew --no-daemon :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug

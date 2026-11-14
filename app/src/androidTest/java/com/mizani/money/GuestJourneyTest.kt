@@ -69,6 +69,11 @@ class GuestJourneyTest {
         compose.onNodeWithText("Where do you keep your money?").assertExists()
         compose.onNodeWithText("Wallet type").assertExists()
         compose.onNodeWithText("Wallet name").assertExists()
+        // Country suggestions vary with the emulator/device locale. Pick Uganda explicitly so
+        // this flow verifies the intended local provider list on every test device.
+        compose.onAllNodesWithContentDescription("Open options").onFirst().performClick()
+        compose.onNodeWithText("Search countries").performTextInput("Uganda")
+        compose.onAllNodesWithText("Uganda").onLast().performClick()
         compose.onAllNodesWithContentDescription("Open options").onLast().performClick()
         compose.onNodeWithText("Mobile money").performClick()
         compose.onNodeWithText("MTN MoMo").assertExists()

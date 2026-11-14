@@ -1,7 +1,7 @@
 [versions]
-agp = "9.4.1"
-kotlin = "2.2.10"
-ksp = "2.2.10-2.0.2"
+agp = "9.3.1"
+kotlin = "2.4.21"
+ksp = "2.3.12"
 coreKtx = "1.17.0"
 lifecycle = "2.9.4"
 activityCompose = "1.11.0"
@@ -67,6 +67,8 @@ androidx-window = { group = "androidx.window", name = "window", version.ref = "w
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicensesPlugin" }

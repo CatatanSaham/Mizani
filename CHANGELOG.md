@@ -6,6 +6,16 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ## [Unreleased]
 
+### Added
+
+- Add a Kotlin Multiplatform shared money foundation and an early native iOS preview while keeping
+  the existing Android data and financial flows in place.
+
+### Changed
+
+- Make the Xcode-to-Gradle framework build portable across Macs and document the currently
+  compatible Apple toolchain without pinning a developer-specific JDK path.
+
 ## [1.12.0] - 2026-11-14
 
 ### Added

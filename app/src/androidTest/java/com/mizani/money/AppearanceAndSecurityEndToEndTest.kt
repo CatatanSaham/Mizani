@@ -149,7 +149,7 @@ class AppearanceAndSecurityEndToEndTest {
         }
         compose.onNodeWithText("Cancel").performClick()
 
-        compose.onNodeWithText("Download Excel workbook").performScrollTo().performClick()
+        compose.onNodeWithText("Download Excel workbook (recommended)").performScrollTo().performClick()
         compose.onNodeWithText("Confirm your identity").assertExists()
         compose.onNodeWithText("Cancel").performClick()
 

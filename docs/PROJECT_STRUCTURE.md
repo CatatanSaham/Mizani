@@ -2,44 +2,53 @@
 
 ## Module decision
 
-V1 is a **single `:app` Gradle module** with enforced package boundaries. The PRD explicitly warns that
-"avoid hundreds of Gradle modules in the first release" and that modularization should protect domains without
-creating build-system bureaucracy. For a one-module, one-team V1, packages give the same dependency discipline
-with faster builds and fewer configuration risks (AGP 9 + KSP). The boundary rules below are designed so that
-`core`, `data`, `domain` and `feature` can be extracted into modules later without rewrites.
+The project keeps one Android application module (`:app`) and adds one Kotlin Multiplatform library
+(`:shared`) for code that is safe to run on Android and iOS. Android-only packages remain organized
+inside `:app`; the iOS application is a native SwiftUI project under `iosApp/` and consumes the
+framework exported by `:shared`.
+
+The shared module is intentionally small at first. It contains the platform-neutral currency and
+money value types and amount limits. Android storage, validation transactions, exports, lock, and UI
+remain in `:app`. The iOS project is an integration preview and has no production ledger, encrypted
+storage, or complete budgeting flows yet. Do not move Android-only code into `:shared` merely to make
+the module larger.
 
 ## Package layout
 
+```text
+com.mizani.money (Android :app)
+|-- MizaniApplication.kt            application + SQLCipher native load + container
+|-- MainActivity.kt                 FragmentActivity, theme, root routing, lock lifecycle
+|-- di/AppContainer.kt              explicit dependency graph (manual DI)
+|-- core/
+|   |-- money/                      shared value types; Android catalog, conversion, formatting
+|   |-- model/                      domain enums, country packs, default categories
+|   |-- legal/                      runtime Terms of Service and Privacy Notice
+|   |-- importing/                  bounded local parser for user-shared transaction text
+|   |-- time/                       DateRange, periods, recurring date math
+|   `-- security/                   PBKDF2-HMAC-SHA256, PIN policy
+|-- data/
+|   |-- local/                      Room entities, DAOs, encrypted database, Keystore key
+|   `-- repo/                       FinanceRepository (write boundary), FinanceModels.kt,
+|                                   SettingsRepository, BackupValidator.kt
+|-- domain/
+|   |-- analytics/                  deterministic analytics and insight engines
+|   |-- engagement/                 local Daily Momentum rules
+|   |-- notifications/              local check-in notification rules
+|   `-- export/                     CSV/XLSX and encrypted backup/restore
+|-- ui/                             AppViewModel, navigation, fold layout, theme, components
+|-- reminder/                       Android WorkManager and notification adapters
+`-- feature/                        onboarding, home, transactions, commitments, debts, wallets,
+                                    investments, insights, more, settings, legal, lock
 ```
-com.mizani.money
-├── MizaniApplication.kt           application + SQLCipher native load + container
-├── MainActivity.kt                FragmentActivity, theme, root routing, lock lifecycle
-├── di/AppContainer.kt             explicit dependency graph (manual DI)
-├── core/
-│   ├── money/                     Money, Currency, parsing/formatting (pure JVM)
-│   ├── model/                     domain enums, country packs, default categories
-│   ├── importing/                 bounded local parser for user-shared transaction text
-│   ├── time/                      DateRange, periods, recurring date math
-│   └── security/                  PBKDF2-HMAC-SHA256, PIN policy
-├── data/
-│   ├── local/                     Room entities, DAOs, encrypted database, Keystore key
-│   └── repo/                      FinanceRepository (write boundary), FinanceModels.kt
-│                                  (LedgerSnapshot + screen/plan state), SettingsRepository,
-│                                  BackupValidator.kt (restore validation)
-├── domain/
-│   ├── analytics/                 Analytics.kt + Insights.kt engines,
-│   │                              AnalyticsModels.kt (metric/insight models)
-│   └── export/                    CSV + encrypted backup/restore
-├── ui/
-│   ├── AppViewModel.kt            root state, period selection, lock state
-│   ├── Navigation.kt              top-level destinations and bottom bar
-│   ├── FoldWindow.kt              fold posture/pane resolution + fold-aware dialog host
-│   ├── FoldNavigation.kt          book sidebar + tabletop dock (navigation-only)
-│   ├── theme/                     colour, type, shapes, palette tokens
-│   └── components/                reusable Compose primitives (cards, charts, pickers)
-└── feature/
-    ├── onboarding/ home/ transactions/ commitments/ investments/ wallets/ categories/
-    ├── insights/ more/ settings/ legal/ lock/
+
+## Cross-platform build structure
+
+```text
+:app      Android application (Jetpack Compose + Room/SQLCipher)
+:shared   KMP library (commonMain money/currency types; Android and iOS targets)
+iosApp/   SwiftUI iOS preview consuming the MizaniShared framework
+scripts/ios/ Xcode build helper for the shared framework integration
 ```
 
 ## Dependency direction
@@ -49,7 +58,18 @@ feature / ui  ->  domain  ->  data  ->  core
                      \--------------------^
 ```
 
-- `core.money` and `core.time` have **no Android or Compose dependency** and are unit-tested on the JVM.
+Platform integration direction:
+
+```
+:app    -> :shared
+iosApp  -> MizaniShared framework from :shared
+```
+
+- `:shared` common code has no Android, Apple, or Compose dependency and is covered by common tests
+  executed on the Android host. iOS native compilation still requires macOS and Xcode.
+- Android money parsing/formatting, runtime currency discovery, and decimal conversion remain in
+  `app/core.money`; its `Currency`, `Money`, and `MoneyLimits` types come from `:shared`.
+- `core.time` is currently Android/JVM-only and has not been moved to common code.
 - `domain.analytics` consumes plain entities/models and has **no Android UI dependency**; it is deterministic.
 - `data.local` depends on `core.model` and Room/SQLCipher; it does not know about screens.
 - `data.repo` is the only layer that opens write transactions. `FinanceRepository` is the single validated write
@@ -74,7 +94,10 @@ reflected immediately.
 
 | Change | Location |
 |---|---|
-| Money arithmetic/format | `core/money/Money.kt` + `MoneyTest` |
+| Shared money values/arithmetic | `shared/src/commonMain/.../SharedMoney.kt` + `shared/src/commonTest/.../MoneyTest.kt` |
+| Android currency catalog | `app/src/main/.../core/money/Currencies.kt` + `app/src/test/.../MoneyTest.kt` |
+| Android money conversion | `app/src/main/.../core/money/CurrencyConversion.kt` + `app/src/test/.../MoneyTest.kt` |
+| Android money parsing/formatting | `app/src/main/.../core/money/MoneyFormat.kt` + `app/src/test/.../MoneyTest.kt` |
 | New transaction type | `core/model/TransactionType`, repository validation, add-screen picker, analytics rules, tests |
 | New analytic metric | `domain/analytics`, an explanation string, unit test, UI card |
 | New database column/table | `data/local` entity + DAO + versioned migration test; never destructive migration |
@@ -88,14 +111,19 @@ reflected immediately.
 app/src/test/          pure JVM: money, analytics, insights, dates, PIN hashing
 app/src/androidTest/   encrypted Room/SQLCipher CRUD, guest journey, app lock, backup/restore
 app/schemas/           exported Room schema (checked in for migration tests)
+shared/src/commonTest/ KMP common money/currency rules, executed by the Android host-test task
 ```
 
-## Evolution path
+## KMP evolution path
 
-If the team grows or an iOS/KMP requirement appears, extract in this order:
-1. `core:money`, `core:model`, `core:time` (pure Kotlin);
-2. `core:database` (Room/SQLCipher/Keystore);
-3. `domain:analytics`, `domain:export`;
-4. feature modules (`feature:home`, `feature:transactions`, …).
+1. Keep shared value types and deterministic rules in `:shared/commonMain` and add common tests.
+2. Move country/currency metadata and date/recurrence rules only after replacing JVM-specific APIs
+   and verifying Android behavior remains identical.
+3. Define platform-neutral repository contracts and snapshots before considering shared analytics.
+4. Implement and security-review iOS persistence, key management, app lock, backup/restore, import,
+   export, and native system integrations. Android Room entities and SQLCipher stay in Android code.
+5. Consider sharing UI only after native iOS feature flows are complete and usability requirements
+   for both platforms are understood.
 
-Keep `FinanceRepository` as the write boundary across modules. Do not split graded modules merely for aesthetics.
+Keep `FinanceRepository` as the Android write boundary. iOS requires its own validated repository
+boundary. Do not add modules merely for aesthetics.

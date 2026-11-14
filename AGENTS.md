@@ -7,7 +7,8 @@ These instructions apply to the whole repository. Follow them alongside the user
 - Read `README.md` for setup, build, and CI commands.
 - Read `docs/ARCHITECTURE_CONTRACT.md` and `docs/PROJECT_STRUCTURE.md` before changing architecture, data flow, or package boundaries.
 - Read `docs/SECURITY.md` and the relevant privacy/legal/verification documents when touching sensitive data, cryptography, exports, permissions, network access, release configuration, or legal copy.
-- The product is a single-module, offline-first Android app using Kotlin, Jetpack Compose, Room, SQLCipher, DataStore, and manual dependency injection. Keep dependencies flowing through the existing package boundaries; do not add a backend, account system, cloud sync, analytics, or new Gradle modules without an explicit product decision.
+- The product is an offline-first Android app with an initial iOS preview. The Android app remains in `:app`; `:shared` is the Kotlin Multiplatform module for code that has been made platform-independent; `iosApp/` contains the native SwiftUI client shell. Keep Android Room/SQLCipher/DataStore/Keystore and manual dependency injection inside Android boundaries. Do not add a backend, account system, cloud sync, analytics, or extra Gradle modules without an explicit product decision.
+- The iOS preview is not ready for financial use or App Store submission. Do not claim iOS data protection, backup, financial functionality, or review compliance until those platform flows are implemented and tested on macOS/Xcode.
 
 ## Preserve application invariants
 
@@ -47,7 +48,7 @@ These instructions apply to the whole repository. Follow them alongside the user
 
 ## Verification and handoff
 
-- Use the Gradle wrapper and the commands documented in `README.md` and `.github/workflows/android-ci.yml`. CI currently runs `:app:testDebugUnitTest` and `:app:assembleDebug`; run focused checks for the code changed and report the exact commands and results.
+- Use the Gradle wrapper and the commands documented in `README.md` and `.github/workflows/android-ci.yml`. CI runs `:shared:testAndroidHostTest`, `:app:testDebugUnitTest`, and `:app:assembleDebug`; run focused checks for the code changed and report the exact commands and results.
 - Use disposable test data for instrumentation tests. Never run tests that reset app state against a device or profile containing data the user needs.
 - Keep changes scoped. Update relevant documentation and tests with behavior changes. Do not commit machine-specific paths, `local.properties`, signing keys, passwords, or other secrets.
 - In the handoff, summarize behavior/documentation changes, changelog disposition, verification actually performed, and any known limitations. Never claim a test, build, release, or review passed unless it was actually performed.

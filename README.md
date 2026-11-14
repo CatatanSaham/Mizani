@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/Kotlin-087F72?logo=kotlin&logoColor=white" alt="Built with Kotlin">
 </p>
 
-Mizani is an Android budgeting app designed to work offline. It needs no account: your ledger stays on your device, and the core tracking features work without a connection. Country setup includes presets for Uganda, Kenya, Tanzania, Rwanda, Nigeria, Ghana and South Africa
+Mizani is an offline-first Android budgeting app. It needs no account: your ledger stays on your device, and core tracking works without a connection. The project now has a Kotlin Multiplatform shared foundation and an early native iOS preview; the iOS client is not yet ready for financial use or App Store distribution.
 
 ## What you can do
 
@@ -95,14 +95,17 @@ guide](docs/SECURITY.md) and [privacy notice](docs/PRIVACY_NOTICE.md).
 
 ### Requirements
 
-- Android Studio with a full JDK/JBR supported by the project’s Gradle and Android Gradle Plugin versions.
-- Android SDK Platform 37 and Android SDK Platform-Tools.
+- Android Studio with an installed Android SDK Platform 37 and Android SDK Platform-Tools.
+- For iOS builds, a Mac with macOS Tahoe 26.2 or later and Xcode 26.4.x. Kotlin 2.4.21's current
+  compatibility table lists Xcode 26.4; wait for that table to include a newer Xcode line before
+  upgrading Xcode.
 - Internet access for the first Gradle dependency and wrapper downloads.
 
-The repository’s root <code>gradle.properties</code> currently includes a Windows Android Studio
-JBR discovery path. If your JDK is installed elsewhere, update that setting locally to your full
-JDK/JBR path. Keep machine-specific paths out of commits. Android Studio can create
-<code>local.properties</code> for the SDK location; that file is intentionally ignored by Git.
+The checked-in Gradle daemon criteria select JetBrains Runtime 25 and provide download URLs for
+supported platforms. The Xcode build phase needs a local JDK 17 or newer to start Gradle; it checks
+<code>JAVA_HOME</code>, <code>ANDROID_STUDIO_JDK</code>, Android Studio's standard macOS JBR location,
+then the system JDK registry. Android Studio can create <code>local.properties</code> for the Android
+SDK location; that file is intentionally ignored by Git.
 
 ### Build a debug APK
 
@@ -114,7 +117,7 @@ cd Mizani
 .\gradlew.bat :app:assembleDebug
 ```
 
-On macOS or Linux, use <code>./gradlew</code> in place of <code>.\gradlew.bat</code>.
+On macOS or Linux, use <code>bash ./gradlew</code> in place of <code>.\gradlew.bat</code>.
 
 The APK is written to <code>app/build/outputs/apk/debug/app-debug.apk</code>. Install it on a
 connected device or emulator with:
@@ -131,6 +134,7 @@ check because they need a disposable Android emulator and clear its app data.
 
 ```powershell
 .\gradlew.bat :app:testDebugUnitTest
+.\gradlew.bat :shared:testAndroidHostTest
 .\gradlew.bat :app:assembleDebugAndroidTest
 ```
 
@@ -143,6 +147,23 @@ To run the Android instrumentation suite, connect a disposable emulator and use:
 > **Test data warning:** Instrumentation tests clear the app’s local database and settings. Run
 > them only on a disposable emulator or test profile, never on a device containing a ledger you
 > need to keep.
+
+### iOS preview
+
+The repository includes an early native SwiftUI preview backed by the KMP `:shared` framework.
+On a Mac with the required toolchain, compile it for the simulator with:
+
+```sh
+xcodebuild -project iosApp/Mizani.xcodeproj -scheme Mizani \
+  -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+```
+
+The Xcode build phase finds a JDK and invokes Gradle through
+<code>scripts/ios/build-shared-framework.sh</code>. This command is a compile check only; open
+<code>iosApp/Mizani.xcodeproj</code>, select an installed simulator and run the app separately to
+exercise its preview. The target is not ready for financial use or App Store submission; see the
+[iOS readiness checklist](docs/IOS_APP_STORE_READINESS.md) for required implementation and review
+work. iOS build and simulator checks require macOS and Xcode.
 
 ### Release builds
 
@@ -169,7 +190,16 @@ listing, and staged-rollout gates.
 
 ## Project structure
 
-Mizani is a single Android app module with package boundaries:
+Mizani has an Android app module, a Kotlin Multiplatform library, and a native iOS preview:
+
+| Project path | Responsibility |
+| ------------ | -------------- |
+| <code>:app</code> | Complete Android application: Compose UI, encrypted Room storage, repositories, analytics and platform services. |
+| <code>:shared</code> | Platform-independent money types and limits consumed by Android and iOS. |
+| <code>iosApp/</code> | SwiftUI preview that links the <code>MizaniShared</code> framework from <code>:shared</code>. |
+| <code>scripts/ios/</code> | Xcode build helper for locating the local JDK and compiling the shared framework. |
+
+Android packages within <code>:app</code> remain separated by responsibility:
 
 | Package                 | Responsibility                                                    |
 | ----------------------- | ----------------------------------------------------------------- |
