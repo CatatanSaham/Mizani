@@ -2,6 +2,81 @@
 
 ## Automated verification
 
+### Savings-goal KMP/Android and iOS source verification attempt (2026-11-15)
+
+Added KMP goal amount/allocation rules and Android repository checks, plus iOS schema v4, encrypted
+goal management, and an atomic linked-wallet contribution flow. Common and Swift repository test
+source was added, but no test task completed during this attempt. The Gradle wrapper download was
+blocked by network permissions. Running the locally cached Gradle distribution offline also stopped
+before task execution: Gradle could not compile its generated dependency accessors because Windows
+denied access to `gradle-core-api-9.6.0.jar`.
+
+An active Pixel 10 Pro Fold API 37 emulator had Mizani installed, but it was not identified as the
+documented disposable QA profile. No instrumentation, install, or app-data reset was run on it. The
+environment has no Mac, Swift, or Xcode, so the iOS package tests, Kotlin/Native framework build, and
+SwiftUI simulator build remain unverified.
+
+On 2026-11-15, the following checks passed after the KMP and native iOS foundation work:
+
+```powershell
+.\gradlew.bat :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+```
+
+Results: 25 shared Android-host tests and 176 Android JVM unit tests passed. The debug APK and
+instrumentation APK assembled successfully, and all 50 Android instrumentation tests across 19
+classes passed on a disposable API 37.0 emulator. Classes ran in separate Gradle invocations because
+the tests reset app state. Instrumentation exposed a More-screen landscape breakpoint issue, which
+was fixed and rechecked; the PIN setup wait was lengthened after a cold-emulator timeout, and its
+class passed on rerun. `git diff --check` reported no whitespace errors; Git emitted LF-to-CRLF
+working-copy warnings. This Windows environment has no Swift, macOS, or Xcode toolchain, so the iOS
+package tests and SwiftUI simulator build were not run.
+
+### Shared app-lock policy and native iOS lock flow (2026-11-15)
+
+Moved the six-digit PIN validation, PBKDF2 iteration count, retry backoff, and 15-second background
+grace policy into `:shared`. Android now consumes those values through its existing adapters. The iOS
+source checks Keychain lock state before opening SQLCipher, stores its PIN verifier and retry state in
+a device-only Keychain item, offers a biometric-only unlock path with PIN fallback, and clears the
+in-memory ledger and closes the database after the configured background grace period. The native
+app-lock and lifecycle flows are source-only here; they are not claimed as Apple-platform verified.
+
+Verified with:
+
+```powershell
+.\gradlew.bat --no-daemon --rerun-tasks :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug
+```
+
+The forced run passed 34 shared Android-host tests and 176 Android JVM tests and rebuilt the debug
+APK. No Android instrumentation was run for this PIN-policy change. `git diff --check` passed with
+Git's LF-to-CRLF working-copy warnings. Swift package tests, Kotlin/Native iOS compilation, Xcode
+build, simulator behavior, Keychain/file-protection behavior, and physical-device checks remain
+unverified because this Windows environment has no Mac or Xcode.
+
+### KMP-backed iOS investment snapshots (2026-11-15)
+
+Added shared investment asset metadata, draft validation, and checked active-portfolio aggregation.
+Android's existing investment repository and summary now call those shared rules. The iOS client adds
+an encrypted v4-to-v5 investment table migration, validated repository writes, archive/restore, and a
+native management screen that hides saved amounts with the existing Hide balances control. Common
+rule tests and Swift repository/migration tests were added as source.
+
+The latest Android verification attempt was:
+
+```powershell
+.\gradlew.bat :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest --no-daemon
+```
+
+It stopped before Gradle task execution while downloading Gradle 9.6.0; the JVM reported
+`SocketException: Permission denied: getsockopt`. No test or build task completed for this latest
+investment change. `git diff --check` reported no whitespace errors and Git emitted only LF-to-CRLF
+working-copy warnings. No instrumentation or emulator data reset was run. There is no Mac, Swift, or
+Xcode in this environment, so the Swift package tests, Kotlin/Native framework build, Xcode build,
+and simulator/device behavior remain unverified.
+
+The connected API 37 emulator has Android `1.12.0` (`versionCode` 1012000) installed. A non-destructive
+`adb shell monkey -p com.mizani.money 1` launch left the app process running; this smoke check covers
+the installed APK only, not the latest unbuilt source changes, and did not modify app data.
+
 The current debug build, JVM unit tests, Android test compilation, and isolated guest journey passed
 on 2026-10-26. The guest journey ran on the API 36.1 `Medium_Phone_API_36.1` emulator and drove
 first-run onboarding, expense entry, income entry, and ledger balance assertions.
@@ -404,6 +479,25 @@ were assembled. The shell helper passed `sh -n`, and `git diff --check` reported
 errors. Kotlin/Native iOS simulator tasks were disabled by Gradle because this host is Windows.
 No Xcode project build, iOS simulator launch, or Apple-device test was performed; run the documented
 `xcodebuild` command on a Mac to verify native framework linking and preview runtime behavior.
+
+### Shared ledger analytics and iOS Insights summary (2026-11-15)
+
+Moved posted-ledger income, spending, fee, refund, and category attribution into
+`:shared/commonMain`; Android's analytics adapter now calls that implementation, and the iOS preview
+uses it for a current-month summary. Common vectors cover fee treatment, transfers, refunds,
+adjustments, deleted and out-of-range rows, inclusive date bounds, and checked overflow. The iOS
+bridge also rejects mismatched snapshot columns and unknown transaction types.
+
+Verified with a forced fresh run:
+
+```powershell
+.\gradlew.bat --rerun-tasks :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug
+```
+
+All 29 shared host tests and 176 Android JVM tests passed, and the debug APK assembled. No Android
+instrumentation was run for this analytics-only change. Swift package tests, Kotlin/Native iOS
+compilation, Xcode build, simulator behavior, and physical-device checks remain unverified because
+this environment has no Mac or Xcode.
 
 ## Scope and data compatibility
 

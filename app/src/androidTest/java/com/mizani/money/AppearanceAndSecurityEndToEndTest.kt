@@ -115,8 +115,10 @@ class AppearanceAndSecurityEndToEndTest {
         compose.onNodeWithText("Share Mizani").assertDoesNotExist()
 
         compose.onNodeWithContentDescription("Back").performClick()
-        compose.onAllNodesWithText("More").onLast().performClick()
-        compose.onNodeWithText("Export or back up data").performClick()
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("Manage money").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Export or back up data").performScrollTo().performClick()
         compose.onNodeWithText("Share budgets").assertDoesNotExist()
         compose.onNodeWithText("No saved budgets are available to share yet.").assertDoesNotExist()
     }

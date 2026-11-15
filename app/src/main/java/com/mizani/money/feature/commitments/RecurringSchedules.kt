@@ -55,6 +55,7 @@ import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.SectionHeader
 import com.mizani.money.ui.components.Spacing
 import com.mizani.money.ui.components.StorysetIllustration
+import com.mizani.money.ui.guides.guideTarget
 import java.time.LocalDate
 
 /** The user-facing recurring schedule workspace. Schedules are forecasts until recorded. */
@@ -93,7 +94,7 @@ internal fun RecurringSchedulesPanel(
             .padding(bottom = Spacing.bottom),
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
     ) {
-        MizaniCard {
+        MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("commitments.recurring")) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.md),

@@ -243,6 +243,7 @@ class SettingsRepository(context: Context) {
     }
 
     suspend fun setPin(pin: String) {
+        require(PinDefaults.isValidPin(pin)) { "App-lock PIN must contain six ASCII digits." }
         val salt = PinHasher.newSalt()
         val hash = withContext(Dispatchers.Default) { PinHasher.hash(pin, salt) }
         context.mizaniSettings.edit { preferences ->

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
@@ -49,10 +50,13 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -63,6 +67,9 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -78,6 +85,7 @@ import com.mizani.money.feature.debts.DebtsScreen
 import com.mizani.money.feature.home.HomeScreen
 import com.mizani.money.feature.insights.InsightsScreen
 import com.mizani.money.feature.investments.InvestmentsScreen
+import com.mizani.money.feature.more.GettingStartedScreen
 import com.mizani.money.feature.more.MoreScreen
 import com.mizani.money.feature.settings.AboutScreen
 import com.mizani.money.feature.settings.FeedbackScreen
@@ -90,6 +98,12 @@ import com.mizani.money.core.model.TransactionType
 import com.mizani.money.ui.components.Spacing
 import com.mizani.money.ui.components.mizaniSurfaceBorderColor
 import com.mizani.money.ui.theme.LocalMizaniThemeTokens
+import com.mizani.money.ui.guides.FeatureGuide
+import com.mizani.money.ui.guides.FeatureGuides
+import com.mizani.money.ui.guides.GuideTargetReporter
+import com.mizani.money.ui.guides.GuidedTourOverlay
+import com.mizani.money.ui.guides.LocalGuideTargetReporter
+import com.mizani.money.ui.guides.LocalActiveGuideTarget
 import kotlinx.coroutines.launch
 
 internal data class Tab(
@@ -109,6 +123,9 @@ internal val tabs = listOf(
 private val topLevelRoutes = tabs.map { it.route }.toSet()
 
 private fun isTopLevelRoute(route: String?): Boolean = route != null && route in topLevelRoutes
+
+private fun Rect.intersects(other: Rect): Boolean =
+    left < other.right && right > other.left && top < other.bottom && bottom > other.top
 
 private fun navEnter(
     scope: androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation.NavBackStackEntry>,
@@ -168,6 +185,15 @@ fun MizaniNavHost(
     // instead of leaving an open flag behind an invisible chooser. The half-open branch renders a
     // Dialog, which is visible on composition for the same reason.
     var showAddSheet by rememberSaveable { mutableStateOf(false) }
+    var activeGuideId by rememberSaveable { mutableStateOf<String?>(null) }
+    var activeGuideStep by rememberSaveable { mutableIntStateOf(0) }
+    var activeGuideShouldReturnToPrevious by rememberSaveable { mutableStateOf(false) }
+    val guideTargetBounds = remember { mutableStateMapOf<String, Rect>() }
+    val guideTargetReporter: GuideTargetReporter = remember(guideTargetBounds) {
+        { targetId, bounds -> guideTargetBounds[targetId] = bounds }
+    }
+    var guideOverlayBounds by remember { mutableStateOf(Rect.Zero) }
+    val activeGuide = activeGuideId?.let(FeatureGuides::byId)
     val addSheetState = rememberModalBottomSheetState()
     val sheetScope = androidx.compose.runtime.rememberCoroutineScope()
     val foldLayout = LocalFoldWindowLayout.current ?: rememberFoldWindowLayout(null)
@@ -210,6 +236,45 @@ fun MizaniNavHost(
         }
     }
 
+    fun startGuide(guide: FeatureGuide) {
+        activeGuideShouldReturnToPrevious = currentRoute != guide.route
+        guideTargetBounds.clear()
+        activeGuideStep = 0
+        activeGuideId = guide.id
+        if (activeGuideShouldReturnToPrevious) openDetail(guide.route)
+    }
+
+    fun exitGuide() {
+        val shouldReturn = activeGuideShouldReturnToPrevious
+        activeGuideId = null
+        activeGuideShouldReturnToPrevious = false
+        if (shouldReturn) navController.popBackStack()
+    }
+
+    fun startGuideById(id: String) {
+        FeatureGuides.byId(id)?.let(::startGuide)
+    }
+
+    fun moveGuideToStep(step: Int) {
+        val guide = activeGuide ?: return
+        val boundedStep = step.coerceIn(guide.steps.indices)
+        if (boundedStep != activeGuideStep) {
+            guideTargetBounds.remove(guide.steps[boundedStep].targetId)
+            activeGuideStep = boundedStep
+        }
+    }
+
+    BackHandler(enabled = activeGuide != null) { exitGuide() }
+
+    LaunchedEffect(currentRoute, activeGuideId) {
+        if (activeGuide != null && currentRoute != activeGuide.route && currentRoute != "getting-started") {
+            activeGuideId = null
+        }
+    }
+
+    val activeStep = activeGuide?.steps?.getOrNull(activeGuideStep.coerceAtLeast(0))
+    val activeTargetBounds = activeStep?.let { guideTargetBounds[it.targetId] }
+
     fun openFromAddSheet(destination: () -> Unit) {
         if (isHalfOpen) {
             // The half-open chooser is a fold-aware dialog, not a bottom sheet, so there is no
@@ -227,6 +292,11 @@ fun MizaniNavHost(
 
     fun openTopLevel(route: String) {
         showAddSheet = false
+        // If this top-level destination is still in the active stack, return to it directly.
+        // This is especially important after an imported receipt is completed from Home: the
+        // import route is removed without saving it, and restoring the Home route through
+        // navigate(..., restoreState = true) can restore the just-popped Activity entry instead.
+        if (navController.popBackStack(route, inclusive = false, saveState = true)) return
         navController.navigate(route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
             launchSingleTop = true
@@ -239,11 +309,20 @@ fun MizaniNavHost(
         if (navController.popBackStack("transactions", inclusive = false)) {
             return
         }
-        navController.navigate("transactions") {
-            // Do not save the transient paste/review destinations. Saving that back stack can
-            // retain an INITIALIZED import-review entry and make Activity teardown unsafe.
-            popUpTo(navController.graph.findStartDestination().id) { saveState = false }
-            launchSingleTop = true
+        // A share can open review directly from Home, so there is no Activity destination to
+        // pop back to. Clear the transient import destinations by returning to the Home root,
+        // then open Activity as a normal top-level destination. This keeps the start destination
+        // on the back stack so later Home-tab taps continue to work.
+        if (navController.popBackStack("home", inclusive = false)) {
+            navController.navigate("transactions") { launchSingleTop = true }
+        } else {
+            navController.navigate("transactions") {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = false
+                    saveState = false
+                }
+                launchSingleTop = true
+            }
         }
     }
 
@@ -269,7 +348,11 @@ fun MizaniNavHost(
         content = {
             // The content slot keeps the NavHost composed in one place so its back stack and
             // saveable form state survive Flat/Book/Tabletop posture changes.
-            BoxWithConstraints(Modifier.fillMaxSize()) {
+            BoxWithConstraints(
+                Modifier
+                    .fillMaxSize()
+                    .onGloballyPositioned { guideOverlayBounds = it.boundsInRoot() },
+            ) {
                 val density = LocalDensity.current
                 val useRail = !isHalfOpen && isTopLevel &&
                     maxWidth >= AdaptiveLayout.MEDIUM_WIDTH_DP.dp
@@ -277,6 +360,7 @@ fun MizaniNavHost(
                 val hideBottomLabels = maxWidth < 300.dp ||
                     density.fontScale > AdaptiveLayout.EXTRA_LARGE_FONT_SCALE
                 val hideRailLabels = density.fontScale > AdaptiveLayout.EXTRA_LARGE_FONT_SCALE
+                Box(Modifier.fillMaxSize()) {
                 Row(Modifier.fillMaxSize()) {
             if (useRail) {
                 NavigationRail(
@@ -368,6 +452,10 @@ fun MizaniNavHost(
                     }
                 },
             ) { padding ->
+        CompositionLocalProvider(
+            LocalGuideTargetReporter provides guideTargetReporter,
+            LocalActiveGuideTarget provides activeGuide?.steps?.getOrNull(activeGuideStep)?.targetId,
+        ) {
         NavHost(
             navController = navController,
             startDestination = "home",
@@ -402,6 +490,7 @@ fun MizaniNavHost(
                             openDetail("import-message")
                         },
                         onOpenCommitments = { openTopLevel("commitments") },
+                        onStartHomeGuide = { startGuideById("home") },
                     )
                 }
             }
@@ -418,6 +507,7 @@ fun MizaniNavHost(
                         state = state,
                         onEdit = { id -> openDetail("edit/$id") },
                         onAdd = { showAddSheet = true },
+                        onOpenGuide = { startGuideById("activity") },
                     )
                 }
             }
@@ -434,6 +524,8 @@ fun MizaniNavHost(
                         state = state,
                         onExportData = { openDetail("export") },
                         onSetupPin = { openDetail("settings/app-lock") },
+                        onOpenTransactions = { openTopLevel("transactions") },
+                        onOpenGuide = { startGuideById("insights") },
                     )
                 }
             }
@@ -451,6 +543,20 @@ fun MizaniNavHost(
                 }
             }
             composable(
+                "getting-started",
+                enterTransition = ::navEnter,
+                exitTransition = ::navExit,
+                popEnterTransition = ::navPopEnter,
+                popExitTransition = ::navPopExit,
+            ) {
+                MizaniRouteSurface {
+                    GettingStartedScreen(
+                        onBack = ::navigateBack,
+                        onStartGuide = ::startGuide,
+                    )
+                }
+            }
+            composable(
                 "investments",
                 enterTransition = ::navEnter,
                 exitTransition = ::navExit,
@@ -463,6 +569,7 @@ fun MizaniNavHost(
                         state = state,
                         onBack = ::navigateBack,
                         onSetupPin = { openDetail("settings/app-lock") },
+                        onOpenGuide = { startGuideById("investments") },
                     )
                 }
             }
@@ -478,6 +585,7 @@ fun MizaniNavHost(
                         vm = vm,
                         state = state,
                         onRecordExpense = { openDetail("add/EXPENSE") },
+                        onOpenGuide = { startGuideById("commitments") },
                     )
                 }
             }
@@ -520,6 +628,7 @@ fun MizaniNavHost(
                         vm = vm,
                         initialNotice = sharedImportNotice,
                         onReview = { navController.navigate("import-review") { launchSingleTop = true } },
+                        onOpenGuide = { startGuideById("mobile-money-import") },
                         onBack = {
                             vm.clearPendingImport()
                             navigateBack()
@@ -541,6 +650,7 @@ fun MizaniNavHost(
                             vm = vm,
                             initialNotice = "Paste a transaction message to begin.",
                             onReview = { navController.navigate("import-review") { launchSingleTop = true } },
+                            onOpenGuide = { startGuideById("mobile-money-import") },
                             onBack = ::navigateBack,
                         )
                     } else {
@@ -594,6 +704,7 @@ fun MizaniNavHost(
                         state = state,
                         onBack = ::navigateBack,
                         onSetupPin = { openDetail("settings/app-lock") },
+                        onOpenGuide = { startGuideById("wallets") },
                     )
                 }
             }
@@ -610,6 +721,7 @@ fun MizaniNavHost(
                         state = state,
                         onBack = ::navigateBack,
                         onSetupPin = { openDetail("settings/app-lock") },
+                        onOpenGuide = { startGuideById("debts") },
                     )
                 }
             }
@@ -621,7 +733,12 @@ fun MizaniNavHost(
                 popExitTransition = ::navPopExit,
             ) {
                 MizaniRouteSurface {
-                    CategoriesScreen(vm = vm, state = state, onBack = ::navigateBack)
+                    CategoriesScreen(
+                        vm = vm,
+                        state = state,
+                        onBack = ::navigateBack,
+                        onOpenGuide = { startGuideById("categories") },
+                    )
                 }
             }
             composable(
@@ -700,6 +817,24 @@ fun MizaniNavHost(
             }
             }
         }
+        }
+                }
+                // Outside the Row on purpose: a fill-max-size Row child would take the whole
+                // width and measure the weighted Scaffold at 0, blanking the destination.
+                if (activeGuide != null && currentRoute == activeGuide.route) {
+                    GuidedTourOverlay(
+                        guide = activeGuide,
+                        stepIndex = activeGuideStep.coerceIn(activeGuide.steps.indices),
+                        targetBoundsInRoot = activeTargetBounds,
+                        overlayBoundsInRoot = guideOverlayBounds,
+                        onPrevious = { moveGuideToStep((activeGuideStep - 1).coerceAtLeast(0)) },
+                        onNext = {
+                            if (activeGuideStep >= activeGuide.steps.lastIndex) exitGuide()
+                            else moveGuideToStep(activeGuideStep + 1)
+                        },
+                        onExit = ::exitGuide,
+                    )
+                }
         }
         }
     },

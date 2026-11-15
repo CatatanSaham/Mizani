@@ -1,7 +1,7 @@
 # Mizani Privacy Notice
 
-**Version:** 2026-11-01-1
-**Effective:** 1 November 2026
+**Version:** 2026-11-15-1
+**Effective:** 15 November 2026
 **Provider:** Paul Ochieng
 **Address:** Kampala, Uganda
 **Contact:** paul.ochieng.dev@gmail.com
@@ -30,7 +30,7 @@ If you choose **Send feedback**, Mizani opens the email app on your device with 
 
 ## 4. Optional requests
 
-When you convert a foreign-currency transaction, Mizani sends the two currency codes to Frankfurter to get the latest available reference rate. It does not send the amount, date, payee, note, wallet name, or other ledger details. The rate and date are saved with the transaction on your phone.
+When you convert a foreign-currency transaction or a commitment target, Mizani sends the two currency codes to Frankfurter to get the latest available reference rate. It does not send the amount, date, payee, note, wallet name, or other ledger details. The rate and date are saved with the transaction or commitment on your phone.
 
 Frankfurter says it neither collects nor logs personal data, IP addresses, or request details. Your network provider still handles the connection. Read more at <https://frankfurter.dev/>.
 
@@ -58,7 +58,7 @@ The provider does not receive or sell an online copy of your ledger, or use it f
 
 ## 8. Your choices and privacy rights
 
-You can view and correct entries in the app, export your ledger from Settings, and delete local data from Settings. Deletion does not remove exports or backups already saved elsewhere. Currency-rate requests happen only when you convert a foreign-currency transaction. Update checks use GitHub for sideloaded builds and Google Play for Play-installed builds. Neither sends ledger entries. Optional reminders use local settings and check local records only. Shared or pasted transaction text is processed on this device and is not retained as a message.
+You can view and correct entries in the app, export your ledger from Settings, and delete local data from Settings. Deletion does not remove exports or backups already saved elsewhere. Currency-rate requests happen only when you convert a foreign-currency transaction or a commitment target. Update checks use GitHub for sideloaded builds and Google Play for Play-installed builds. Neither sends ledger entries. Optional reminders use local settings and check local records only. Shared or pasted transaction text is processed on this device and is not retained as a message.
 
 Privacy rights depend on the law that applies where you live. That law may give you rights to request access, correction or deletion, object to certain processing, or complain to a data-protection authority. You can manage records stored only on this device in the app. For a request about information the provider handles, email paul.ochieng.dev@gmail.com. Do not email ledger details unless needed to handle your request.
 

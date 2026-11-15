@@ -15,6 +15,32 @@ Mizani stores personal financial records. Its protections are designed to reduce
 - Mobile-money import accepts only text a user chooses to paste or share. Parsing stays on device, the original message is discarded after review, and no SMS permission or background message listener is used. Commitment reminders show generic text without names or amounts on the lock screen.
 - Wallet balances are concealed on Home and Wallets by default. Revealing them requires a fresh app PIN confirmation, or biometrics when the user enabled them. A user without a PIN must set up app lock to create one. The reveal lasts only while the app stays on that screen and in the foreground.
 
+## iOS storage foundation status
+
+The `iosApp/MizaniCore` Swift package contains an initial encrypted database foundation. It pins the
+SQLCipher.swift 4.20.0 community package, creates a random 256-bit database key in Keychain with
+`kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`, and marks the item non-synchronizable. If the key
+is missing while the database, WAL, SHM, or rollback-journal file exists, the key provider fails
+closed instead of creating a replacement key. The database verifies SQLCipher on open, enables
+memory security, and applies complete file protection and backup exclusion to the database and
+sidecars on iOS.
+
+The iOS app now uses the package for an early workspace, wallet, category, income-source, ledger,
+savings-goal, and manual investment snapshot slice through a validated repository. Investment
+records use the same SQLCipher database, and their shared validation and aggregation rules come from
+KMP. Its Swift package tests have not been run in this Windows environment, and Keychain accessibility,
+device locking, file protection, lifecycle behavior, and recovery still require macOS/Xcode simulator
+and physical-device verification. Do not store real financial records in the iOS preview.
+
+The iOS source now includes an optional six-digit app lock. It calls the shared KMP PIN validation,
+PBKDF2 work factor, retry backoff, and 15-second background grace policy; the native verifier and
+retry record use a non-synchronizable, passcode-protected, device-only Keychain item. Biometric
+unlock uses a biometric-only LocalAuthentication prompt with explicit PIN fallback. The app checks
+lock state before opening the encrypted database, covers the interface when it becomes inactive,
+and clears the in-memory ledger and closes the connection after the background grace period. These
+flows have not been compiled or tested on an Apple platform yet. The shield does not prevent a user
+from taking an ordinary screenshot while the app is active.
+
 ## Recovery and data-loss precautions
 
 1. Create an encrypted backup before uninstalling, resetting, or replacing a device. Keep the backup file and its passphrase in separate trusted places.

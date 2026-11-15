@@ -1,0 +1,101 @@
+name: Feature request
+description: Suggest a capability or an improvement, with privacy and data-compatibility impact.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mizani is an offline-first budgeting app. Features that need a backend, an account system,
+        cloud sync, analytics, or that send financial data off the device are out of scope by design.
+        Please describe the user problem before the implementation.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched existing issues and discussions and this is not a duplicate.
+          required: true
+        - label: This request works without sending financial data off the device.
+          required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Which platform should this land on?
+      multiple: true
+      options:
+        - Android app
+        - iOS preview
+        - Shared Kotlin (KMP)
+        - Build, CI or tooling
+        - Documentation or legal copy
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is hard or impossible today, and who does it affect?
+      placeholder: As someone tracking ... I cannot ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behaviour you expect, not only the UI.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you use today, or a simpler scope that would already help.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable outcomes that would let a reviewer accept this.
+      placeholder: |
+        - Given ..., when ..., then ...
+        - A wrong or partial write must not be possible.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact areas
+      description: Tick anything this feature would touch, so the issue can be labelled correctly.
+      options:
+        - label: Stored data or database schema (Room migration required)
+        - label: Backup or restore compatibility
+        - label: CSV, XLSX or PDF export columns
+        - label: Money, balances, totals or rounding
+        - label: App lock, PIN, biometrics or balance visibility
+        - label: Permissions or notifications
+        - label: Accessibility or localisation
+        - label: Legal documents or third-party notices
+        - label: In-app guides or onboarding
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Data and compatibility plan (if applicable)
+      description: >
+        How should existing users keep their data? Describe the forward migration, backup
+        compatibility, and whether older app versions must still read the data.
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups or references (optional)
+      description: Screenshots, sketches or links. Do not include real financial data.

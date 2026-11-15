@@ -34,6 +34,7 @@ import com.mizani.money.ui.components.Spacing
 
 /** Cap for the two-column More layout so wide screens never stretch cards. */
 private val MoreContentMaxWidth = 1180.dp
+private val MoreTwoColumnMinWidth = 640.dp
 
 @Composable
 fun MoreScreen(
@@ -49,7 +50,9 @@ fun MoreScreen(
                 .padding(bottom = Spacing.bottomFab),
         ) {
             BoxWithConstraints(Modifier.fillMaxWidth()) {
-                val twoColumn = maxWidth >= AdaptiveLayout.EXPANDED_CONTENT_WIDTH_DP.dp
+                // More sections are compact enough to split at a narrower width than Home's cards.
+                // This keeps landscape phones in two columns after the navigation rail and gutters.
+                val twoColumn = maxWidth >= MoreTwoColumnMinWidth
                 val contentMaxWidth = if (twoColumn) {
                     MoreContentMaxWidth
                 } else {
@@ -77,12 +80,14 @@ fun MoreScreen(
                             ) {
                                 YourDataSection(onNavigate)
                                 AppSection(onNavigate)
+                                GettingStartedSection(onNavigate)
                             }
                         }
                     } else {
                         ManageMoneySection(onNavigate)
                         YourDataSection(onNavigate)
                         AppSection(onNavigate)
+                        GettingStartedSection(onNavigate)
                     }
                 }
             }
@@ -185,5 +190,18 @@ private fun AppSection(
                 onClick = { onNavigate("feedback") },
             )
         }
+    }
+}
+
+@Composable
+private fun GettingStartedSection(onNavigate: (String) -> Unit) {
+    SectionHeader(title = "Help", accent = true)
+    MizaniSectionCard {
+        MizaniInfoRow(
+            icon = Icons.Rounded.Info,
+            title = "Guides for every feature",
+            subtitle = "A short guide to wallets, transactions and balances",
+            onClick = { onNavigate("getting-started") },
+        )
     }
 }

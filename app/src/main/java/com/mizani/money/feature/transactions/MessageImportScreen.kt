@@ -35,6 +35,8 @@ import com.mizani.money.ui.components.MizaniInfoButton
 import com.mizani.money.ui.components.MizaniPicker
 import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,6 +47,7 @@ fun MessageImportScreen(
     initialNotice: String?,
     onReview: () -> Unit,
     onBack: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     var message by remember { mutableStateOf("") }
     var providerHint by remember { mutableStateOf<String?>(null) }
@@ -53,7 +56,11 @@ fun MessageImportScreen(
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "Import transaction", onBack = onBack)
+        MizaniTopBar(
+            title = "Import transaction",
+            onBack = onBack,
+            actions = { GuideHelpAction("Mobile-money import", onOpenGuide) },
+        )
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -75,12 +82,12 @@ fun MessageImportScreen(
                 )
             }
             Text(
-                "If the message does not name its provider, choose it here. Supported networks include MTN MoMo, Airtel Money, M-Pesa, Orange Money, Moov, Wave, Telecel, Tigo, EcoCash, OPay and more.",
+                "Mizani detects the provider when it can. Otherwise, search for and select it here.",
                 style = MaterialTheme.typography.labelLarge,
             )
             MizaniPicker(
                 selectedText = providerHint?.let { id ->
-                    TransactionMessageParser.providerOptions.firstOrNull { it.id == id }?.label
+                    TransactionMessageParser.providerLabel(id)
                 } ?: "Provider detected automatically",
                 options = TransactionMessageParser.providerOptions.map { PickerOption(it.id, it.label) },
                 onSelect = { providerHint = it },
@@ -89,23 +96,33 @@ fun MessageImportScreen(
                 searchable = true,
                 searchHint = "Search mobile-money networks",
                 fieldLabel = "Provider hint (optional)",
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().guideTarget("import.provider"),
             )
-            OutlinedTextField(
-                value = message,
-                onValueChange = { value ->
-                    if (value.length <= TransactionMessageParser.MAX_MESSAGE_LENGTH) message = value
-                    error = null
-                },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 5,
-                maxLines = 10,
-                label = { Text("Transaction message") },
-                placeholder = { Text("Paste the confirmation text") },
-                supportingText = { Text("${message.length}/${TransactionMessageParser.MAX_MESSAGE_LENGTH}") },
-                leadingIcon = { Icon(Icons.Rounded.ContentPaste, contentDescription = null) },
-                isError = error != null,
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth().guideTarget("import.message"),
+                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            ) {
+                Text("Transaction message", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    "Paste the confirmation exactly as shown, including the amount and reference. You can review it before saving.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                OutlinedTextField(
+                    value = message,
+                    onValueChange = { value ->
+                        if (value.length <= TransactionMessageParser.MAX_MESSAGE_LENGTH) message = value
+                        error = null
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 5,
+                    maxLines = 10,
+                    placeholder = { Text("Paste the confirmation text") },
+                    supportingText = { Text("${message.length}/${TransactionMessageParser.MAX_MESSAGE_LENGTH}") },
+                    leadingIcon = { Icon(Icons.Rounded.ContentPaste, contentDescription = null) },
+                    isError = error != null,
+                )
+            }
             if (error != null) {
                 Text(
                     error.orEmpty(),
@@ -136,7 +153,7 @@ fun MessageImportScreen(
                     }
                 },
                 enabled = message.isNotBlank() && !reading,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().guideTarget("import.review"),
                 shape = MaterialTheme.shapes.medium,
             ) {
                 if (reading) {

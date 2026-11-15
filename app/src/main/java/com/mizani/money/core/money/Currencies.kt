@@ -3,20 +3,20 @@ package com.mizani.money.core.money
 import java.util.Currency as JavaCurrency
 import java.util.Locale
 
-/** Runtime currency catalog for Android/JVM. Shared value types live in `:shared`. */
+/** Runtime currency catalog for Android/JVM, augmented by shared curated metadata. */
 object Currencies {
-    val UGX = Currency("UGX", "USh", "Ugandan Shilling", 0)
-    val KES = Currency("KES", "KSh", "Kenyan Shilling", 0)
-    val TZS = Currency("TZS", "TSh", "Tanzanian Shilling", 0)
-    val RWF = Currency("RWF", "FRw", "Rwandan Franc", 0)
-    val NGN = Currency("NGN", "₦", "Nigerian Naira", 2)
-    val GHS = Currency("GHS", "GH₵", "Ghanaian Cedi", 2)
-    val ZAR = Currency("ZAR", "R", "South African Rand", 2)
-    val USD = Currency("USD", "$", "US Dollar", 2)
-    val EUR = Currency("EUR", "€", "Euro", 2)
-    val GBP = Currency("GBP", "£", "British Pound", 2)
+    val UGX = SharedCurrencyCatalog.UGX
+    val KES = SharedCurrencyCatalog.KES
+    val TZS = SharedCurrencyCatalog.TZS
+    val RWF = SharedCurrencyCatalog.RWF
+    val NGN = SharedCurrencyCatalog.NGN
+    val GHS = SharedCurrencyCatalog.GHS
+    val ZAR = SharedCurrencyCatalog.ZAR
+    val USD = SharedCurrencyCatalog.USD
+    val EUR = SharedCurrencyCatalog.EUR
+    val GBP = SharedCurrencyCatalog.GBP
 
-    private val curatedCurrencies = listOf(UGX, KES, TZS, RWF, NGN, GHS, ZAR, USD, EUR, GBP)
+    private val curatedCurrencies = SharedCurrencyCatalog.curated
 
     /** Currency codes currently assigned to an ISO country or territory. */
     private val currentCurrencyCodes: Set<String> by lazy {
@@ -41,6 +41,9 @@ object Currencies {
     /** Every currency usable as a workspace currency. */
     val all: List<Currency> by lazy { currentUnionCurated() }
 
+    /** Current foreign currencies supported for transaction entry and search. */
+    val transactionCurrencies: List<Currency> by lazy { currentUnionCurated() }
+
     /**
      * All currencies known to the runtime are retained so [byCode] can keep formatting older
      * records. Historical and non-country codes are deliberately not offered for new entry.
@@ -58,9 +61,6 @@ object Currencies {
             )
         }
     }
-
-    /** Current foreign currencies supported for transaction entry and search. */
-    val transactionCurrencies: List<Currency> by lazy { currentUnionCurated() }
 
     private val allCurrenciesByCode: Map<String, Currency> by lazy {
         (curatedCurrencies + runtimeCurrencies).associateBy { it.code }

@@ -70,6 +70,7 @@ import com.mizani.money.feature.lock.WalletBalanceVisibilityControl
 import com.mizani.money.ui.AdaptiveLayout
 import com.mizani.money.ui.AppUiState
 import com.mizani.money.ui.AppViewModel
+import com.mizani.money.ui.DashboardMetricsState
 import com.mizani.money.ui.components.DateRangePickerDialog
 import com.mizani.money.ui.components.EmptyState
 import com.mizani.money.ui.components.InsightCard
@@ -83,6 +84,8 @@ import com.mizani.money.ui.components.PeriodMenu
 import com.mizani.money.ui.components.ProgressBar
 import com.mizani.money.ui.components.SectionHeader
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import com.mizani.money.ui.components.parseHexColor
 import com.mizani.money.ui.theme.LocalMizaniThemeTokens
 import java.time.YearMonth
@@ -99,8 +102,11 @@ fun InsightsScreen(
     state: AppUiState,
     onExportData: () -> Unit,
     onSetupPin: () -> Unit = {},
+    onOpenTransactions: () -> Unit = {},
+    onOpenGuide: () -> Unit = {},
 ) {
-    val metrics by vm.metrics.collectAsStateWithLifecycle()
+    val dashboardState by vm.dashboardMetrics.collectAsStateWithLifecycle()
+    val metrics = (dashboardState as? DashboardMetricsState.Ready)?.metrics
     val insights by vm.insights.collectAsStateWithLifecycle()
     val selectedPreset by vm.selectedPreset.collectAsStateWithLifecycle()
     val customRange by vm.customRange.collectAsStateWithLifecycle()
@@ -110,6 +116,41 @@ fun InsightsScreen(
     val today by vm.today.collectAsStateWithLifecycle()
     var showRangePicker by remember { mutableStateOf(false) }
     var showDailyTargetDialog by remember { mutableStateOf(false) }
+
+    val walletBalances = remember(snapshot) { snapshot.walletBalancesOrNull() }
+    if (walletBalances == null) {
+        Column(Modifier.fillMaxSize()) {
+            MizaniTopBar(
+                title = "Insights",
+                actions = { GuideHelpAction("Insights", onOpenGuide) },
+            )
+            EmptyState(
+                title = "Balances need review",
+                body = "Some saved entries exceed the supported balance range. Review Activity and edit or delete an entry before relying on these insights.",
+                icon = Icons.Rounded.BarChart,
+                actionLabel = "Review Activity",
+                onAction = onOpenTransactions,
+            )
+        }
+        return
+    }
+
+    if (dashboardState is DashboardMetricsState.InvalidLedgerTotals) {
+        Column(Modifier.fillMaxSize()) {
+            MizaniTopBar(
+                title = "Insights",
+                actions = { GuideHelpAction("Insights", onOpenGuide) },
+            )
+            EmptyState(
+                title = "Totals could not be calculated",
+                body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
+                icon = Icons.Rounded.BarChart,
+                actionLabel = "Review Activity",
+                onAction = onOpenTransactions,
+            )
+        }
+        return
+    }
 
     // Secondary metrics stay behind a "More detail" toggle. rememberSaveable keeps the
     // choice across scrolling, tab switches and process death within the screen session.
@@ -168,6 +209,7 @@ fun InsightsScreen(
             title = "Insights",
             subtitle = stringResource(R.string.insights_subtitle),
             actions = {
+                GuideHelpAction("Insights", onOpenGuide)
                 IconButton(onClick = onExportData) {
                     Icon(Icons.Rounded.Download, contentDescription = "Export data")
                 }
@@ -219,12 +261,24 @@ fun InsightsScreen(
                             onSetupPin = onSetupPin,
                             onEditTarget = { showDailyTargetDialog = true },
                         )
-                        EmptyState(
-                            title = "No transactions yet",
-                            body = "Add income or expenses to see your cash flow and analysis.",
-                            icon = Icons.Rounded.BarChart,
-                            illustrationAsset = "financial_data_cuate.svg",
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .guideTarget("insights.spending"),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .guideTarget("insights.cashflow"),
+                            ) {
+                                EmptyState(
+                                    title = "No transactions yet",
+                                    body = "Add income or expenses to see your cash flow and analysis.",
+                                    icon = Icons.Rounded.BarChart,
+                                    illustrationAsset = "financial_data_cuate.svg",
+                                )
+                            }
+                        }
                         return@Column
                     }
 
@@ -401,13 +455,15 @@ private fun OutlookSection(
     onEditTarget: () -> Unit,
 ) {
     SectionHeader(title = "Money Outlook", accent = true)
-    MoneyOutlookCard(
-        vm = vm,
-        state = state,
-        outlook = outlook,
-        onSetupPin = onSetupPin,
-        onEditTarget = onEditTarget,
-    )
+    Box(Modifier.fillMaxWidth().guideTarget("insights.outlook")) {
+        MoneyOutlookCard(
+            vm = vm,
+            state = state,
+            outlook = outlook,
+            onSetupPin = onSetupPin,
+            onEditTarget = onEditTarget,
+        )
+    }
 }
 
 @Composable
@@ -428,7 +484,7 @@ private fun WhatChangedSection(insights: List<Insight>) {
 @Composable
 private fun SpendingSection(metrics: DashboardMetrics, currency: Currency) {
     SectionHeader(title = "Spending", accent = true)
-    MizaniCard(modifier = Modifier.fillMaxWidth()) {
+    MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("insights.spending")) {
         Text(
             "Spending by category",
             style = MaterialTheme.typography.bodySmall,
@@ -484,7 +540,7 @@ private fun SpendingSection(metrics: DashboardMetrics, currency: Currency) {
 @Composable
 private fun CashFlowSection(monthly: List<MonthFlow>, currency: Currency) {
     SectionHeader(title = "Six-month cash flow", accent = true)
-    MizaniCard(modifier = Modifier.fillMaxWidth()) {
+    MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("insights.cashflow")) {
         Text(
             "Income versus expenses",
             style = MaterialTheme.typography.bodySmall,

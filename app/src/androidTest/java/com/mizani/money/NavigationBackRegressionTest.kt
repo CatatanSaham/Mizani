@@ -86,14 +86,15 @@ class NavigationBackRegressionTest {
             compose.onAllNodesWithText("Home").fetchSemanticsNodes().isNotEmpty()
         }
 
-        compose.onNodeWithText("Add expense").performClick()
+        compose.onNodeWithText("Add your first transaction").performClick()
+        compose.onNodeWithText("Record expense").performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithText("New transaction").fetchSemanticsNodes().isNotEmpty()
         }
 
         compose.onNodeWithContentDescription("Back").performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
-            compose.onAllNodesWithText("Add expense").fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText("Add your first transaction").fetchSemanticsNodes().isNotEmpty()
         }
         assertTrue(compose.onAllNodesWithText("New transaction").fetchSemanticsNodes().isEmpty())
     }
@@ -101,14 +102,14 @@ class NavigationBackRegressionTest {
     @Test
     fun switchingTopLevelTabsDoesNotKeepThePreviousPageComposed() {
         compose.waitUntil(timeoutMillis = 15_000) {
-            compose.onAllNodesWithText("Start tracking your money").fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText("Your wallet is ready").fetchSemanticsNodes().isNotEmpty()
         }
 
         compose.onNodeWithText("Activity").performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithText("0 transactions").fetchSemanticsNodes().isNotEmpty()
         }
-        assertTrue(compose.onAllNodesWithText("Start tracking your money").fetchSemanticsNodes().isEmpty())
+        assertTrue(compose.onAllNodesWithText("Your wallet is ready").fetchSemanticsNodes().isEmpty())
 
         compose.onNodeWithText("Insights").performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
@@ -130,7 +131,7 @@ class NavigationBackRegressionTest {
 
         compose.onNodeWithText("Home").performClick()
         compose.waitUntil(timeoutMillis = 10_000) {
-            compose.onAllNodesWithText("Start tracking your money").fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText("Your wallet is ready").fetchSemanticsNodes().isNotEmpty()
         }
         assertTrue(compose.onAllNodesWithText("Manage money").fetchSemanticsNodes().isEmpty())
     }

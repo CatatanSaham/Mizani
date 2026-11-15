@@ -10,6 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.math.BigInteger
 import java.time.LocalDate
 
 class AnalyticsEngineTest {
@@ -45,6 +46,117 @@ class AnalyticsEngineTest {
         assertEquals(68_500L, balances["momo"])
         assertEquals(30_000L, balances["cash"])
         assertEquals(98_500L, balances.values.sum())
+    }
+
+    @Test
+    fun `income fee reduces wallet credit and is included in spending`() {
+        val snapshot = Fixtures.snapshot(
+            wallets = listOf(Fixtures.wallet("cash", opening = 500L)),
+            categories = listOf(Fixtures.category("salary", type = com.mizani.money.core.model.CategoryType.INCOME)),
+            transactions = listOf(
+                Fixtures.transaction(
+                    id = "income-with-fee",
+                    type = TransactionType.INCOME,
+                    amount = 100L,
+                    fee = 7L,
+                    walletId = "cash",
+                    categoryId = "salary",
+                    date = today,
+                ),
+            ),
+        )
+        val engine = AnalyticsEngine(snapshot)
+        val summary = AnalyticsEngine.summarizeTransactions(snapshot.transactions)
+
+        assertEquals(593L, snapshot.walletBalances().getValue("cash"))
+        assertEquals(100L, engine.incomeMinor(october))
+        assertEquals(7L, engine.expenseMinor(october))
+        assertEquals(93L, engine.netMinor(october))
+        assertEquals(engine.incomeMinor(october), summary.incomeMinor)
+        assertEquals(engine.expenseMinor(october), summary.expenseMinor)
+    }
+
+    @Test
+    fun `safe wallet balances return null for wallet and active aggregate overflow`() {
+        val walletOverflow = Fixtures.snapshot(
+            wallets = listOf(Fixtures.wallet("cash", opening = Long.MAX_VALUE)),
+            transactions = listOf(
+                Fixtures.transaction(
+                    id = "overflow-income",
+                    type = TransactionType.INCOME,
+                    amount = 1L,
+                    walletId = "cash",
+                    date = today,
+                ),
+            ),
+        )
+        assertNull(walletOverflow.walletBalancesOrNull())
+
+        val aggregateOverflow = Fixtures.snapshot(
+            wallets = listOf(
+                Fixtures.wallet("large", opening = Long.MAX_VALUE),
+                Fixtures.wallet("extra", opening = 1L),
+            ),
+        )
+        assertNull(aggregateOverflow.walletBalancesOrNull())
+    }
+
+    @Test
+    fun `dashboard rejects an expense total that would silently overflow`() {
+        val snapshot = Fixtures.snapshot(
+            wallets = listOf(Fixtures.wallet("cash", opening = Long.MAX_VALUE)),
+            transactions = listOf(
+                Fixtures.transaction(
+                    id = "large-expense-one",
+                    type = TransactionType.EXPENSE,
+                    amount = Long.MAX_VALUE,
+                    walletId = "cash",
+                    categoryId = "food",
+                    date = today,
+                ),
+                Fixtures.transaction(
+                    id = "large-expense-two",
+                    type = TransactionType.EXPENSE,
+                    amount = 1L,
+                    walletId = "cash",
+                    categoryId = "food",
+                    date = today,
+                ),
+            ),
+        )
+
+        assertThrows(ArithmeticException::class.java) {
+            AnalyticsEngine(snapshot).dashboard(october, today)
+        }
+    }
+
+    @Test
+    fun `daily spending rejects an overflowing total instead of wrapping`() {
+        val snapshot = Fixtures.snapshot(
+            wallets = listOf(Fixtures.wallet("cash", opening = Long.MAX_VALUE)),
+            transactions = listOf(
+                Fixtures.transaction(
+                    id = "large-daily-expense-one",
+                    type = TransactionType.EXPENSE,
+                    amount = Long.MAX_VALUE,
+                    walletId = "cash",
+                    categoryId = "food",
+                    date = today,
+                ),
+                Fixtures.transaction(
+                    id = "large-daily-expense-two",
+                    type = TransactionType.EXPENSE,
+                    amount = 1L,
+                    walletId = "cash",
+                    categoryId = "food",
+                    date = today,
+                ),
+            ),
+        )
+
+        assertThrows(ArithmeticException::class.java) {
+            AnalyticsEngine(snapshot).dailySpending(1, today)
+        }
     }
 
     @Test
@@ -243,6 +355,27 @@ class AnalyticsEngineTest {
         val food = progress.lines.first { it.line.categoryId == "food" }
         assertEquals(145_161L, food.expectedToDateMinor)
         assertEquals(4_839L, food.paceVarianceMinor)
+    }
+
+    @Test
+    fun `budget expected spending preserves exact minor units for large amounts`() {
+        val budget = Fixtures.budget("large-budget", october.start, october.end)
+        val snapshot = Fixtures.snapshot(
+            wallets = listOf(Fixtures.wallet("cash")),
+            categories = listOf(Fixtures.category("food")),
+            budgets = listOf(budget),
+            lines = listOf(
+                Fixtures.line("large-line", budget.id, "food", planned = Long.MAX_VALUE),
+            ),
+        )
+        val line = requireNotNull(AnalyticsEngine(snapshot).budgetProgress(october, budget, today))
+            .lines.single()
+        val expected = BigInteger.valueOf(Long.MAX_VALUE)
+            .multiply(BigInteger.valueOf(15L))
+            .divide(BigInteger.valueOf(31L))
+            .longValueExact()
+
+        assertEquals(expected, line.expectedToDateMinor)
     }
 
     @Test

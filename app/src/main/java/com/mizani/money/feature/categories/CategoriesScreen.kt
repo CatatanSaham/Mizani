@@ -64,6 +64,8 @@ import com.mizani.money.ui.components.MizaniPageContent
 import com.mizani.money.ui.components.MizaniTopBar
 import com.mizani.money.ui.components.SmallPill
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import com.mizani.money.ui.components.StatusBanner
 import com.mizani.money.ui.components.parseHexColor
 import com.mizani.money.ui.theme.BrandPalette
@@ -74,6 +76,7 @@ fun CategoriesScreen(
     vm: AppViewModel,
     state: AppUiState,
     onBack: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     val snapshot = state.snapshot
     val scope = rememberCoroutineScope()
@@ -127,7 +130,11 @@ fun CategoriesScreen(
             subtitle = "${categories.size} ${type.label.lowercase()} categories",
             onBack = onBack,
             actions = {
-                IconButton(onClick = { editing = null; showDialog = true }) {
+                GuideHelpAction("Categories", onOpenGuide)
+                IconButton(
+                    modifier = Modifier.guideTarget("categories.add"),
+                    onClick = { editing = null; showDialog = true },
+                ) {
                     Icon(Icons.Rounded.Add, contentDescription = "Add category")
                 }
             },
@@ -140,7 +147,10 @@ fun CategoriesScreen(
                     onDismiss = { error = null },
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().guideTarget("categories.types"),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+            ) {
                 CategoryType.entries.forEach { option ->
                     FilterChip(
                         selected = type == option,
@@ -155,8 +165,11 @@ fun CategoriesScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            categories.forEach { category ->
+            categories.forEachIndexed { index, category ->
                 MizaniCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(if (index == 0) Modifier.guideTarget("categories.list") else Modifier),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(Spacing.md),
                     onClick = { editing = category; showDialog = true },

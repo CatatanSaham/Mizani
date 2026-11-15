@@ -6,6 +6,7 @@ local.properties
 .idea/
 .kotlin/
 .DS_Store
+**/.build/
 /captures
 .externalNativeBuild
 .cxx
@@ -21,5 +22,18 @@ local.properties
 *.jks
 *.keystore
 
-# OpenCode runtime staging (not product artefacts)
+# OpenCode session state, QA scripts and screenshots (never committed)
 .opencode/
+
+# Xcode / macOS user state
+**/xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Local environment and diagnostics
+.env
+.env.*
+!.env.example
+*.log
+*.hprof
+Thumbs.db

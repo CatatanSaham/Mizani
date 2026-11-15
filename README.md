@@ -141,6 +141,12 @@ a preview, not a financial app ready for distribution.
 .\gradlew.bat :app:assembleDebugAndroidTest
 ```
 
+On the supported Mac toolchain, the iOS encrypted-storage package tests run with:
+
+```sh
+swift test --package-path iosApp/MizaniCore
+```
+
 To run the Android instrumentation suite, connect a disposable emulator and use:
 
 ```powershell
@@ -151,10 +157,15 @@ To run the Android instrumentation suite, connect a disposable emulator and use:
 > them only on a disposable emulator or test profile, never on a device containing a ledger you
 > need to keep.
 
-### iOS preview
+### iOS development preview
 
-The repository includes an early native SwiftUI preview backed by the KMP `:shared` framework.
-On a Mac with the required toolchain, compile it for the simulator with:
+The repository includes an early native SwiftUI client backed by the KMP `:shared` framework and
+the `MizaniCore` SQLCipher package. It supports local workspace and wallet setup, categorized
+ledger entry, transfers, refunds, adjustments, Activity search, category and income-source
+management, savings goals, and manual investment snapshots, plus a current-month cash-flow and
+spending-by-category summary calculated by shared KMP rules. Full Android Insights parity is not implemented. It remains incomplete
+and must use test data until Apple-platform builds and security checks pass. On a Mac with the
+required toolchain, compile it for the simulator with:
 
 ```sh
 xcodebuild -project iosApp/Mizani.xcodeproj -scheme Mizani \
@@ -164,7 +175,8 @@ xcodebuild -project iosApp/Mizani.xcodeproj -scheme Mizani \
 The Xcode build phase finds a JDK and invokes Gradle through
 <code>scripts/ios/build-shared-framework.sh</code>. This command is a compile check only; open
 <code>iosApp/Mizani.xcodeproj</code>, select an installed simulator and run the app separately to
-exercise its preview. The target is not ready for financial use or App Store submission; see the
+exercise its flows. Run `swift test --package-path iosApp/MizaniCore` for the encrypted storage and
+repository package tests. The target is not ready for financial use or App Store submission; see the
 [iOS readiness checklist](docs/IOS_APP_STORE_READINESS.md) for required implementation and review
 work. iOS build and simulator checks require macOS and Xcode.
 
@@ -198,8 +210,8 @@ Mizani has an Android app module, a Kotlin Multiplatform library, and a native i
 | Project path | Responsibility |
 | ------------ | -------------- |
 | <code>:app</code> | Complete Android application: Compose UI, encrypted Room storage, repositories, analytics and platform services. |
-| <code>:shared</code> | Platform-independent money types and limits consumed by Android and iOS. |
-| <code>iosApp/</code> | SwiftUI preview that links the <code>MizaniShared</code> framework from <code>:shared</code>. |
+| <code>:shared</code> | Platform-independent money types and decimal parsing, featured country/currency defaults, finance enums, ledger validation, balances, search, and analytics rules consumed by Android and iOS. |
+| <code>iosApp/</code> | Native SwiftUI development preview, with local storage in <code>MizaniCore</code> and shared rules from <code>MizaniShared</code>. |
 | <code>scripts/ios/</code> | Xcode build helper for locating the local JDK and compiling the shared framework. |
 
 Android packages within <code>:app</code> remain separated by responsibility:

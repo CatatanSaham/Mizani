@@ -21,6 +21,7 @@ import com.mizani.money.core.model.IncomeSourceKind
 import com.mizani.money.core.model.InvestmentAssetType
 import com.mizani.money.core.model.RecurringType
 import com.mizani.money.domain.Fixtures
+import com.mizani.money.core.money.MoneyLimits
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -88,6 +89,19 @@ class BackupValidatorTest {
     fun `rejects mismatched transaction currency`() {
         val bundle = validBundle(listOf(txn("t1", TransactionType.EXPENSE, currencyCode = "USD")))
         assertRejected(bundle, "currency")
+    }
+
+    @Test
+    fun `rejects transactions and fees beyond supported minor unit limits`() {
+        val oversizedExpense = txn("t1", TransactionType.EXPENSE).copy(
+            amountMinor = MoneyLimits.MAX_MINOR_AMOUNT + 1L,
+        )
+        assertRejected(validBundle(listOf(oversizedExpense)), "supported range")
+
+        val oversizedFee = txn("t1", TransactionType.EXPENSE).copy(
+            feeMinor = MoneyLimits.MAX_MINOR_AMOUNT + 1L,
+        )
+        assertRejected(validBundle(listOf(oversizedFee)), "supported amount range")
     }
 
     @Test

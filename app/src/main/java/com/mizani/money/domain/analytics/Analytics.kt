@@ -28,6 +28,17 @@ import java.time.temporal.ChronoUnit
  */
 class AnalyticsEngine(private val data: LedgerSnapshot) {
 
+    private val sharedAnalyticsTransactions by lazy { data.transactions.map(::toSharedTransaction) }
+    private val analyticsByRange = mutableMapOf<DateRange, LedgerAnalyticsSummary>()
+
+    private fun analytics(range: DateRange): LedgerAnalyticsSummary = analyticsByRange.getOrPut(range) {
+        LedgerAnalyticsRules.summarize(
+            transactions = sharedAnalyticsTransactions,
+            startEpochDay = range.start.toEpochDay(),
+            endEpochDay = range.end.toEpochDay(),
+        )
+    }
+
     fun transactionsIn(range: DateRange): List<TransactionEntity> =
         data.transactions.filter { transaction ->
             transaction.deletedAt == null &&
@@ -35,22 +46,17 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
                 transaction.localDateEpochDay <= range.end.toEpochDay()
         }
 
-    fun incomeMinor(range: DateRange): Long = transactionsIn(range)
-        .filter { it.type == TransactionType.INCOME }
-        .sumOf { it.amountMinor }
+    fun incomeMinor(range: DateRange): Long = analytics(range).incomeMinor
 
-    fun feesMinor(range: DateRange): Long = transactionsIn(range)
-        .sumOf { it.feeMinor }
+    fun feesMinor(range: DateRange): Long = analytics(range).feesMinor
 
-    fun refundsMinor(range: DateRange): Long = transactionsIn(range)
-        .filter { it.type == TransactionType.REFUND }
-        .sumOf { it.amountMinor }
+    fun refundsMinor(range: DateRange): Long = analytics(range).refundsMinor
 
     /**
      * Total eligible spending, including fees and net of refunds. Transfers are excluded
      * except for their fee. This equals the sum of category slices by construction.
      */
-    fun expenseMinor(range: DateRange): Long = categorySpendTotals(range).values.sum()
+    fun expenseMinor(range: DateRange): Long = analytics(range).expenseMinor
 
     /**
      * Daily spending for the trailing [days] window ending at [today], oldest day first.
@@ -68,12 +74,12 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
             val epochDay = transaction.localDateEpochDay
             if (transaction.deletedAt != null || epochDay < startDay || epochDay > todayDay) continue
             val contribution = when (transaction.type) {
-                TransactionType.EXPENSE -> transaction.amountMinor + positiveFee(transaction)
+                TransactionType.EXPENSE -> Math.addExact(transaction.amountMinor, positiveFee(transaction))
                 TransactionType.TRANSFER -> positiveFee(transaction)
-                TransactionType.REFUND -> -transaction.amountMinor + positiveFee(transaction)
+                TransactionType.REFUND -> Math.addExact(Math.negateExact(transaction.amountMinor), positiveFee(transaction))
                 TransactionType.INCOME, TransactionType.ADJUSTMENT -> 0L
             }
-            byEpochDay[epochDay] = (byEpochDay[epochDay] ?: 0L) + contribution
+            byEpochDay[epochDay] = Math.addExact(byEpochDay[epochDay] ?: 0L, contribution)
         }
         return (0 until days).map { offset ->
             val day = startDay + offset
@@ -81,38 +87,9 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         }
     }
 
-    fun netMinor(range: DateRange): Long = incomeMinor(range) - expenseMinor(range)
+    fun netMinor(range: DateRange): Long = analytics(range).netMinor
 
-    fun categorySpendTotals(range: DateRange): Map<String, Long> {
-        val totals = mutableMapOf<String, Long>()
-        for (transaction in transactionsIn(range)) {
-            when (transaction.type) {
-                TransactionType.EXPENSE -> {
-                    add(totals, transaction.categoryId ?: UNCATEGORISED, transaction.amountMinor)
-                    if (transaction.feeMinor > 0) {
-                        add(totals, transaction.feeCategoryId ?: DefaultCategories.feesId(), transaction.feeMinor)
-                    }
-                }
-                TransactionType.TRANSFER -> {
-                    if (transaction.feeMinor > 0) {
-                        add(totals, transaction.feeCategoryId ?: DefaultCategories.feesId(), transaction.feeMinor)
-                    }
-                }
-                TransactionType.REFUND -> {
-                    add(totals, transaction.categoryId ?: UNCATEGORISED, -transaction.amountMinor)
-                    if (transaction.feeMinor > 0) {
-                        add(
-                            totals,
-                            transaction.feeCategoryId ?: DefaultCategories.feesId(),
-                            transaction.feeMinor,
-                        )
-                    }
-                }
-                TransactionType.INCOME, TransactionType.ADJUSTMENT -> Unit
-            }
-        }
-        return totals
-    }
+    fun categorySpendTotals(range: DateRange): Map<String, Long> = analytics(range).categorySpendMinor
 
     fun categorySlices(range: DateRange): List<CategorySlice> {
         val totals = categorySpendTotals(range)
@@ -144,7 +121,8 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
                 else -> Unit
             }
         }
-        val positiveTotal = totals.values.filter { it > 0 }.sum()
+        val positiveTotal = totals.values.filter { it > 0 }
+            .fold(0L) { total, amount -> Math.addExact(total, amount) }
         return totals
             .filter { it.value != 0L }
             .map { (categoryId, amount) ->
@@ -199,9 +177,9 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         val progressLines = lines.map { line ->
             val spent = categorySpend(line.categoryId, period)
             val rollover = rolloverFor(line, previous)
-            val available = line.plannedMinor + rollover
-            val remaining = available - spent
-            val expected = (available * elapsed).toLong()
+            val available = Math.addExact(line.plannedMinor, rollover)
+            val remaining = Math.subtractExact(available, spent)
+            val expected = proratedMinorAmount(available, period, today)
             val used = if (available <= 0) {
                 if (spent > 0) 100.0 else 0.0
             } else {
@@ -216,28 +194,32 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
                 remainingMinor = remaining,
                 usedPercent = used,
                 expectedToDateMinor = expected,
-                paceVarianceMinor = spent - expected,
+                paceVarianceMinor = Math.subtractExact(spent, expected),
             )
         }
 
-        val planned = lines.sumOf { it.plannedMinor }
-        val funded = lines.sumOf { it.fundedMinor }
-        val spent = progressLines.sumOf { it.spentMinor }
-        val available = progressLines.sumOf { it.availableMinor }
-        val remaining = available - spent
-        val unbudgeted = expenseMinor(period) - spent
+        val planned = lines.fold(0L) { total, line -> Math.addExact(total, line.plannedMinor) }
+        val funded = lines.fold(0L) { total, line -> Math.addExact(total, line.fundedMinor) }
+        val spent = progressLines.fold(0L) { total, line -> Math.addExact(total, line.spentMinor) }
+        val available = progressLines.fold(0L) { total, line -> Math.addExact(total, line.availableMinor) }
+        val remaining = Math.subtractExact(available, spent)
+        val unbudgeted = Math.subtractExact(expenseMinor(period), spent)
         // Safe-to-spend only ever uses funded money: planned-but-unfunded lines are not spendable.
         val fundedFlexible = lines
             .filter { !it.essential }
-            .sumOf { it.fundedMinor }
+            .fold(0L) { total, line -> Math.addExact(total, line.fundedMinor) }
         val flexibleRemaining = progressLines
             .filter { !it.line.essential }
-            .sumOf { (it.line.fundedMinor + it.rolloverMinor - it.spentMinor).coerceAtLeast(0) }
+            .fold(0L) { total, line ->
+                val available = Math.addExact(line.line.fundedMinor, line.rolloverMinor)
+                val remaining = Math.subtractExact(available, line.spentMinor).coerceAtLeast(0L)
+                Math.addExact(total, remaining)
+            }
 
         val reserved = reservedCommitments(period, today)
         val daysLeft = period.daysRemaining(today)
         val safeDaily = if (today in period.start..period.end && fundedFlexible > 0) {
-            val pool = (flexibleRemaining - reserved).coerceAtLeast(0)
+            val pool = Math.subtractExact(flexibleRemaining, reserved).coerceAtLeast(0L)
             pool / daysLeft.coerceAtLeast(1)
         } else {
             null
@@ -268,6 +250,21 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         }
         .maxByOrNull { it.startEpochDay }
 
+    /** Applies an elapsed-day fraction without converting a money amount to floating point. */
+    private fun proratedMinorAmount(amountMinor: Long, period: DateRange, today: LocalDate): Long {
+        val periodDays = period.days.toLong()
+        val elapsedDays = when {
+            today.isBefore(period.start) -> 0L
+            today.isAfter(period.end) -> periodDays
+            else -> ChronoUnit.DAYS.between(period.start, today) + 1L
+        }
+        val wholeAmount = amountMinor / periodDays
+        val remainder = amountMinor % periodDays
+        val wholeElapsed = Math.multiplyExact(wholeAmount, elapsedDays)
+        val remainderElapsed = Math.multiplyExact(remainder, elapsedDays) / periodDays
+        return Math.addExact(wholeElapsed, remainderElapsed)
+    }
+
     private fun rolloverFor(line: BudgetLineEntity, previous: BudgetEntity?): Long {
         if (line.rolloverRule == com.mizani.money.core.model.RolloverRule.NONE || previous == null) return 0L
         val previousLine = data.budgetLinesFor(previous.id).firstOrNull { it.categoryId == line.categoryId } ?: return 0L
@@ -276,7 +273,7 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
             LocalDate.ofEpochDay(previous.endEpochDay),
         )
         val previousSpent = categorySpend(line.categoryId, previousPeriod)
-        val variance = previousLine.plannedMinor - previousSpent
+        val variance = Math.subtractExact(previousLine.plannedMinor, previousSpent)
         return when (line.rolloverRule) {
             com.mizani.money.core.model.RolloverRule.NONE -> 0L
             com.mizani.money.core.model.RolloverRule.POSITIVE -> variance.coerceAtLeast(0)
@@ -321,7 +318,7 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         // DateRange is inclusive, so today plus 29 covers 30 calendar dates including today.
         val horizon = DateRange(today, today.plusDays(29))
         val reserved = reservedCommitments(horizon, today)
-        val spendable = (liquid - reserved).coerceAtLeast(0L)
+        val spendable = Math.subtractExact(liquid, reserved).coerceAtLeast(0L)
         val windowStart = today.minusDays(HISTORY_WINDOW_DAYS - 1L)
         val window = DateRange(windowStart, today)
         val recordedTransactions = transactionsIn(window).filter { it.type != TransactionType.ADJUSTMENT }
@@ -339,7 +336,7 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         val expenses = expenseMinor(window).coerceAtLeast(0L)
         val average = if (observedDays >= MIN_HISTORY_DAYS && expenses > 0L) {
             // Round up so fractional minor units never overstate estimated coverage.
-            (expenses + observedDays - 1L) / observedDays
+            Math.addExact(expenses, observedDays - 1L) / observedDays
         } else null
         val target = data.workspace?.outlookDailyTargetMinor?.takeIf { it > 0L }
         val dailyCost = average ?: target
@@ -347,7 +344,7 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
             liquidBalanceMinor = liquid,
             reservedCommitmentsMinor = reserved,
             spendableBalanceMinor = spendable,
-            shortfallMinor = (reserved - liquid).coerceAtLeast(0L),
+            shortfallMinor = Math.subtractExact(reserved, liquid).coerceAtLeast(0L),
             recordedExpensesMinor = expenses,
             observedDays = observedDays,
             averageDailySpendMinor = average,
@@ -433,7 +430,12 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
 
     fun expectedIncome(range: DateRange): Long = data.recurring
         .filter { it.deletedAt == null && !it.archived && it.type == RecurringType.INCOME }
-        .sumOf { rule -> occurrencesInRange(rule, range) * rule.amountMinor }
+        .fold(0L) { total, rule ->
+            Math.addExact(
+                total,
+                Math.multiplyExact(occurrencesInRange(rule, range).toLong(), rule.amountMinor),
+            )
+        }
 
     fun occurrencesInRange(rule: RecurringRuleEntity, range: DateRange): Int {
         var due = firstOccurrenceOnOrAfter(rule, range.start)
@@ -483,7 +485,9 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         val median = if (nonZero.size % 2 == 1) {
             nonZero[nonZero.size / 2]
         } else {
-            (nonZero[nonZero.size / 2 - 1] + nonZero[nonZero.size / 2]) / 2
+            val lower = nonZero[nonZero.size / 2 - 1]
+            val upper = nonZero[nonZero.size / 2]
+            lower + (upper - lower) / 2
         }
         return IncomeVariability(
             medianMinor = median,
@@ -549,19 +553,20 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
             .coerceIn(1L, 14L)
             .toInt()
         if (observedDays < MIN_FORECAST_HISTORY_DAYS) return null
-        val netSpend = eligible.sumOf { transaction ->
-            when (transaction.type) {
-                TransactionType.EXPENSE -> transaction.amountMinor + transaction.feeMinor
-                TransactionType.TRANSFER -> transaction.feeMinor
-                TransactionType.REFUND -> -transaction.amountMinor + transaction.feeMinor
+        val netSpend = eligible.fold(0L) { total, transaction ->
+            val contribution = when (transaction.type) {
+                TransactionType.EXPENSE -> Math.addExact(transaction.amountMinor, positiveFee(transaction))
+                TransactionType.TRANSFER -> positiveFee(transaction)
+                TransactionType.REFUND -> Math.addExact(Math.negateExact(transaction.amountMinor), positiveFee(transaction))
                 TransactionType.INCOME, TransactionType.ADJUSTMENT -> 0L
             }
+            Math.addExact(total, contribution)
         }
         // A window that nets to zero or negative (refunds) never lowers the projection below
         // what has already been spent in the period.
         val averageDaily = (netSpend / observedDays).coerceAtLeast(0L)
         val spendToDate = expenseMinor(DateRange(range.start, today)).coerceAtLeast(0)
-        return spendToDate + averageDaily * daysRemaining
+        return Math.addExact(spendToDate, Math.multiplyExact(averageDaily, daysRemaining.toLong()))
     }
 
     fun dashboard(range: DateRange, today: LocalDate = LocalDate.now()): DashboardMetrics {
@@ -569,18 +574,23 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         val budgetProgress = budgetProgress(range, budget, today)
         val slices = categorySlices(range)
         val balances = walletBalances(today)
-        val walletTotal = balances.sumOf { it.balanceMinor }
+        val walletTotal = balances.fold(0L) { total, balance -> Math.addExact(total, balance.balanceMinor) }
         val walletLiquid = balances
             .filter { it.wallet.type != WalletType.DEBT }
-            .sumOf { it.balanceMinor }
+            .fold(0L) { total, balance -> Math.addExact(total, balance.balanceMinor) }
         val byType = balances.groupBy { it.wallet.type }
-            .map { (type, list) -> WalletTypeTotal(type, list.sumOf { it.balanceMinor }) }
+            .map { (type, list) ->
+                WalletTypeTotal(
+                    type,
+                    list.fold(0L) { total, balance -> Math.addExact(total, balance.balanceMinor) },
+                )
+            }
             .sortedByDescending { it.totalMinor }
         val previous = previousComparable(range, today)
         val received = incomeMinor(range)
         val essentialPlanned = budgetProgress?.lines
             ?.filter { it.line.essential }
-            ?.sumOf { it.line.plannedMinor } ?: 0L
+            ?.fold(0L) { total, line -> Math.addExact(total, line.line.plannedMinor) } ?: 0L
         val essentialCoverage = if (essentialPlanned > 0) {
             ((received.toDouble() / essentialPlanned) * 100.0).toInt().coerceIn(0, 999)
         } else {
@@ -600,7 +610,7 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
             expenseMinor = expenseMinor(range),
             feesMinor = feesMinor(range),
             refundsMinor = refundsMinor(range),
-            netMinor = received - expenseMinor(range),
+            netMinor = Math.subtractExact(received, expenseMinor(range)),
             categorySlices = slices,
             budget = budgetProgress,
             upcoming = upcoming(range, today),
@@ -639,7 +649,25 @@ class AnalyticsEngine(private val data: LedgerSnapshot) {
         if (transaction.feeMinor > 0) transaction.feeMinor else 0L
 
     companion object {
-        const val UNCATEGORISED = "uncategorised"
+        const val UNCATEGORISED = LedgerAnalyticsRules.UNCATEGORISED
+
+        /** Summarizes an already-filtered transaction set with the same shared ledger rules. */
+        fun summarizeTransactions(transactions: List<TransactionEntity>): LedgerAnalyticsSummary =
+            LedgerAnalyticsRules.summarize(
+                transactions = transactions.map(::toSharedTransaction),
+                startEpochDay = Long.MIN_VALUE,
+                endEpochDay = Long.MAX_VALUE,
+            )
+
+        private fun toSharedTransaction(transaction: TransactionEntity) = AnalyticsTransactionInput(
+            type = transaction.type,
+            amountMinor = transaction.amountMinor,
+            feeMinor = transaction.feeMinor,
+            categoryId = transaction.categoryId,
+            feeCategoryId = transaction.feeCategoryId,
+            localDateEpochDay = transaction.localDateEpochDay,
+            deleted = transaction.deletedAt != null,
+        )
 
         private const val HISTORY_WINDOW_DAYS = 30
         private const val MIN_HISTORY_DAYS = 7

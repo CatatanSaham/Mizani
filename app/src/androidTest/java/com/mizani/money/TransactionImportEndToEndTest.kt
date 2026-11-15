@@ -1,22 +1,24 @@
 package com.mizani.money
 
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import android.content.Intent
 import com.mizani.money.core.legal.LegalDocuments
 import com.mizani.money.core.model.CategoryType
 import com.mizani.money.core.model.TransactionType
 import com.mizani.money.core.model.WalletType
+import com.mizani.money.core.time.DateRange
+import com.mizani.money.data.repo.TransactionDraft
+import com.mizani.money.domain.analytics.AnalyticsEngine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -26,10 +28,16 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDate
 
 /** Drives the real import screen and verifies review-before-save category behavior. */
 @RunWith(AndroidJUnit4::class)
 class TransactionImportEndToEndTest {
+
+    private companion object {
+        const val LARGE_LEDGER_SEED_COUNT = 250
+        const val SHARED_MESSAGE = "You have received UGX 10000 from MTN MOMO VIRTUAL CARD on 2026-10-28 13:45:16. fee:500. Reason: Card offload. New balance: UGX 37570. ID: 44604050982."
+    }
 
     @get:Rule
     val compose = createEmptyComposeRule()
@@ -55,6 +63,20 @@ class TransactionImportEndToEndTest {
                 LegalDocuments.PRIVACY_VERSION,
                 System.currentTimeMillis(),
             )
+            val walletId = app.container.financeRepository.snapshot.first().wallets.single().id
+            repeat(LARGE_LEDGER_SEED_COUNT) { index ->
+                app.container.financeRepository.saveTransaction(
+                    TransactionDraft(
+                        type = TransactionType.EXPENSE,
+                        amountMinor = 100L,
+                        walletId = walletId,
+                        note = "Regression seed",
+                        // Keep the load-test rows outside the receipt's October 2026 analytics
+                        // period so this test isolates the imported fee totals.
+                        date = LocalDate.of(2026, 9, 15).minusDays((index % 10).toLong()),
+                    ),
+                )
+            }
         }
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
@@ -65,22 +87,20 @@ class TransactionImportEndToEndTest {
     }
 
     @Test
-    fun incomingVirtualCardMessageRequiresCategoryThenSavesOnce() {
+    fun sharedIncomingMessageWithLargeLedgerSavesAndReturnsToHome() {
         compose.waitUntil(timeoutMillis = 20_000) {
-            compose.onAllNodesWithText("Home").fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodesWithText("Record activity").fetchSemanticsNodes().isNotEmpty() &&
+                compose.onAllNodesWithText("Regression seed").fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText("Activity").performClick()
-        compose.onNodeWithText("Add transaction").performClick()
-        compose.onNodeWithText("Import a message").performClick()
-        compose.waitUntil(timeoutMillis = 5_000) {
-            compose.onAllNodesWithText("Import transaction").fetchSemanticsNodes().isNotEmpty()
+        val sharedIntent = Intent(app, MainActivity::class.java).apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, SHARED_MESSAGE)
         }
-
-        val message = "You have received UGX 10000 from MTN MOMO VIRTUAL CARD on 2026-10-28 13:45:16. fee:0. Reason: Card offload. New balance: UGX 37570. ID: 44604050982."
-        compose.onAllNodes(hasSetTextAction()).onFirst().performTextInput(message)
-        Espresso.closeSoftKeyboard()
-        compose.onNodeWithText("Review transaction").performClick()
-        compose.waitUntil(timeoutMillis = 10_000) {
+        // Exercise the common share handler used by both onCreate and onNewIntent without
+        // starting a second task that would make ActivityScenario lifecycle cleanup flaky.
+        scenario.onActivity { activity -> activity.consumeSharedText(sharedIntent) }
+        compose.waitUntil(timeoutMillis = 20_000) {
             compose.onAllNodesWithText("Review imported transaction").fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithText("Suggested from MTN MoMo", substring = true).assertExists()
@@ -99,14 +119,34 @@ class TransactionImportEndToEndTest {
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithText("Review imported transaction").fetchSemanticsNodes().isEmpty()
         }
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("Activity").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.waitUntil(timeoutMillis = 5_000) {
+            compose.onAllNodesWithContentDescription("Saved").fetchSemanticsNodes().isEmpty()
+        }
+        compose.onAllNodesWithText("Home").onFirst().performClick()
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("Record activity").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.waitForIdle()
         val snapshot = runBlocking { app.container.financeRepository.snapshot.first() }
-        val transaction = snapshot.transactions.single()
+        val transaction = snapshot.transactions.single { it.sourceReference == "44604050982" }
+        assertEquals(LARGE_LEDGER_SEED_COUNT + 1, snapshot.transactions.size)
         assertEquals(TransactionType.INCOME, transaction.type)
         assertEquals("mtn_momo", transaction.sourceProvider)
         assertEquals("44604050982", transaction.sourceReference)
         assertEquals(10_000L, transaction.amountMinor)
+        assertEquals(500L, transaction.feeMinor)
         assertNotNull(transaction.categoryId)
         assertEquals(CategoryType.INCOME, snapshot.category(transaction.categoryId!!)?.type)
+        assertEquals(34_500L, snapshot.walletBalances().values.single())
+        val summary = AnalyticsEngine(snapshot).let { engine ->
+            val period = DateRange(LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31))
+            Triple(engine.incomeMinor(period), engine.expenseMinor(period), engine.netMinor(period))
+        }
+        assertEquals(10_000L, summary.first)
+        assertEquals(500L, summary.second)
+        assertEquals(9_500L, summary.third)
     }
 }

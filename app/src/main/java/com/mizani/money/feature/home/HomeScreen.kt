@@ -77,7 +77,6 @@ import com.mizani.money.core.time.PeriodPreset
 import com.mizani.money.core.time.Periods
 import com.mizani.money.data.local.WalletEntity
 import com.mizani.money.data.repo.LedgerSnapshot
-import com.mizani.money.domain.analytics.AnalyticsEngine
 import com.mizani.money.domain.analytics.DashboardMetrics
 import com.mizani.money.domain.analytics.UpcomingCommitment
 import com.mizani.money.domain.engagement.DailyMomentum
@@ -87,6 +86,7 @@ import com.mizani.money.feature.lock.WalletBalanceVisibilityControl
 import com.mizani.money.ui.AdaptiveLayout
 import com.mizani.money.ui.AppUiState
 import com.mizani.money.ui.AppViewModel
+import com.mizani.money.ui.DashboardMetricsState
 import com.mizani.money.ui.components.DateRangePickerDialog
 import com.mizani.money.ui.components.EmptyState
 import com.mizani.money.ui.components.InsightCard
@@ -96,6 +96,8 @@ import com.mizani.money.ui.components.PeriodMenu
 import com.mizani.money.ui.components.ProgressBar
 import com.mizani.money.ui.components.SectionHeader
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import com.mizani.money.ui.components.StorysetIllustration
 import com.mizani.money.ui.components.TransactionRow
 import com.mizani.money.ui.components.WalletAvatar
@@ -157,29 +159,47 @@ fun HomeScreen(
     onAddTransfer: () -> Unit,
     onImportMessage: () -> Unit,
     onOpenCommitments: () -> Unit,
+    onStartHomeGuide: () -> Unit,
 ) {
-    val metrics by vm.metrics.collectAsStateWithLifecycle()
+    val dashboardState by vm.dashboardMetrics.collectAsStateWithLifecycle()
+    val readyDashboard = dashboardState as? DashboardMetricsState.Ready
+    val metrics = readyDashboard?.metrics
     val insights by vm.insights.collectAsStateWithLifecycle()
     val selectedPreset by vm.selectedPreset.collectAsStateWithLifecycle()
     val customRange by vm.customRange.collectAsStateWithLifecycle()
     val periodRange by vm.periodRange.collectAsStateWithLifecycle()
     val snapshot = state.snapshot
     val currency = state.currency
-    val walletBalances = remember(snapshot) { snapshot.walletBalances() }
+    val walletBalances = remember(snapshot) { snapshot.walletBalancesOrNull() }
     val today by vm.today.collectAsStateWithLifecycle()
-    val momentum = remember(snapshot.transactions, today) {
-        DailyMomentumCalculator.calculate(snapshot.transactions, today)
+
+    if (walletBalances == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = Spacing.lg),
+            contentAlignment = Alignment.Center,
+        ) {
+            EmptyState(
+                title = "Wallet balances need review",
+                body = "A saved entry is outside the supported balance range. Open Activity to edit or delete entries until balances can be calculated again. Your saved records are unchanged.",
+                iconRes = R.drawable.ic_ph_wallet,
+                actionLabel = "Review Activity",
+                onAction = onOpenTransactions,
+            )
+        }
+        return
     }
-    val analytics = remember(snapshot) { AnalyticsEngine(snapshot) }
-    // One seven-day spending pulse feeds both the two-column and single-column layouts.
-    val spendingPulse = remember(analytics, today) {
-        analytics.dailySpending(7, today)
+
+    val homeMetrics = readyDashboard?.homeSupportingMetrics
+    // Empty-ledger Home remains useful while async metrics load. This fallback only scans an
+    // empty list; all non-empty ledger analytics are prepared on Dispatchers.Default.
+    val momentum = homeMetrics?.dailyMomentum ?: remember(today) {
+        DailyMomentumCalculator.calculate(emptyList(), today)
     }
-    // The card looks ahead independently of the selected analytics period so bills at the
-    // start of next month are still listed near month-end.
-    val upcomingSoon = remember(analytics, today) {
-        analytics.upcoming(DateRange(today, today.plusDays(45)), today)
-    }
+    val spendingPulse = homeMetrics?.spendingPulse.orEmpty()
+    val upcomingSoon = homeMetrics?.upcomingSoon.orEmpty()
     var showRangePicker by remember { mutableStateOf(false) }
 
     if (showRangePicker) {
@@ -194,7 +214,7 @@ fun HomeScreen(
     }
 
     val activeWallets = remember(snapshot) { snapshot.wallets.filter { !it.archived && it.deletedAt == null } }
-    val isEmptyLedger = snapshot.transactions.isEmpty()
+    val isEmptyLedger = snapshot.transactions.none { it.deletedAt == null }
     val current = metrics
 
     Box(
@@ -230,6 +250,7 @@ fun HomeScreen(
                     stackHeader = stackHeader,
                     onSelect = { preset -> vm.selectPreset(preset) },
                     onCustom = { showRangePicker = true },
+                    onStartHomeGuide = onStartHomeGuide,
                 )
 
                 if (isEmptyLedger) {
@@ -243,10 +264,15 @@ fun HomeScreen(
                         onOpenWallets = onOpenWallets,
                         onSetupPin = onSetupPin,
                         onAdd = onAdd,
-                        onAddIncome = onAddIncome,
-                        onAddExpense = onAddExpense,
-                        onAddTransfer = onAddTransfer,
                         onImportMessage = onImportMessage,
+                    )
+                } else if (dashboardState is DashboardMetricsState.InvalidLedgerTotals) {
+                    EmptyState(
+                        title = "Totals could not be calculated",
+                        body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
+                        iconRes = R.drawable.ic_ph_wallet,
+                        actionLabel = "Review Activity",
+                        onAction = onOpenTransactions,
                     )
                 } else if (current == null) {
                     LoadingBox()
@@ -385,19 +411,23 @@ private fun HomeHeader(
     stackHeader: Boolean,
     onSelect: (PeriodPreset) -> Unit,
     onCustom: () -> Unit,
+    onStartHomeGuide: () -> Unit,
 ) {
     val greeting = DateText.greeting(LocalTime.now().hour)
     val subtitle = "${DateText.weekday(today)} · ${workspaceName ?: "My money"}"
     if (stackHeader) {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-            HomeGreeting(greeting = greeting, subtitle = subtitle)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                HomeGreeting(greeting = greeting, subtitle = subtitle, modifier = Modifier.weight(1f))
+                GuideHelpAction(featureName = "Home", onClick = onStartHomeGuide)
+            }
             PeriodMenu(
                 selected = selectedPreset,
                 customRange = customRange,
                 range = periodRange,
                 onSelect = onSelect,
                 onCustom = onCustom,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().guideTarget("home.period"),
             )
         }
     } else {
@@ -414,7 +444,9 @@ private fun HomeHeader(
                 range = periodRange,
                 onSelect = onSelect,
                 onCustom = onCustom,
+                modifier = Modifier.guideTarget("home.period"),
             )
+            GuideHelpAction(featureName = "Home", onClick = onStartHomeGuide)
         }
     }
 }
@@ -463,16 +495,11 @@ private fun EmptyLedgerHome(
     onOpenWallets: () -> Unit,
     onSetupPin: () -> Unit,
     onAdd: () -> Unit,
-    onAddIncome: () -> Unit,
-    onAddExpense: () -> Unit,
-    onAddTransfer: () -> Unit,
     onImportMessage: () -> Unit,
 ) {
     GetStartedHero()
-    QuickActionsCard(
-        onAddExpense = onAddExpense,
-        onAddIncome = onAddIncome,
-        onAddTransfer = onAddTransfer,
+    FirstTransactionCard(
+        onAdd = onAdd,
         onImportMessage = onImportMessage,
     )
     WalletsSection(
@@ -486,6 +513,40 @@ private fun EmptyLedgerHome(
         showVisibilityControl = true,
     )
     DailyMomentumCard(momentum = momentum, onAdd = onAdd)
+}
+
+@Composable
+private fun FirstTransactionCard(
+    onAdd: () -> Unit,
+    onImportMessage: () -> Unit,
+) {
+    MizaniCard(
+        modifier = Modifier.fillMaxWidth().guideTarget("home.actions"),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        contentPadding = PaddingValues(Spacing.md),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Rounded.CheckCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(Modifier.width(Spacing.sm))
+                Text("Your first wallet is ready", style = MaterialTheme.typography.titleSmall)
+            }
+            Text(
+                "Next, record one income or expense so your balance and Insights reflect your activity.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Button(onClick = onAdd, modifier = Modifier.fillMaxWidth()) {
+                Text("Add your first transaction")
+            }
+            TextButton(onClick = onImportMessage) { Text("Import MoMo message") }
+        }
+    }
 }
 
 @Composable
@@ -837,7 +898,7 @@ private fun QuickActionsCard(
         ),
     )
     MizaniCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().guideTarget("home.actions"),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         contentPadding = PaddingValues(Spacing.md),
     ) {
@@ -1311,7 +1372,7 @@ private fun WalletsSection(
             }
         }
         MizaniCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().guideTarget("home.wallets"),
             onClick = onOpenWallets,
             contentPadding = PaddingValues(horizontal = Spacing.md, vertical = Spacing.xs),
         ) {

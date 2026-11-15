@@ -6,16 +6,77 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-15
+
 ### Added
 
+- Add replayable, feature-specific in-app guides with animated spotlights, a dimmed page that stays readable, steps that switch the Bills tab so recurring schedules are explained rather than skipped, and small page-level help buttons; keep Home focused on the first transaction.
 - Add a Kotlin Multiplatform shared money foundation and an early native iOS preview while keeping
   the existing Android data and financial flows in place.
+- Share stable finance and preference enums, transaction amount/fee validation, and wallet balance
+  rules with iOS while preserving persisted Android values.
+- Share curated currency metadata with Android and iOS, and add an initial encrypted iOS flow for
+  workspace setup, wallets, expenses, and income.
+- Share the built-in category catalog and stable Android category IDs with iOS, add category-aware
+  transaction entry, and migrate the iOS encrypted database forward without changing ledger rows.
+- Add atomic iOS wallet transfers with shared balance semantics and transfer-fee categorization.
+- Add iOS refunds linked to active expenses and signed balance adjustments using shared ledger rules.
+- Add iOS transaction editing, reversible deletion, and restore with stable ledger IDs and balance updates.
+- Add private, debounced iOS Activity search across transaction notes, types, wallets, categories,
+  currencies, and amounts, with lazy row rendering for large ledgers.
+- Share Activity search normalization and matching between Android and iOS in KMP.
+- Add iOS category creation, renaming, archive/restore, and per-type reordering while preserving
+  transaction references in the encrypted local database, with the minimum-active-category rule
+  shared through KMP.
+- Add KMP-backed iOS income-source kinds, management, and income transaction links; the forward
+  schema migration preserves existing nullable source IDs.
+- Share posted-ledger cash-flow totals and category spending between Android and iOS, and add a basic
+  current-month Insights summary to the iOS preview.
+- Share the six-digit app-lock PIN policy, PBKDF2 work factor, retry backoff, and background grace
+  period through KMP.
+- Add an iOS PIN lock with device-only Keychain storage, biometric unlock, and lifecycle privacy
+  shielding; Apple-platform build and device verification remain outstanding.
+- Share featured country-pack and wallet defaults with iOS, expose currency precision through KMP,
+  and add an iOS first-run preview acknowledgment with country, currency, wallet, and opening-balance
+  setup.
+- Share decimal-to-minor-unit input parsing and rounding rules across Android and iOS through KMP.
+- Make iOS opening balances, transaction inputs, and displayed amounts respect the selected
+  currency's minor-unit precision.
+- Share savings-goal amount and allocation-overflow rules in KMP; add iOS goal management with
+  encrypted, additive storage, atomic linked-wallet contributions, and Hide balances support.
+- Share investment asset types, draft validation, and checked portfolio totals through KMP; add
+  encrypted iOS investment snapshots with archive/restore and Hide balances support.
+- Align Android Gradle Plugin 9.3.1 with Kotlin Multiplatform 2.4.21's published compatibility range.
+- Add an initial SQLCipher-backed iOS storage package with a device-only Keychain database key and
+  encrypted-file and repository tests.
+- Add iOS commitment management for the curated currency set with KMP-backed validation/conversion,
+  cached reference rates, and expense-linked progress that accounts for active refunds, using an
+  additive encrypted schema migration. iOS reminders and backup/restore remain unavailable.
+- Disclose commitment-target currency conversion alongside foreign-currency transaction conversion;
+  both requests send currency codes only and save the returned rate and date locally.
 
 ### Changed
 
+- Explain how wallet starting balances and recorded activity combine, show a signed balance
+  breakdown, and let users record a dated adjustment to match a provider statement.
 - Run Android verification and the iOS preview/shared-rule checks in the same CI workflow.
 - Make the Xcode-to-Gradle framework build portable across Macs and document the currently
   compatible Apple toolchain without pinning a developer-specific JDK path.
+- Advance the iOS encrypted schema with an additive v4-to-v5 investment table migration while
+  preserving existing ledger, goal, and contribution records.
+
+### Fixed
+
+- Restore feature-guide spotlights, keep the provider picker usable during its walkthrough step, scroll highlighted controls into view, keep the destination page and its chrome laid out behind every step, move the coach card clear of the highlighted control, and use one provider catalog for selection and review labels.
+- Parse shared mobile-money messages and Home dashboard calculations off the UI thread; preserve
+  Home-tab navigation after imported transactions; show an actionable recovery screen when saved
+  totals cannot be represented; reconcile income fees across wallet balances, spending totals and
+  exports; reject out-of-range transaction amounts and fees; and use checked integer arithmetic
+  for dashboard and budget totals.
+- Use remaining landscape width for the More screen's management and app sections.
+- Reject ledger writes, wallet reactivation, restores and backup replacements that overflow checked
+  wallet balances, while keeping a repair path for older invalid ledgers.
+- Correct the display symbols for Nigerian naira, Ghanaian cedi, euro, and British pound.
 
 ## [1.12.0] - 2026-11-14
 

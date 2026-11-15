@@ -1,6 +1,7 @@
 package com.mizani.money.feature.debts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -66,6 +67,8 @@ import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.ProgressBar
 import com.mizani.money.ui.components.Spacing
 import com.mizani.money.ui.components.StatusBanner
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -76,6 +79,7 @@ fun DebtsScreen(
     state: AppUiState,
     onBack: () -> Unit,
     onSetupPin: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     val snapshot = state.snapshot
     val currency = state.currency
@@ -153,14 +157,18 @@ fun DebtsScreen(
             subtitle = "${active.size} active ${if (active.size == 1) "debt" else "debts"}",
             onBack = onBack,
             actions = {
+                GuideHelpAction("Debts", onOpenGuide)
                 WalletBalanceVisibilityControl(vm, state, onSetupPin)
-                IconButton(onClick = { editing = null; error = null; showDebtDialog = true }) {
+                IconButton(
+                    modifier = Modifier.guideTarget("debts.add"),
+                    onClick = { editing = null; error = null; showDebtDialog = true },
+                ) {
                     Icon(Icons.Rounded.Add, contentDescription = "Add debt")
                 }
             },
         )
         MizaniPageContent {
-            MizaniCard {
+            MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("debts.summary")) {
                 Text("See what you owe and how it is changing.", style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
@@ -191,23 +199,31 @@ fun DebtsScreen(
             }
 
             if (active.isEmpty()) {
-                EmptyState(
-                    title = "No debts yet",
-                    body = "If you owe money, add it here and record payments as you make them.",
-                    icon = Icons.Rounded.AccountBalance,
-                    actionLabel = "Add debt",
-                    onAction = { editing = null; error = null; showDebtDialog = true },
-                )
+                Box(Modifier.fillMaxWidth().guideTarget("debts.records")) {
+                    EmptyState(
+                        title = "No debts yet",
+                        body = "If you owe money, add it here and record payments as you make them.",
+                        icon = Icons.Rounded.AccountBalance,
+                        actionLabel = "Add debt",
+                        onAction = { editing = null; error = null; showDebtDialog = true },
+                    )
+                }
             } else {
                 Text("Active debts", style = MaterialTheme.typography.titleMedium)
-                active.forEach { debt ->
-                    DebtCard(
-                        debt = debt,
-                        currency = currency,
-                        balanceVisible = state.walletBalancesVisible,
-                        onEdit = { editing = debt; error = null; showDebtDialog = true },
-                        onRecordPayment = { paymentDebt = debt; error = null },
-                    )
+                active.forEachIndexed { index, debt ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .then(if (index == 0) Modifier.guideTarget("debts.records") else Modifier),
+                    ) {
+                        DebtCard(
+                            debt = debt,
+                            currency = currency,
+                            balanceVisible = state.walletBalancesVisible,
+                            onEdit = { editing = debt; error = null; showDebtDialog = true },
+                            onRecordPayment = { paymentDebt = debt; error = null },
+                        )
+                    }
                 }
             }
 

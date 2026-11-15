@@ -7,6 +7,11 @@ import com.mizani.money.core.model.RecurringType
 import com.mizani.money.core.model.RolloverRule
 import com.mizani.money.core.model.TransactionType
 import com.mizani.money.core.model.WalletType
+import com.mizani.money.domain.finance.LedgerBalanceRules
+import com.mizani.money.domain.finance.InvestmentRules
+import com.mizani.money.domain.finance.TransactionBalanceInput
+import com.mizani.money.domain.finance.WalletBalanceBreakdown
+import com.mizani.money.domain.finance.WalletBalanceInput
 import com.mizani.money.data.local.BudgetEntity
 import com.mizani.money.data.local.BudgetLineEntity
 import com.mizani.money.data.local.CategoryEntity
@@ -48,11 +53,15 @@ data class LedgerSnapshot(
         get() = investments.filter { !it.archived && it.deletedAt == null }
 
     fun investmentSummary(): InvestmentSummary {
-        val active = activeInvestments
+        val summary = InvestmentRules.summarize(
+            costBasisMinor = investments.map { it.costBasisMinor },
+            currentValueMinor = investments.map { it.currentValueMinor },
+            active = investments.map { !it.archived && it.deletedAt == null },
+        ) ?: throw ArithmeticException("Invalid or overflowing investment summary")
         return InvestmentSummary(
-            holdingCount = active.size,
-            costBasisMinor = active.sumExact { it.costBasisMinor },
-            currentValueMinor = active.sumExact { it.currentValueMinor },
+            holdingCount = summary.holdingCount,
+            costBasisMinor = summary.costBasisMinor,
+            currentValueMinor = summary.currentValueMinor,
         )
     }
 
@@ -97,41 +106,67 @@ data class LedgerSnapshot(
         budgetId?.let { id -> budgetLines.filter { it.budgetId == id } } ?: emptyList()
 
     /** Balances derived from a single canonical ledger; transfers preserve total net worth. */
-    fun walletBalances(): Map<String, Long> {
-        val balances = wallets.associate { it.id to it.openingBalanceMinor }.toMutableMap()
-        for (transaction in transactions) {
-            if (transaction.deletedAt != null) continue
-            when (transaction.type) {
-                TransactionType.INCOME -> add(balances, transaction.walletId, transaction.amountMinor)
-                TransactionType.EXPENSE -> add(
-                    balances,
-                    transaction.walletId,
-                    -(transaction.amountMinor + transaction.feeMinor),
+    fun walletBalances(): Map<String, Long> = LedgerBalanceRules.walletBalances(
+        wallets = wallets.map { WalletBalanceInput(it.id, it.openingBalanceMinor) },
+        transactions = transactions.map {
+            TransactionBalanceInput(
+                type = it.type,
+                amountMinor = it.amountMinor,
+                feeMinor = it.feeMinor,
+                walletId = it.walletId,
+                toWalletId = it.toWalletId,
+                deleted = it.deletedAt != null,
+            )
+        },
+    )
+
+    /** Best-effort signed breakdown for explaining a wallet total without changing its calculation. */
+    fun walletBalanceBreakdownsOrNull(): Map<String, WalletBalanceBreakdown>? = try {
+        LedgerBalanceRules.walletBalanceBreakdowns(
+            wallets = wallets.map { WalletBalanceInput(it.id, it.openingBalanceMinor) },
+            transactions = transactions.map {
+                TransactionBalanceInput(
+                    type = it.type,
+                    amountMinor = it.amountMinor,
+                    feeMinor = it.feeMinor,
+                    walletId = it.walletId,
+                    toWalletId = it.toWalletId,
+                    deleted = it.deletedAt != null,
                 )
-                TransactionType.TRANSFER -> {
-                    add(
-                        balances,
-                        transaction.walletId,
-                        -(transaction.amountMinor + transaction.feeMinor),
-                    )
-                    transaction.toWalletId?.let { add(balances, it, transaction.amountMinor) }
+            },
+        )
+    } catch (_: ArithmeticException) {
+        null
+    }
+
+    /**
+     * Returns balances only when every wallet and active aggregate can be represented exactly.
+     * A null result keeps older invalid ledgers readable so Activity can offer a repair path.
+     */
+    fun walletBalancesOrNull(): Map<String, Long>? = try {
+        val balances = walletBalances()
+        var allActiveTotal = 0L
+        var activeLiquidTotal = 0L
+        wallets.asSequence()
+            .filter { !it.archived && it.deletedAt == null }
+            .sortedWith(compareBy<WalletEntity> { it.sortOrder }.thenBy { it.createdAt }.thenBy { it.id })
+            .forEach { wallet ->
+                val balance = balances[wallet.id] ?: 0L
+                allActiveTotal = Math.addExact(allActiveTotal, balance)
+                if (wallet.type != WalletType.DEBT) {
+                    activeLiquidTotal = Math.addExact(activeLiquidTotal, balance)
                 }
-                TransactionType.REFUND -> add(
-                    balances,
-                    transaction.walletId,
-                    transaction.amountMinor - transaction.feeMinor,
-                )
-                TransactionType.ADJUSTMENT -> add(balances, transaction.walletId, transaction.amountMinor)
             }
-        }
-        return balances
+        balances
+    } catch (_: ArithmeticException) {
+        null
     }
 
     fun liquidBalance(): Long {
         val balances = walletBalances()
         return wallets
             .filter { it.type != WalletType.DEBT && !it.archived && it.deletedAt == null }
-            .sumOf { balances[it.id] ?: 0L }
+            .fold(0L) { total, wallet -> Math.addExact(total, balances[wallet.id] ?: 0L) }
     }
 
     /** Paid totals are derived from linked, active expense transactions; links never duplicate ledger rows. */
@@ -184,10 +219,6 @@ data class LedgerSnapshot(
                 )
             }
             .toList()
-    }
-
-    private fun add(map: MutableMap<String, Long>, key: String, delta: Long) {
-        map[key] = (map[key] ?: 0L) + delta
     }
 
     private fun <T> List<T>.sumExact(selector: (T) -> Long): Long =

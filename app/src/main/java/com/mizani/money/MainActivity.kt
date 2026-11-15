@@ -162,7 +162,7 @@ class MainActivity : FragmentActivity() {
         consumeSharedText(intent)
     }
 
-    private fun consumeSharedText(incoming: Intent?) {
+    internal fun consumeSharedText(incoming: Intent?) {
         if (incoming?.action != Intent.ACTION_SEND || incoming.type != "text/plain") return
         val sharedText = incoming.getCharSequenceExtra(Intent.EXTRA_TEXT)
         val senderHint = incoming.getCharSequenceExtra(Intent.EXTRA_TITLE)

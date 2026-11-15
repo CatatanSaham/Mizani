@@ -3,6 +3,7 @@ package com.mizani.money.data.repo
 import com.mizani.money.core.model.TransactionType
 import com.mizani.money.core.money.Currencies
 import com.mizani.money.core.money.CurrencyConversion
+import com.mizani.money.core.money.MoneyLimits
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -26,8 +27,12 @@ internal object TransactionCurrencyRules {
         require(type in setOf(TransactionType.EXPENSE, TransactionType.INCOME, TransactionType.REFUND)) {
             "Currency conversion is not supported for this transaction type"
         }
-        require(sourceAmountMinor != null && sourceAmountMinor > 0L) { "Original amount is missing or invalid" }
-        require(sourceFeeMinor == null || sourceFeeMinor >= 0L) { "Original fee cannot be negative" }
+        require(sourceAmountMinor != null && sourceAmountMinor in 1L..MoneyLimits.MAX_MINOR_AMOUNT) {
+            "Original amount is missing or outside the supported range"
+        }
+        require(sourceFeeMinor == null || sourceFeeMinor in 0L..MoneyLimits.MAX_MINOR_AMOUNT) {
+            "Original fee is outside the supported range"
+        }
         require(sourceCurrencyCode != null && sourceCurrencyCode != workspaceCurrencyCode) {
             "Original currency must differ from the workspace currency"
         }

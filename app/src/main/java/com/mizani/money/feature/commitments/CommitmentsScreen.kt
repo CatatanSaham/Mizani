@@ -1,6 +1,7 @@
 package com.mizani.money.feature.commitments
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -83,6 +84,9 @@ import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.ProgressBar
 import com.mizani.money.ui.components.SectionHeader
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.LocalActiveGuideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
@@ -92,12 +96,24 @@ fun CommitmentsScreen(
     vm: AppViewModel,
     state: AppUiState,
     onRecordExpense: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     val snapshot = state.snapshot
     val currency = state.currency
     val today by vm.today.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var selectedSection by rememberSaveable { mutableIntStateOf(0) }
+    // The guided tour walks through both tabs, so the active step selects the matching section
+    // before its spotlight is measured. Without this the guide would only ever explain the tab
+    // the user happened to leave open.
+    val activeGuideTarget = LocalActiveGuideTarget.current
+    LaunchedEffect(activeGuideTarget) {
+        when (activeGuideTarget) {
+            "commitments.recurring" -> selectedSection = 1
+            "commitments.add", "commitments.records" -> selectedSection = 0
+            else -> Unit
+        }
+    }
     var editor by remember { mutableStateOf<CommitmentEntity?>(null) }
     var editorOpen by remember { mutableStateOf(false) }
     var editError by remember { mutableStateOf<String?>(null) }
@@ -264,7 +280,9 @@ fun CommitmentsScreen(
                 "Remember repeating bills and expected income"
             },
             actions = {
+                GuideHelpAction("Bills and commitments", onOpenGuide)
                 IconButton(
+                    modifier = Modifier.guideTarget("commitments.add"),
                     onClick = {
                         if (selectedSection == 0) {
                             editor = null
@@ -284,7 +302,10 @@ fun CommitmentsScreen(
                 }
             },
         )
-        PrimaryTabRow(selectedTabIndex = selectedSection) {
+        PrimaryTabRow(
+            selectedTabIndex = selectedSection,
+            modifier = Modifier.fillMaxWidth().guideTarget("commitments.tabs"),
+        ) {
             Tab(
                 selected = selectedSection == 0,
                 onClick = { selectedSection = 0 },
@@ -315,7 +336,7 @@ fun CommitmentsScreen(
                 Text(error.orEmpty(), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
             }
             if (active.isEmpty()) {
-                MizaniCard {
+                MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("commitments.records")) {
                     Text(
                         if (archived.isEmpty()) "No bills or commitments yet"
                         else "No active bills or commitments",
@@ -343,57 +364,63 @@ fun CommitmentsScreen(
                 }
             } else {
                 active.forEach { item ->
-                    CommitmentCard(
-                        item = item,
-                        state = state,
-                        linkedTransactions = linkedTransactionsById,
-                        linkableExpenses = linkableExpensesByCommitment[item.commitment.id].orEmpty(),
-                        hasRecordedExpenses = unlinkedExpenseCandidates.isNotEmpty(),
-                        netExpenseMinorById = netExpenseMinorById,
-                        actionError = actionError?.takeIf { it.first == item.commitment.id }?.second,
-                        busy = savingId == item.commitment.id,
-                        onRecordExpense = onRecordExpense,
-                        onEdit = { editor = item.commitment; editError = null; editorOpen = true },
-                        onArchive = { archivedValue ->
-                            savingId = item.commitment.id
-                            scope.launch {
-                                runCatching { vm.finance.setCommitmentArchived(item.commitment.id, archivedValue) }
-                                    .onFailure { error = it.message ?: "Could not update this commitment." }
-                                savingId = null
-                            }
-                        },
-                        onDelete = { deleteTarget = item.commitment },
-                        onLink = { transactionId ->
-                            savingId = item.commitment.id
-                            error = null
-                            actionError = null
-                            scope.launch {
-                                runCatching { vm.finance.linkExpenseToCommitment(item.commitment.id, transactionId) }
-                                    .onFailure {
-                                        actionError = item.commitment.id to commitmentActionMessage(
-                                            it,
-                                            "Could not link this expense. Please try again.",
-                                        )
-                                    }
-                                savingId = null
-                            }
-                        },
-                        onUnlink = { paymentId ->
-                            savingId = item.commitment.id
-                            error = null
-                            actionError = null
-                            scope.launch {
-                                runCatching { vm.finance.unlinkCommitmentPayment(paymentId) }
-                                    .onFailure {
-                                        actionError = item.commitment.id to commitmentActionMessage(
-                                            it,
-                                            "Could not unlink this expense. Please try again.",
-                                        )
-                                    }
-                                savingId = null
-                            }
-                        },
-                    )
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .then(if (item == active.firstOrNull()) Modifier.guideTarget("commitments.records") else Modifier),
+                    ) {
+                        CommitmentCard(
+                            item = item,
+                            state = state,
+                            linkedTransactions = linkedTransactionsById,
+                            linkableExpenses = linkableExpensesByCommitment[item.commitment.id].orEmpty(),
+                            hasRecordedExpenses = unlinkedExpenseCandidates.isNotEmpty(),
+                            netExpenseMinorById = netExpenseMinorById,
+                            actionError = actionError?.takeIf { it.first == item.commitment.id }?.second,
+                            busy = savingId == item.commitment.id,
+                            onRecordExpense = onRecordExpense,
+                            onEdit = { editor = item.commitment; editError = null; editorOpen = true },
+                            onArchive = { archivedValue ->
+                                savingId = item.commitment.id
+                                scope.launch {
+                                    runCatching { vm.finance.setCommitmentArchived(item.commitment.id, archivedValue) }
+                                        .onFailure { error = it.message ?: "Could not update this commitment." }
+                                    savingId = null
+                                }
+                            },
+                            onDelete = { deleteTarget = item.commitment },
+                            onLink = { transactionId ->
+                                savingId = item.commitment.id
+                                error = null
+                                actionError = null
+                                scope.launch {
+                                    runCatching { vm.finance.linkExpenseToCommitment(item.commitment.id, transactionId) }
+                                        .onFailure {
+                                            actionError = item.commitment.id to commitmentActionMessage(
+                                                it,
+                                                "Could not link this expense. Please try again.",
+                                            )
+                                        }
+                                    savingId = null
+                                }
+                            },
+                            onUnlink = { paymentId ->
+                                savingId = item.commitment.id
+                                error = null
+                                actionError = null
+                                scope.launch {
+                                    runCatching { vm.finance.unlinkCommitmentPayment(paymentId) }
+                                        .onFailure {
+                                            actionError = item.commitment.id to commitmentActionMessage(
+                                                it,
+                                                "Could not unlink this expense. Please try again.",
+                                            )
+                                        }
+                                    savingId = null
+                                }
+                            },
+                        )
+                    }
                 }
             }
             if (archived.isNotEmpty()) {

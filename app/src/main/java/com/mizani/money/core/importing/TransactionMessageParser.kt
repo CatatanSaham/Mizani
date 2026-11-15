@@ -75,6 +75,10 @@ object TransactionMessageParser {
 
     data class ProviderOption(val id: String, val label: String, internal val matcher: Regex)
 
+    /** Uses the same provider catalog for the picker and the import review summary. */
+    fun providerLabel(providerId: String): String =
+        providerOptions.firstOrNull { it.id == providerId }?.label ?: providerId
+
     fun parse(
         message: String,
         today: LocalDate = LocalDate.now(),

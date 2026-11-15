@@ -3,6 +3,7 @@ package com.mizani.money.feature.transactions
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +49,8 @@ import com.mizani.money.core.time.DateText
 import com.mizani.money.core.time.Periods
 import com.mizani.money.R
 import com.mizani.money.data.local.TransactionEntity
+import com.mizani.money.domain.analytics.AnalyticsEngine
+import com.mizani.money.domain.search.ActivitySearchRules
 import com.mizani.money.ui.AppUiState
 import com.mizani.money.ui.AppViewModel
 import com.mizani.money.ui.AdaptiveLayout
@@ -59,6 +62,9 @@ import com.mizani.money.ui.components.MizaniPicker
 import com.mizani.money.ui.components.MizaniTopBar
 import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.Spacing
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
+import com.mizani.money.ui.components.StatusBanner
 import com.mizani.money.ui.components.TransactionRow
 import com.mizani.money.ui.theme.LocalMizaniThemeTokens
 import kotlinx.coroutines.delay
@@ -80,9 +86,11 @@ fun TransactionsScreen(
     state: AppUiState,
     onEdit: (String) -> Unit,
     onAdd: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     val snapshot = state.snapshot
     val currency = state.currency
+    val balancesAvailable = remember(snapshot) { snapshot.walletBalancesOrNull() != null }
     val today by vm.today.collectAsStateWithLifecycle()
     var search by rememberSaveable { mutableStateOf("") }
     var appliedSearch by remember { mutableStateOf("") }
@@ -113,7 +121,7 @@ fun TransactionsScreen(
     val minMinor = MoneyFormat.parse(minAmount, currency)
     val maxMinor = MoneyFormat.parse(maxAmount, currency)
 
-    // Build searchable text once per ledger snapshot. Rebuilding and lowercasing this string
+    // Build searchable text once per ledger snapshot. Rebuilding and normalizing this string
     // inside the row filter for every keystroke makes large local ledgers feel progressively
     // slower, even though the data is already in memory.
     val searchIndex = remember(snapshot.transactions, snapshot.categories, snapshot.wallets) {
@@ -125,7 +133,7 @@ fun TransactionsScreen(
                 append(snapshot.walletName(transaction.walletId)).append(' ')
                 append(transaction.type.label).append(' ')
                 append(transaction.amountMinor)
-            }.lowercase()
+            }.let { ActivitySearchRules.normalizeSearchText(it) }
         }
     }
 
@@ -140,7 +148,7 @@ fun TransactionsScreen(
         minMinor,
         maxMinor,
     ) {
-        val query = appliedSearch.trim().lowercase()
+        val query = ActivitySearchRules.normalizeSearchText(appliedSearch)
         snapshot.transactions.filter { transaction ->
             if (range != null && !range.contains(LocalDate.ofEpochDay(transaction.localDateEpochDay))) return@filter false
             if (selectedTypes.isNotEmpty() && transaction.type !in selectedTypes) return@filter false
@@ -148,20 +156,16 @@ fun TransactionsScreen(
             if (categoryId != null && transaction.categoryId != categoryId && transaction.feeCategoryId != categoryId) return@filter false
             if (minMinor != null && transaction.amountMinor < minMinor) return@filter false
             if (maxMinor != null && transaction.amountMinor > maxMinor) return@filter false
-            if (query.isNotEmpty()) {
-                if (!(searchIndex[transaction.id] ?: "").contains(query)) return@filter false
-            }
+            if (!ActivitySearchRules.containsNormalized(searchIndex[transaction.id] ?: "", query)) return@filter false
             true
         }
     }
 
     val grouped = filtered.groupBy { LocalDate.ofEpochDay(it.localDateEpochDay) }
         .toSortedMap(compareByDescending { it })
-    val income = filtered.filter { it.type == TransactionType.INCOME }.sumOf { it.amountMinor }
-    val expense = filtered.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amountMinor + it.feeMinor } +
-        filtered.filter { it.type == TransactionType.TRANSFER }.sumOf { it.feeMinor } -
-        filtered.filter { it.type == TransactionType.REFUND }.sumOf { it.amountMinor } +
-        filtered.filter { it.type == TransactionType.REFUND }.sumOf { it.feeMinor }
+    val filteredSummary = remember(filtered) { AnalyticsEngine.summarizeTransactions(filtered) }
+    val income = filteredSummary.incomeMinor
+    val expense = filteredSummary.expenseMinor
 
     if (showRangePicker) {
         DateRangePickerDialog(
@@ -180,13 +184,19 @@ fun TransactionsScreen(
             title = "Activity",
             subtitle = "${filtered.size} transactions",
             actions = {
-                IconButton(onClick = { showFilters = !showFilters }) {
+                GuideHelpAction(featureName = "Activity and transactions", onClick = onOpenGuide)
+                IconButton(
+                    modifier = Modifier.guideTarget("activity.filters"),
+                    onClick = { showFilters = !showFilters },
+                ) {
                     Icon(Icons.Rounded.FilterList, contentDescription = "Filters")
                 }
             },
         )
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            // Keep the guide target on the visible viewport. Individual lazy rows may not be
+            // composed yet when a guide step is reached, especially for an empty ledger.
+            modifier = Modifier.fillMaxSize().guideTarget("activity.records"),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(
                 start = Spacing.lg,
                 end = Spacing.lg,
@@ -209,7 +219,7 @@ fun TransactionsScreen(
                     },
                     singleLine = true,
                     shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().guideTarget("activity.search"),
                 )
             }
             item {
@@ -266,34 +276,55 @@ fun TransactionsScreen(
                 }
             }
             item {
-                SummaryRow(
-                    incomeMinor = income,
-                    expenseMinor = expense,
-                    currency = currency,
-                )
+                if (!balancesAvailable) {
+                    StatusBanner(
+                        text = "Wallet balances and totals are unavailable until you edit or delete the entries causing the overflow. Activity remains available for recovery.",
+                        isError = true,
+                    )
+                }
+            }
+            if (balancesAvailable) {
+                item(key = "activity-summary") {
+                    Box(Modifier.fillMaxWidth()) {
+                        SummaryRow(
+                            incomeMinor = income,
+                            expenseMinor = expense,
+                            currency = currency,
+                        )
+                    }
+                }
             }
             if (grouped.isEmpty()) {
                 item {
-                    EmptyState(
-                        title = if (snapshot.transactions.isEmpty()) "No transactions yet" else "No matching transactions",
-                        body = if (snapshot.transactions.isEmpty()) {
-                            "Add income or expenses to start tracking."
-                        } else {
-                            "Try a different search, date range or filter."
-                        },
-                        iconRes = R.drawable.ic_ph_receipt,
-                        actionLabel = if (snapshot.transactions.isEmpty()) "Add transaction" else null,
-                        onAction = if (snapshot.transactions.isEmpty()) onAdd else null,
-                        compact = true,
-                    )
+                    Box(Modifier.fillMaxWidth()) {
+                        EmptyState(
+                            title = if (snapshot.transactions.isEmpty()) "No transactions yet" else "No matching transactions",
+                            body = if (snapshot.transactions.isEmpty()) {
+                                "Add income or expenses to start tracking."
+                            } else {
+                                "Try a different search, date range or filter."
+                            },
+                            iconRes = R.drawable.ic_ph_receipt,
+                            actionLabel = if (snapshot.transactions.isEmpty()) "Add transaction" else null,
+                            onAction = if (snapshot.transactions.isEmpty()) onAdd else null,
+                            compact = true,
+                        )
+                    }
                 }
             } else {
                 grouped.forEach { (date, transactions) ->
                     item(key = "header-$date") {
-                        DayHeader(date = date, transactions = transactions, snapshot = snapshot, currency = currency)
+                        DayHeader(
+                            date = date,
+                            transactions = transactions,
+                            snapshot = snapshot,
+                            currency = currency,
+                            showTotal = balancesAvailable,
+                        )
                     }
                     item(key = "day-$date") {
                         MizaniCard(
+                            modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(
                                 horizontal = Spacing.md,
@@ -325,19 +356,21 @@ private fun DayHeader(
     transactions: List<TransactionEntity>,
     snapshot: com.mizani.money.data.repo.LedgerSnapshot,
     currency: Currency,
+    showTotal: Boolean,
 ) {
-    val dayExpense = transactions
-        .filter { it.type == TransactionType.EXPENSE }
-        .sumOf { it.amountMinor + it.feeMinor } +
-        transactions.filter { it.type == TransactionType.TRANSFER }.sumOf { it.feeMinor } -
-        transactions.filter { it.type == TransactionType.REFUND }.sumOf { it.amountMinor } +
-        transactions.filter { it.type == TransactionType.REFUND }.sumOf { it.feeMinor }
-    // One sign only: a net-negative day (refunds exceed spending) is money coming back,
-    // so it reads as "+amount"; MoneyFormat.format would otherwise render a second minus.
-    val dayExpenseLabel = when {
-        dayExpense > 0 -> "−${MoneyFormat.format(dayExpense, currency)}"
-        dayExpense < 0 -> "+${MoneyFormat.format(dayExpense, currency).removePrefix("-")}"
-        else -> MoneyFormat.format(dayExpense, currency)
+    val dayExpenseLabel = if (showTotal) {
+        val dayExpense = remember(transactions) {
+            AnalyticsEngine.summarizeTransactions(transactions).expenseMinor
+        }
+        // One sign only: a net-negative day (refunds exceed spending) is money coming back,
+        // so it reads as "+amount"; MoneyFormat.format would otherwise render a second minus.
+        when {
+            dayExpense > 0 -> "−${MoneyFormat.format(dayExpense, currency)}"
+            dayExpense < 0 -> "+${MoneyFormat.format(dayExpense, currency).removePrefix("-")}"
+            else -> MoneyFormat.format(dayExpense, currency)
+        }
+    } else {
+        null
     }
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm, bottom = 2.dp),
@@ -349,11 +382,13 @@ private fun DayHeader(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f),
         )
-        Text(
-            dayExpenseLabel,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (dayExpenseLabel != null) {
+            Text(
+                dayExpenseLabel,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

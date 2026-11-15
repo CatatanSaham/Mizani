@@ -1,8 +1,9 @@
 # Product architecture contract (Mizani V1)
 
-This is an offline-first financial application. Android remains the complete client today; the iOS
-target is an integration preview and must not be treated as ready for financial use or store
-submission until its storage, security, and core flows are implemented and validated.
+This is an offline-first financial application. Android remains the complete client today; iOS has
+an early native wallet and ledger-entry slice with a basic shared Insights summary, but must not be
+treated as ready for financial use or store submission until its storage, security, and complete
+feature flows are implemented and validated.
 
 ## Canonical data and identity
 
@@ -17,12 +18,19 @@ submission until its storage, security, and core flows are implemented and valid
 
 ## Technology
 
-- Kotlin Multiplatform shared library (`:shared`) for platform-independent financial value types
-  and rules; its first shared contract is `Currency`, `Money`, and `MoneyLimits`.
+- Kotlin Multiplatform shared library (`:shared`) for platform-independent financial value types,
+  stable built-in category metadata/IDs, deterministic ledger analytics, and rules. Its common
+  contract includes `Currency`, `Money`, `MoneyLimits`, and the stable finance and preference enums
+  consumed by Android persistence and backup code.
 - Android application (`:app`) keeps Jetpack Compose, Material 3, Navigation Compose, Room, SQLCipher,
   DataStore, Android Keystore, AndroidX BiometricPrompt, and manual dependency injection.
-- Native SwiftUI iOS project (`iosApp`) consumes the `MizaniShared` framework. It is currently a
-  preview shell; it does not persist or process financial records.
+- Native SwiftUI iOS project (`iosApp`) consumes the `MizaniShared` framework and the `MizaniCore`
+  Swift package. `MizaniCore` provides SQLCipher/Keychain storage and a validated repository for the
+  initial workspace, wallet, category-aware expense and income, atomic transfer, linked refund, and
+  signed balance adjustment flows. Category management preserves transaction references, and
+  income sources use the forward-migrated encrypted schema and KMP-backed kind catalog.
+  Apple-platform build and
+  runtime behavior remain unverified in the current Windows environment.
 - Room for relational local state, with exportable schema and no destructive migrations.
 - SQLCipher (`net.zetetic:sqlcipher-android`) for the encrypted database.
 - Android Keystore, AES-GCM-wrapped random 256-bit database passphrase.
@@ -35,11 +43,41 @@ submission until its storage, security, and core flows are implemented and valid
 - Keep Compose and SwiftUI user interfaces native. A shared financial rule belongs in
   `:shared/commonMain` once both clients need it; both clients call that implementation instead of
   carrying separate copies of the rule.
+- Transaction amount/fee validation and wallet balance derivation now start in
+  `:shared/commonMain`; Android calls those implementations from its existing repository and
+  snapshot boundaries, and the iOS repository calls the same rules through the Kotlin/Native
+  framework.
+- The built-in category catalog and existing Android category IDs now come from
+  `:shared/commonMain`; Android retains its existing `DefaultCategories` adapter and iOS seeds its
+  local category table from the same catalog.
+- Income-source kinds and their persisted names come from shared enums; iOS exposes that catalog
+  through the narrow `IosFinanceRules` bridge rather than defining another Swift enum.
+- The rule that permits source metadata only on income transactions lives in `:shared/commonMain`;
+  Android and iOS repositories apply it before persistence, and iOS rechecks source availability
+  within its encrypted write transaction.
+- Investment asset types, manual snapshot validation, and checked portfolio aggregation live in
+  `:shared/commonMain`; Android and iOS keep investment records in their own encrypted local stores
+  and do not create ledger transactions for snapshot changes.
+- The rule that prevents archiving the final active category of a type lives in
+  `:shared/commonMain`; Android and iOS invoke it from their platform repositories while counting
+  categories inside their respective write transactions.
+- Activity search text normalization and matching live in `:shared/commonMain`; each native screen
+  builds its own in-memory search index from its platform record model and calls the shared rules.
+- Posted-ledger cash-flow totals and category spend attribution live in `:shared/commonMain`;
+  Android maps its Room snapshot at the analytics boundary, and iOS calls the same calculation via
+  the narrow native bridge. Both keep date selection and presentation native. Income remains gross
+  while its positive fee reduces wallet credit and counts as spending; expenses include positive
+  fees, transfers count only positive fees, refunds reduce category spend while retaining positive
+  fees, and deleted rows are excluded.
+- The optional app-lock PIN length and validation, PBKDF2 work factor, failed-attempt backoff, and
+  background grace period also live in `:shared/commonMain`. Each platform keeps verifier storage,
+  biometric prompts, and lifecycle handling in its native security boundary.
 - Keep platform APIs and persistence behind each client boundary. Android Room entities, SQLCipher,
   Keystore, DataStore, and Android workers stay in `:app`; iOS owns its storage, Keychain, biometric,
   file, and notification adapters.
-- Map platform persistence models to platform-neutral shared models at each repository boundary.
-  Never expose Room entities, DAOs, or SQLite APIs to `commonMain` or SwiftUI.
+- Map platform persistence models to platform-neutral models at each repository boundary; promote a
+  model to `:shared` when both clients need the same contract. Never expose Room entities, DAOs, or
+  SQLite APIs to `commonMain` or SwiftUI.
 - Before moving existing financial behavior, add common test vectors and compare Android results to
   the current implementation. Preserve persisted enum names, database meaning, backup JSON fields,
   rounding, and transaction boundaries.
@@ -52,9 +90,11 @@ submission until its storage, security, and core flows are implemented and valid
   backup format, or DataStore key changes are part of the KMP foundation.
 - Shared code must remain platform-independent and must not access Android or Apple APIs, storage,
   UI, or secrets directly.
-- Before iOS can store financial data, define and review its encrypted local database, key storage,
-  biometric/app-lock, backup/restore, and export implementations. Keep iOS data on-device and preserve
-  the existing offline-first and data-minimization rules.
+- Persisted enum names remain stable across the move to `commonMain`; common tests lock down their
+  Room, DataStore, and backup representations.
+- Before iOS should be used with real financial data, validate its encrypted local database and
+  Keychain behavior on Apple devices, then implement biometric/app-lock, backup/restore, and export
+  flows. Keep iOS data on-device and preserve the existing offline-first and data-minimization rules.
 - Do not share Room entities with common code. Shared domain code consumes platform-neutral value
   objects and validated snapshots; repository implementations own persistence on each platform.
 
@@ -83,7 +123,8 @@ submission until its storage, security, and core flows are implemented and valid
   future device-to-desktop sync protocol. They are not a sync protocol by themselves: any future
   implementation must still define device identity, conflict resolution, tombstone retention,
   restore ordering and encrypted transport before it adds wireless, Bluetooth or network sync.
-- Financial writes happen in Room transactions with validation at the repository boundary.
+- Android financial writes happen in Room transactions with validation at the repository boundary;
+  iOS writes are validated by its repository and committed through the actor-owned SQLCipher store.
 - Commitment payments associate one active expense with one obligation; they never create a
   second ledger row. Linked refunds reduce the paid total. Deleting an expense removes its link;
   restoring that expense does not relink it. Transfers and non-expense transactions cannot be
@@ -139,6 +180,8 @@ submission until its storage, security, and core flows are implemented and valid
   encrypted local database. They do not create ledger transactions, alter wallet balances, fetch
   market prices, connect to providers, execute trades, or provide investment/tax advice. A future
   trade-history feature must define canonical ledger links and transactionally update both domains.
+- The native iOS investment snapshot flow stores integer minor-unit values in its SQLCipher database;
+  its additive v4-to-v5 migration retains earlier transaction, goal, and contribution rows.
 - No cloud sync implementation in this build; the UI states this and offers encrypted backup.
 - Single base currency per workspace; expense and income entry may be converted from another
   supported currency using the latest available daily Frankfurter reference rate. Bills and

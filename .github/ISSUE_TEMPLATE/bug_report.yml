@@ -1,0 +1,162 @@
+name: Bug report
+description: Report something broken in the Mizani Android app or the iOS preview.
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem.
+
+        **Never paste real financial data.** Redact balances, payees, wallet names, phone numbers,
+        message text and screenshots before submitting. Do not attach databases, encrypted backups,
+        PINs or keystore material.
+
+        **Security vulnerabilities do not belong here.** Read the
+        [security policy](https://github.com/OchiengPaul442/Mizani/blob/main/docs/SECURITY.md) and use
+        a private advisory instead.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I am not reporting a security vulnerability through this public form.
+          required: true
+        - label: I removed personal and financial data from this report and its attachments.
+          required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android app
+        - iOS preview
+        - Build, CI or tooling
+        - Documentation or legal copy
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in Settings > About, or the installed versionName (for example 1.13.0).
+      placeholder: "1.13.0"
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and OS
+      placeholder: "Pixel 7, Android 15; or iPhone 15 simulator, iOS 18"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install this build?
+      options:
+        - Google Play
+        - Local debug build
+        - Release APK
+        - Xcode build or simulator
+        - Not sure
+
+  - type: input
+    id: build
+    attributes:
+      label: Build reference (optional)
+      description: Commit hash, CI run link, or version code if you have it.
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or recordings (optional)
+      description: >
+        Redact balances, names and phone numbers first. For in-app guides, a short recording of the
+        whole walkthrough is more useful than a single frame.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or stack trace (optional)
+      description: >
+        adb logcat excerpts or Xcode console output are welcome. Remove financial values, message
+        text and database paths first.
+      render: text
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area (optional)
+      multiple: true
+      options:
+        - Home and dashboard
+        - Activity and transactions
+        - Insights
+        - Bills, commitments and recurring schedules
+        - Wallets and balances
+        - Debts
+        - Investments
+        - Categories
+        - Mobile-money import
+        - Backup and restore
+        - App lock, PIN and biometrics
+        - In-app guides
+        - Settings, theme or accessibility
+        - Exports (CSV, XLSX, PDF)
+        - iOS preview
+        - Build, CI or release
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      description: Tick everything that applies; this changes how quickly the report is triaged.
+      options:
+        - label: I lost data or could not recover it.
+        - label: A restore or backup produced wrong totals.
+        - label: A balance or total is wrong.
+        - label: The app crashed, froze or failed to launch.
+        - label: This involves the app lock, PIN, biometrics or balance visibility.
+        - label: This happens on a fresh install only.
+        - label: This happens after an upgrade or restore only.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context (optional)
+      description: Anything else that helps, such as the device locale, currency, or whether the device was offline.

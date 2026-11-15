@@ -29,6 +29,7 @@ import com.mizani.money.data.local.WorkspaceEntity
 import com.mizani.money.data.repo.FinanceRepository
 import com.mizani.money.data.repo.RestoreBundle
 import com.mizani.money.data.repo.BackupValidator
+import com.mizani.money.domain.analytics.AnalyticsEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -379,6 +380,7 @@ class ExportManager(
 
     private fun summarize(bundle: RestoreBundle): BackupSummary {
         val transactions = bundle.transactions
+        val ledgerSummary = AnalyticsEngine.summarizeTransactions(transactions)
         return BackupSummary(
             createdAt = bundle.workspace.updatedAt,
             currencyCode = bundle.workspace.currencyCode,
@@ -388,14 +390,8 @@ class ExportManager(
             categoryCount = bundle.categories.size,
             firstDate = transactions.minOfOrNull { it.localDateEpochDay }?.let { LocalDate.ofEpochDay(it) },
             lastDate = transactions.maxOfOrNull { it.localDateEpochDay }?.let { LocalDate.ofEpochDay(it) },
-            incomeMinor = transactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amountMinor },
-            // Eligible spending: expense amounts + every fee (transfer and refund), net of refund amounts.
-            expenseMinor = transactions
-                .filter { it.type == TransactionType.EXPENSE }
-                .sumOf { it.amountMinor + it.feeMinor } +
-                transactions.filter { it.type == TransactionType.TRANSFER }.sumOf { it.feeMinor } -
-                transactions.filter { it.type == TransactionType.REFUND }.sumOf { it.amountMinor } +
-                transactions.filter { it.type == TransactionType.REFUND }.sumOf { it.feeMinor },
+            incomeMinor = ledgerSummary.incomeMinor,
+            expenseMinor = ledgerSummary.expenseMinor,
         )
     }
 

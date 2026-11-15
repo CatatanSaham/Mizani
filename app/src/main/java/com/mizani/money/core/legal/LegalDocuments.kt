@@ -24,9 +24,9 @@ data class LegalDocument(
  */
 object LegalDocuments {
     const val EFFECTIVE_DATE = "1 November 2026"
-    const val PRIVACY_EFFECTIVE_DATE = "1 November 2026"
+    const val PRIVACY_EFFECTIVE_DATE = "15 November 2026"
     const val TERMS_VERSION = "2026-11-01-1"
-    const val PRIVACY_VERSION = "2026-11-01-1"
+    const val PRIVACY_VERSION = "2026-11-15-1"
     const val PRIVACY_CONTACT = "paul.ochieng.dev@gmail.com"
     const val PROVIDER_NAME = "Paul Ochieng"
     const val PROVIDER_ADDRESS = "Kampala, Uganda"
@@ -162,10 +162,11 @@ object LegalDocuments {
                     "Your email provider receives anything you choose to send and controls delivery and spam filtering.",
             )),
             LegalSection("4. Optional requests", listOf(
-                "When you convert a foreign-currency transaction, Mizani sends the two currency codes to " +
+                "When you convert a foreign-currency transaction or a commitment target, Mizani sends the two " +
+                    "currency codes to " +
                     "Frankfurter to get the latest available reference rate. It does not send the amount, date, " +
                     "payee, note, wallet name, or other ledger details. The rate and date are saved with the " +
-                    "transaction on your phone.",
+                    "transaction or commitment on your phone.",
                 "Frankfurter says it neither collects nor logs personal data, IP addresses, or request details. Your network " +
                     "provider still handles the connection. Read more at https://frankfurter.dev/.",
                 "If you installed Mizani outside Google Play, you can choose to check for updates. Mizani requests " +
@@ -213,7 +214,8 @@ object LegalDocuments {
             LegalSection("8. Your choices and privacy rights", listOf(
                 "You can view and correct entries in the app, export your ledger from Settings, and delete local " +
                     "data from Settings. Deletion does not remove exports or backups already saved elsewhere. " +
-                    "Currency-rate requests happen only when you convert a foreign-currency transaction. Update " +
+                    "Currency-rate requests happen only when you convert a foreign-currency transaction or a " +
+                    "commitment target. Update " +
                     "checks use GitHub for sideloaded builds and Google Play for Play-installed builds. Neither " +
                     "sends ledger entries. Optional reminders use local settings and check local records only. Shared or pasted " +
                     "transaction text is processed on this device and is not retained as a message.",

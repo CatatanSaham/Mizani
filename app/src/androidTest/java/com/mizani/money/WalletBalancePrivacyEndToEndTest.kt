@@ -8,15 +8,19 @@ import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mizani.money.core.legal.LegalDocuments
 import com.mizani.money.core.model.WalletType
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -95,7 +99,7 @@ class WalletBalancePrivacyEndToEndTest {
             compose.onAllNodesWithText("Confirm your PIN").fetchSemanticsNodes().isNotEmpty()
         }
         enterPin("123456")
-        compose.waitUntil(timeoutMillis = 10_000) {
+        compose.waitUntil(timeoutMillis = 20_000) {
             compose.onAllNodesWithText("On · 6-digit PIN").fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithText("Change PIN").assertExists()
@@ -131,6 +135,83 @@ class WalletBalancePrivacyEndToEndTest {
             "Opening balance hidden. Confirm with your PIN before viewing or changing it.",
         ).assertExists()
         compose.onAllNodesWithText("UGX 275,000").assertCountEquals(0)
+    }
+
+    @Test
+    fun reconciliationRecordsTheExactDifferenceWithoutChangingOpeningBalance() {
+        val momoWalletId = runBlocking {
+            app.container.financeRepository.addWallet(
+                name = "MTN MoMo",
+                type = WalletType.CASH,
+                openingBalanceMinor = 125_000L,
+                colorHex = "#087F72",
+            )
+        }
+        compose.waitUntil(timeoutMillis = 20_000) {
+            compose.onAllNodesWithText("Your wallets").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        compose.onNodeWithContentDescription("Set up an app PIN to view wallet balances").performClick()
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("Set up app lock").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Set up app lock").performClick()
+        enterPin("123456")
+        compose.waitUntil(timeoutMillis = 5_000) {
+            compose.onAllNodesWithText("Confirm your PIN").fetchSemanticsNodes().isNotEmpty()
+        }
+        enterPin("123456")
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("On · 6-digit PIN").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        compose.onNodeWithContentDescription("Back").performClick()
+        compose.waitUntil(timeoutMillis = 20_000) {
+            compose.onAllNodesWithText("Your wallets").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onAllNodesWithText("More").onLast().performClick()
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("Manage money").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Wallets").performClick()
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithContentDescription(
+                "Show wallet balances; confirm with your app PIN or enabled biometrics",
+            ).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithContentDescription(
+            "Show wallet balances; confirm with your app PIN or enabled biometrics",
+        ).performClick()
+        compose.onNodeWithText("Confirm your identity").assertExists()
+        enterPin("123456")
+        compose.waitUntil(timeoutMillis = 5_000) {
+            compose.onAllNodesWithContentDescription("Balance UGX 125,000")
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+
+        compose.onNodeWithText("MTN MoMo").performClick()
+        compose.onNodeWithText("Current balance from recorded activity").assertExists()
+        compose.onNodeWithText("Reconcile to current balance").performClick()
+        compose.onNodeWithText("Balance shown by MoMo or your provider")
+            .performTextInput("95765")
+        compose.onNodeWithText("Record adjustment").performClick()
+
+        compose.waitUntil(timeoutMillis = 10_000) {
+            runBlocking {
+                val snapshot = app.container.financeRepository.snapshot.first()
+                snapshot.walletBalances()[momoWalletId] == 95_765L &&
+                    snapshot.transactions.any {
+                        it.walletId == momoWalletId &&
+                            it.type.name == "ADJUSTMENT" &&
+                            it.amountMinor == -29_235L &&
+                            it.note == "Balance reconciliation"
+                    }
+            }
+        }
+        val savedWallet = runBlocking {
+            app.container.financeRepository.snapshot.first().wallets.single { it.id == momoWalletId }
+        }
+        assertEquals(125_000L, savedWallet.openingBalanceMinor)
     }
 
     private fun enterPin(value: String) {

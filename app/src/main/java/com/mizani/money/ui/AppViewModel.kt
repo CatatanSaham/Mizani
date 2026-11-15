@@ -1,6 +1,7 @@
 package com.mizani.money.ui
 
 import androidx.lifecycle.ViewModel
+import com.mizani.money.core.security.PinPolicyRules
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mizani.money.di.AppContainer
@@ -24,6 +25,9 @@ import com.mizani.money.data.repo.SettingsRepository
 import com.mizani.money.domain.analytics.AnalyticsEngine
 import com.mizani.money.domain.analytics.DashboardMetrics
 import com.mizani.money.domain.analytics.InsightEngine
+import com.mizani.money.domain.analytics.UpcomingCommitment
+import com.mizani.money.domain.engagement.DailyMomentum
+import com.mizani.money.domain.engagement.DailyMomentumCalculator
 import com.mizani.money.domain.export.ExportManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CancellationException
@@ -35,6 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -53,6 +58,21 @@ data class AppUiState(
     val currency: Currency
         get() = Currencies.byCode(snapshot.currencyCode.ifBlank { settings.currencyCode })
 }
+
+sealed interface DashboardMetricsState {
+    object Loading : DashboardMetricsState
+    data class Ready(
+        val metrics: DashboardMetrics,
+        val homeSupportingMetrics: HomeSupportingMetrics,
+    ) : DashboardMetricsState
+    object InvalidLedgerTotals : DashboardMetricsState
+}
+
+data class HomeSupportingMetrics(
+    val dailyMomentum: DailyMomentum,
+    val spendingPulse: List<Pair<LocalDate, Long>>,
+    val upcomingSoon: List<UpcomingCommitment>,
+)
 
 /** Outcome of a PIN attempt, separating a wrong PIN from an active backoff. */
 sealed interface PinAttemptResult {
@@ -203,9 +223,36 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Periods.monthOf(LocalDate.now()))
 
-    val metrics: StateFlow<DashboardMetrics?> = combine(snapshotFlow, periodRange, today) { snapshot, range, currentToday ->
-        snapshot?.let { AnalyticsEngine(it).dashboard(range, currentToday) }
+    val dashboardMetrics: StateFlow<DashboardMetricsState> = combine(
+        snapshotFlow,
+        periodRange,
+        today,
+    ) { snapshot, range, currentToday ->
+        val data = snapshot ?: return@combine DashboardMetricsState.Loading
+        try {
+            val analytics = AnalyticsEngine(data)
+            val dashboard = analytics.dashboard(range, currentToday)
+            val homeSupportingMetrics = HomeSupportingMetrics(
+                dailyMomentum = DailyMomentumCalculator.calculate(data.transactions, currentToday),
+                spendingPulse = analytics.dailySpending(7, currentToday),
+                upcomingSoon = analytics.upcoming(
+                    DateRange(currentToday, currentToday.plusDays(45)),
+                    currentToday,
+                ),
+            )
+            DashboardMetricsState.Ready(dashboard, homeSupportingMetrics)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            // Keep navigation and recovery UI usable if an older ledger contains totals that
+            // cannot be represented or analyzed. Never replace the saved records.
+            DashboardMetricsState.InvalidLedgerTotals
+        }
     }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, DashboardMetricsState.Loading)
+
+    val metrics: StateFlow<DashboardMetrics?> = dashboardMetrics
+        .map { state -> (state as? DashboardMetricsState.Ready)?.metrics }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val insights: StateFlow<List<com.mizani.money.core.model.Insight>> =
@@ -213,11 +260,15 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
             if (snapshot == null || dashboard == null) {
                 emptyList()
             } else {
-                InsightEngine(
-                    data = snapshot,
-                    engine = AnalyticsEngine(snapshot),
-                    currency = Currencies.byCode(snapshot.currencyCode),
-                ).generate(dashboard, currentToday)
+                try {
+                    InsightEngine(
+                        data = snapshot,
+                        engine = AnalyticsEngine(snapshot),
+                        currency = Currencies.byCode(snapshot.currencyCode),
+                    ).generate(dashboard, currentToday)
+                } catch (_: ArithmeticException) {
+                    emptyList()
+                }
             }
         }.flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -334,7 +385,10 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         require(message.length <= TransactionMessageParser.MAX_MESSAGE_LENGTH) {
             "This message is too long to import. Paste only the transaction confirmation."
         }
-        val candidate = when (val parsed = TransactionMessageParser.parse(message, today.value, providerHint)) {
+        val parsed = withContext(Dispatchers.Default) {
+            TransactionMessageParser.parse(message, today.value, providerHint)
+        }
+        val candidate = when (parsed) {
             is MessageParseResult.Parsed -> parsed.candidate
             is MessageParseResult.Rejected -> throw IllegalArgumentException(
                 when (parsed.reason) {
@@ -488,7 +542,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
 
     companion object {
         /** Time in background after which the app re-locks (e.g. long file-picker sessions). */
-        const val LOCK_GRACE_PERIOD_MS = 15_000L
+        const val LOCK_GRACE_PERIOD_MS = PinPolicyRules.BACKGROUND_GRACE_PERIOD_MS
         private const val TODAY_REFRESH_INTERVAL_MS = 60_000L
 
         fun factory(container: AppContainer): ViewModelProvider.Factory =

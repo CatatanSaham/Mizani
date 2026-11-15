@@ -3,23 +3,49 @@
 **Status:** Not ready for financial use or App Store submission. Reviewed against Apple and Kotlin
 official guidance on 14 November 2026.
 
-The current `iosApp` target is a SwiftUI integration and design preview. It intentionally does not
-save financial data, provide money-entry flows, or make network requests. The Android app remains
-the only complete client. This checklist is a release gate, not a claim of legal approval or App
-Store acceptance.
+The current `iosApp` target is an incomplete SwiftUI development preview. It has an early SQLCipher
+storage foundation and workspace, wallet, categorized expense/income, income-source, transfer, refund,
+balance-adjustment, category-management, transaction edit/delete/restore, and basic current-month
+cash-flow/category-summary flows, plus savings goals with optional linked-wallet contributions and
+manual investment snapshots with KMP-backed validation, portfolio totals, and archive/restore. Goal
+amount validation comes from KMP and linked transfers, contribution history, and allocation updates are
+committed together in the encrypted store. Investment records use an additive v4-to-v5 encrypted-schema
+migration. The summary uses the common KMP analytics rule. The source also has
+an initial app-lock PIN and optional biometric flow. First-run setup now warns about preview limits
+and uses shared country, currency, and wallet choices; that acknowledgment is not legal consent. The client has not
+been built or run with Xcode in the current Windows environment and is not ready for real financial
+records. The Android app remains the only complete client. This checklist is a release gate, not a
+claim of legal approval or App Store acceptance.
+
+The source now also includes KMP-backed commitment currency rules, encrypted commitment management,
+cached currency-rate lookup, and progress linked to existing expenses. The additive v5-to-v6 migration,
+SwiftUI flow, and repository tests have not been compiled or run with Xcode. iOS commitment reminders
+and backup/restore are not implemented.
+
+The iOS setup currently offers seven featured country packs plus “Other” and ten curated currencies.
+Android accepts a broader runtime ISO-country currency set, so currency-option parity remains work.
+Foreign-currency transaction entry and several Android financial features are still absent.
 
 ## Before building the iOS client further
 
-- Use macOS Tahoe 26.2 or later with Xcode 26.4.x for the current KMP compatibility selection
-  (Kotlin 2.4.21, Gradle 9.6.0, AGP 9.3.1). Wait for Kotlin's compatibility table to list a newer
-  Xcode line before upgrading. Build and run on an iOS simulator and a physical device before
-  calling the iOS client functional.
+- Use macOS Tahoe 26.2 or later with Xcode 26.4.x for the current Kotlin 2.4.21 line. The project
+  uses Gradle 9.6.0 and AGP 9.3.1, within Kotlin's published KMP compatibility ranges. Build and run
+  on an iOS simulator and a physical device before calling the iOS client functional; Windows checks
+  cannot establish the Apple framework build. Wait for Kotlin's compatibility table to list a newer
+  Xcode line before upgrading Xcode.
 - Confirm the Apple team, bundle identifier, deployment target, app icon, signing, version/build
   values, privacy policy URL, support contact, category, age rating, screenshots, and review notes.
-- Complete the native iOS equivalents of onboarding, local encrypted persistence, app lock,
-  biometric unlock, validated ledger writes, backup and restore, unencrypted export warnings, file
-  sharing, imports, reminders, settings, legal documents, and accessibility behavior. Keep the
-  app usable without an account and keep financial records on the device.
+- Complete the remaining native iOS equivalents of the rest of the ledger features,
+  backup and restore, unencrypted export warnings, file sharing, imports, reminders, settings, legal
+  documents, and accessibility behavior. Budgets/recurring schedules, commitment reminders, debts, and full
+  Insights parity also remain absent. The app-lock PIN, biometric unlock, and lifecycle shield now
+  exist in source but remain uncompiled and unverified on Apple platforms. Keep the app usable
+  without an account and keep financial records on the device.
+- Keep the first-run preview warning distinct from legal consent. Adapt and review iOS-specific legal
+  documents before adding a legal-consent gate or submitting the app.
+- Validate Keychain accessibility, file protection, ciphertext, relaunch persistence, locked-device
+  behavior, and recovery on simulator and physical hardware before using iOS storage for financial
+  data. The current package tests do not exercise the iOS-only protection attributes.
 - Design and test iOS key storage and backup exclusion deliberately. Android Keystore and SQLCipher
   behavior cannot be assumed to transfer to iOS. Preserve the documented encrypted-backup format
   or provide a compatible import/export path before claiming cross-platform data portability.

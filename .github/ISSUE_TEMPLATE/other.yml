@@ -1,0 +1,52 @@
+name: Custom issue
+description: Anything that is not a bug or a feature request, such as documentation, release or legal work.
+title: "[Other]: "
+labels:
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for documentation, release engineering, legal copy, assets or process work.
+        For defects use **Bug report**; for new capabilities use **Feature request**.
+        Never include real financial data, PINs, keystores or backup files.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of work
+      options:
+        - Documentation
+        - Release or versioning
+        - Build, CI or dependencies
+        - Legal copy or third-party notices
+        - Assets or branding
+        - Accessibility or localisation
+        - In-app guides or onboarding copy
+        - Repository or process
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What needs to change and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      placeholder: |
+        - File X updated and linked from Y
+        - CHANGELOG entry added under Unreleased
+        - Verification command run and reported
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context (optional)

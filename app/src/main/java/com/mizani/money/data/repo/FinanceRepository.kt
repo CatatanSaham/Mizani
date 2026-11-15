@@ -13,6 +13,11 @@ import com.mizani.money.core.importing.ImportIdentifiers
 import com.mizani.money.core.money.MoneyLimits
 import com.mizani.money.core.time.DateText
 import com.mizani.money.core.time.Periods
+import com.mizani.money.domain.finance.TransactionRules
+import com.mizani.money.domain.finance.CategoryManagementRules
+import com.mizani.money.domain.finance.IncomeSourceRules
+import com.mizani.money.domain.finance.GoalRules
+import com.mizani.money.domain.finance.InvestmentRules
 import com.mizani.money.data.local.BudgetEntity
 import com.mizani.money.data.local.BudgetLineEntity
 import com.mizani.money.data.local.CategoryEntity
@@ -28,6 +33,9 @@ import com.mizani.money.data.local.RecurringRuleEntity
 import com.mizani.money.data.local.TransactionEntity
 import com.mizani.money.data.local.WalletEntity
 import com.mizani.money.data.local.WorkspaceEntity
+import com.mizani.money.domain.finance.LedgerBalanceRules
+import com.mizani.money.domain.finance.TransactionBalanceInput
+import com.mizani.money.domain.finance.WalletBalanceInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -40,9 +48,6 @@ import java.time.ZoneId
 private const val MAX_COMMITMENT_NAME_LENGTH = 80
 private const val MAX_COMMITMENT_REMINDER_DAYS = 30
 private const val MAX_RECURRING_NAME_LENGTH = 80
-private const val MAX_INVESTMENT_NAME_LENGTH = 80
-private const val MAX_INVESTMENT_PROVIDER_LENGTH = 80
-private const val MAX_INVESTMENT_NOTE_LENGTH = 240
 
 /**
  * The single write boundary for financial data. Every mutation is validated and executed
@@ -130,6 +135,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
         name: String = "My money",
     ): String = database.withTransaction {
         workspaceDao.get()?.let { return@withTransaction it.id }
+        requireSupportedOpeningBalance(openingBalanceMinor)
         val now = System.currentTimeMillis()
         val workspace = WorkspaceEntity(
             id = Ids.newId(),
@@ -191,23 +197,24 @@ class FinanceRepository(private val database: MizaniDatabase) {
         icon: String = "wallet",
     ): String = database.withTransaction {
         val workspace = workspaceDao.get() ?: error("No workspace")
+        requireSupportedOpeningBalance(openingBalanceMinor)
         val now = System.currentTimeMillis()
         val id = Ids.newId()
         val order = walletDao.getAll().size
-        walletDao.upsert(
-            WalletEntity(
-                id = id,
-                name = name.trim().ifBlank { type.label },
-                type = type,
-                openingBalanceMinor = openingBalanceMinor,
-                currencyCode = workspace.currencyCode,
-                colorHex = colorHex,
-                icon = icon,
-                sortOrder = order,
-                createdAt = now,
-                updatedAt = now,
-            ),
+        val wallet = WalletEntity(
+            id = id,
+            name = name.trim().ifBlank { type.label },
+            type = type,
+            openingBalanceMinor = openingBalanceMinor,
+            currencyCode = workspace.currencyCode,
+            colorHex = colorHex,
+            icon = icon,
+            sortOrder = order,
+            createdAt = now,
+            updatedAt = now,
         )
+        validateWalletBalances(walletDao.getAll() + wallet, transactionDao.getAll())
+        walletDao.upsert(wallet)
         id
     }
 
@@ -220,27 +227,41 @@ class FinanceRepository(private val database: MizaniDatabase) {
         icon: String,
     ) {
         database.withTransaction {
+            requireSupportedOpeningBalance(openingBalanceMinor)
             val wallet = walletDao.getById(id) ?: error("Wallet not found")
-            walletDao.upsert(
-                wallet.copy(
-                    name = name.trim().ifBlank { type.label },
-                    type = type,
-                    openingBalanceMinor = openingBalanceMinor,
-                    colorHex = colorHex,
-                    icon = icon,
-                    updatedAt = System.currentTimeMillis(),
-                    revision = wallet.revision + 1,
-                ),
+            val updated = wallet.copy(
+                name = name.trim().ifBlank { type.label },
+                type = type,
+                openingBalanceMinor = openingBalanceMinor,
+                colorHex = colorHex,
+                icon = icon,
+                updatedAt = System.currentTimeMillis(),
+                revision = wallet.revision + 1,
             )
+            val wallets = walletDao.getAll().filterNot { it.id == updated.id } + updated
+            validateWalletBalances(wallets, transactionDao.getAll())
+            walletDao.upsert(updated)
         }
     }
 
     suspend fun setWalletArchived(id: String, archived: Boolean) {
-        if (archived) {
-            val active = walletDao.getAll().filter { !it.archived && it.deletedAt == null }
-            require(active.size > 1) { "Keep at least one active wallet" }
+        database.withTransaction {
+            val wallet = walletDao.getById(id) ?: error("Wallet not found")
+            if (wallet.archived == archived) return@withTransaction
+            if (archived) {
+                val active = walletDao.getAll().filter { !it.archived && it.deletedAt == null }
+                require(active.size > 1) { "Keep at least one active wallet" }
+            } else {
+                val restored = wallet.copy(
+                    archived = false,
+                    updatedAt = System.currentTimeMillis(),
+                    revision = wallet.revision + 1,
+                )
+                val wallets = walletDao.getAll().filterNot { it.id == restored.id } + restored
+                validateWalletBalances(wallets, transactionDao.getAll())
+            }
+            walletDao.setArchived(id, archived, System.currentTimeMillis())
         }
-        walletDao.setArchived(id, archived, System.currentTimeMillis())
     }
 
     suspend fun deleteWallet(id: String) {
@@ -263,19 +284,29 @@ class FinanceRepository(private val database: MizaniDatabase) {
             val name = draft.name.trim()
             val provider = draft.provider.trim()
             val note = draft.note.trim()
-            require(name.isNotBlank()) { "Give this investment a name" }
-            require(name.length <= MAX_INVESTMENT_NAME_LENGTH) { "Investment name is too long" }
-            require(provider.isNotBlank()) { "Enter where this investment is held" }
-            require(provider.length <= MAX_INVESTMENT_PROVIDER_LENGTH) { "Provider name is too long" }
-            require(note.length <= MAX_INVESTMENT_NOTE_LENGTH) { "Investment note is too long" }
-            require(draft.costBasisMinor in 1L..MoneyLimits.MAX_MINOR_AMOUNT) {
-                "Cost basis must be greater than zero"
-            }
-            require(draft.currentValueMinor in 0L..MoneyLimits.MAX_MINOR_AMOUNT) {
-                "Current value is outside the supported range"
-            }
-            require(!draft.valuationDate.isAfter(LocalDate.now())) {
-                "Valuation date cannot be in the future"
+            val validationError = InvestmentRules.validateDraft(
+                name = name,
+                provider = provider,
+                note = note,
+                assetTypeName = draft.assetType.name,
+                costBasisMinor = draft.costBasisMinor,
+                currentValueMinor = draft.currentValueMinor,
+                valuationEpochDay = draft.valuationDate.toEpochDay(),
+                todayEpochDay = LocalDate.now().toEpochDay(),
+            )
+            require(validationError == null) {
+                when (validationError) {
+                    "name_required" -> "Give this investment a name"
+                    "name_too_long" -> "Investment name is too long"
+                    "provider_required" -> "Enter where this investment is held"
+                    "provider_too_long" -> "Provider name is too long"
+                    "note_too_long" -> "Investment note is too long"
+                    "asset_type_invalid" -> "Choose a valid investment type"
+                    "cost_basis_invalid" -> "Cost basis must be greater than zero"
+                    "current_value_invalid" -> "Current value is outside the supported range"
+                    "valuation_date_invalid" -> "Valuation date cannot be in the future"
+                    else -> "Investment draft is invalid"
+                }
             }
             val now = System.currentTimeMillis()
             val entity = InvestmentHoldingEntity(
@@ -354,14 +385,16 @@ class FinanceRepository(private val database: MizaniDatabase) {
     }
 
     suspend fun setCategoryArchived(id: String, archived: Boolean) {
-        if (archived) {
-            val category = categoryDao.getById(id) ?: return
-            val active = categoryDao.getAll().filter {
-                it.type == category.type && !it.archived && it.deletedAt == null
+        database.withTransaction {
+            val category = categoryDao.getById(id) ?: return@withTransaction
+            if (archived && !category.archived && category.deletedAt == null) {
+                val activeCount = categoryDao.getByType(category.type).count { !it.archived }
+                require(CategoryManagementRules.canArchiveCategory(activeCount)) {
+                    "Keep at least one active category of this type"
+                }
             }
-            require(active.size > 1) { "Keep at least one active category of this type" }
+            categoryDao.setArchived(id, archived, System.currentTimeMillis())
         }
-        categoryDao.setArchived(id, archived, System.currentTimeMillis())
     }
 
     /**
@@ -390,9 +423,13 @@ class FinanceRepository(private val database: MizaniDatabase) {
     suspend fun saveTransaction(draft: TransactionDraft): String = database.withTransaction {
         val workspace = workspaceDao.get() ?: error("No workspace yet")
         val existing = transactionDao.getById(draft.id)
+        require(IncomeSourceRules.canAssign(draft.type.name, draft.incomeSourceId != null)) {
+            "An income source can only be assigned to income"
+        }
         val wallet = walletDao.getById(draft.walletId) ?: error("Wallet not found")
         require(!wallet.archived) { "Wallet is archived" }
-        require(draft.feeMinor >= 0) { "Fee cannot be negative" }
+        TransactionRules.validateFee(draft.feeMinor)
+        TransactionRules.validateAmount(draft.type, draft.amountMinor)
         require(wallet.currencyCode == workspace.currencyCode) { "Currency mismatch" }
 
         val sourceProvider = draft.sourceProvider?.let(ImportIdentifiers::normalizeProvider)?.takeIf { it.isNotEmpty() }
@@ -443,13 +480,11 @@ class FinanceRepository(private val database: MizaniDatabase) {
 
         when (draft.type) {
             TransactionType.EXPENSE -> {
-                require(draft.amountMinor > 0) { "Amount must be greater than zero" }
                 categoryId = categoryId ?: categoryDao.getAll()
                     .firstOrNull { it.type == CategoryType.EXPENSE && it.name == "Other" }?.id
                     ?: categoryDao.getAll().firstOrNull { it.type == CategoryType.EXPENSE }?.id
             }
             TransactionType.INCOME -> {
-                require(draft.amountMinor > 0) { "Amount must be greater than zero" }
                 categoryId = categoryId ?: categoryDao.getAll()
                     .firstOrNull { it.type == CategoryType.INCOME && !it.archived }?.id
                 if (draft.incomeSourceId != null) {
@@ -459,7 +494,6 @@ class FinanceRepository(private val database: MizaniDatabase) {
                 }
             }
             TransactionType.TRANSFER -> {
-                require(draft.amountMinor > 0) { "Transfer amount must be greater than zero" }
                 val destination = draft.toWalletId
                 require(destination != null) { "Choose a destination wallet" }
                 require(destination != draft.walletId) { "Choose a different destination wallet" }
@@ -469,7 +503,6 @@ class FinanceRepository(private val database: MizaniDatabase) {
                 categoryId = null
             }
             TransactionType.REFUND -> {
-                require(draft.amountMinor > 0) { "Refund amount must be greater than zero" }
                 val original = draft.linkedTransactionId?.let { transactionDao.getById(it) }
                 if (original != null) {
                     require(original.type == TransactionType.EXPENSE) { "Refunds link to an expense" }
@@ -479,7 +512,6 @@ class FinanceRepository(private val database: MizaniDatabase) {
                 require(categoryId != null) { "Choose the category being refunded" }
             }
             TransactionType.ADJUSTMENT -> {
-                require(draft.amountMinor != 0L) { "Adjustment cannot be zero" }
                 categoryId = null
             }
         }
@@ -534,13 +566,30 @@ class FinanceRepository(private val database: MizaniDatabase) {
             sourceProvider = sourceProvider,
             sourceReference = sourceReference,
         )
-        transactionDao.upsert(entity)
+        upsertTransactionWithBalanceValidation(entity)
         entity.id
     }
 
     suspend fun deleteTransaction(id: String) {
         database.withTransaction {
+            val transaction = transactionDao.getById(id) ?: return@withTransaction
+            if (transaction.deletedAt != null) return@withTransaction
             val now = System.currentTimeMillis()
+            val activeTransactions = transactionDao.getAll()
+            val wallets = walletDao.getAll()
+            val prospective = activeTransactions.filterNot { it.id == id }
+            try {
+                // Keep ordinary deletes guarded. If legacy data already overflows, permit
+                // successive user-requested deletes so the ledger can be repaired in place.
+                validateWalletBalances(wallets, prospective)
+            } catch (candidateError: IllegalArgumentException) {
+                val currentLedgerIsValid = runCatching {
+                    validateWalletBalances(wallets, activeTransactions)
+                }.isSuccess
+                if (currentLedgerIsValid) {
+                    throw candidateError
+                }
+            }
             transactionDao.softDelete(id, now)
             commitmentPaymentDao.getForTransaction(id)?.let { commitmentPaymentDao.delete(it.id) }
         }
@@ -553,6 +602,13 @@ class FinanceRepository(private val database: MizaniDatabase) {
             if (payment != null && transaction.type != TransactionType.EXPENSE) {
                 error("A linked commitment payment must remain an expense")
             }
+            val restored = transaction.copy(
+                deletedAt = null,
+                updatedAt = System.currentTimeMillis(),
+                revision = transaction.revision + 1,
+            )
+            val prospective = transactionDao.getAll().withProspectiveTransaction(restored)
+            validateWalletBalances(walletDao.getAll(), prospective)
             transactionDao.restore(id, System.currentTimeMillis())
         }
     }
@@ -676,7 +732,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
             val type = if (rule.type == RecurringType.BILL) TransactionType.EXPENSE else TransactionType.INCOME
             val now = System.currentTimeMillis()
             val transactionId = Ids.newId()
-            transactionDao.upsert(
+            upsertTransactionWithBalanceValidation(
                 TransactionEntity(
                     id = transactionId,
                     type = type,
@@ -718,7 +774,13 @@ class FinanceRepository(private val database: MizaniDatabase) {
         note: String,
         icon: String = "savings",
     ): String = database.withTransaction {
-        require(targetMinor > 0) { "Target must be greater than zero" }
+        require(GoalRules.isValidTargetMinor(targetMinor)) {
+            if (targetMinor <= 0L) {
+                "Target must be greater than zero"
+            } else {
+                "Target is outside the supported range"
+            }
+        }
         if (linkedWalletId != null) {
             val wallet = walletDao.getById(linkedWalletId)
             require(wallet != null && wallet.deletedAt == null) { "Linked wallet is missing" }
@@ -752,10 +814,18 @@ class FinanceRepository(private val database: MizaniDatabase) {
         date: LocalDate = LocalDate.now(),
         note: String = "",
     ) {
-        require(amountMinor > 0) { "Contribution must be greater than zero" }
+        require(GoalRules.isValidContributionMinor(amountMinor)) {
+            if (amountMinor <= 0L) {
+                "Contribution must be greater than zero"
+            } else {
+                "Contribution is outside the supported range"
+            }
+        }
         database.withTransaction {
             val goal = goalDao.getById(goalId) ?: error("Goal not found")
             if (goal.deletedAt != null || goal.archived) { error("Goal is no longer available") }
+            val allocatedMinor = GoalRules.allocatedMinorAfterContribution(goal.allocatedMinor, amountMinor)
+                ?: error("Contribution would exceed the supported goal amount")
             if (fromWalletId != null) {
                 val fromWallet = walletDao.getById(fromWalletId) ?: error("Wallet not found")
                 require(!fromWallet.archived) { "Wallet is archived" }
@@ -768,7 +838,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
                 val linkedWallet = walletDao.getById(linked) ?: error("Linked savings wallet not found")
                 require(!linkedWallet.archived) { "Linked savings wallet is archived" }
                 transferId = Ids.newId()
-                transactionDao.upsert(
+                upsertTransactionWithBalanceValidation(
                     TransactionEntity(
                         id = transferId,
                         type = TransactionType.TRANSFER,
@@ -799,7 +869,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
             )
             goalDao.upsert(
                 goal.copy(
-                    allocatedMinor = goal.allocatedMinor + amountMinor,
+                    allocatedMinor = allocatedMinor,
                     updatedAt = now,
                     revision = goal.revision + 1,
                 ),
@@ -877,7 +947,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
             val category = categoryDao.getById(DefaultCategories.defaultEntityId("category", "debt"))
                 ?: categoryDao.getAll().firstOrNull { it.type == CategoryType.EXPENSE }
             val now = System.currentTimeMillis()
-            transactionDao.upsert(
+            upsertTransactionWithBalanceValidation(
                 TransactionEntity(
                     id = Ids.newId(),
                     type = TransactionType.EXPENSE,
@@ -1111,6 +1181,13 @@ class FinanceRepository(private val database: MizaniDatabase) {
     suspend fun restoreBundle(bundle: RestoreBundle) {
         BackupValidator.validate(bundle)
         database.withTransaction {
+            requireSupportedOpeningBalances(bundle.wallets)
+            val orderedTransactions = bundle.transactions.sortedWith(
+                compareByDescending<TransactionEntity> { it.localDateEpochDay }
+                    .thenByDescending { it.occurredAt }
+                    .thenBy { it.id },
+            )
+            validateWalletBalances(bundle.wallets, orderedTransactions)
             commitmentPaymentDao.clear()
             commitmentDao.clear()
             investmentHoldingDao.clear()
@@ -1131,7 +1208,7 @@ class FinanceRepository(private val database: MizaniDatabase) {
             bundle.incomeSources.forEach { incomeSourceDao.upsert(it) }
             bundle.wallets.forEach { walletDao.upsert(it) }
             bundle.investments.forEach { investmentHoldingDao.upsert(it) }
-            bundle.transactions.forEach { transactionDao.upsert(it) }
+            orderedTransactions.forEach { transactionDao.upsert(it) }
             bundle.budgets.forEach { budgetDao.upsert(it) }
             bundle.budgetLines.forEach { budgetLineDao.upsertAll(listOf(it)) }
             bundle.goals.forEach { goalDao.upsert(it) }
@@ -1141,6 +1218,93 @@ class FinanceRepository(private val database: MizaniDatabase) {
             bundle.commitments.forEach { commitmentDao.upsert(it) }
             bundle.commitmentPayments.forEach { commitmentPaymentDao.insert(it) }
         }
+    }
+
+    /** Checks wallet balances and visible aggregates with checked arithmetic. */
+    private fun validateWalletBalances(wallets: List<WalletEntity>, transactions: List<TransactionEntity>) {
+        try {
+            val orderedWallets = wallets.sortedWith(
+                compareBy<WalletEntity> { it.sortOrder }.thenBy { it.createdAt }.thenBy { it.id },
+            )
+            val balances = LedgerBalanceRules.walletBalances(
+                wallets = orderedWallets.map { WalletBalanceInput(it.id, it.openingBalanceMinor) },
+                transactions = transactions.map {
+                    TransactionBalanceInput(
+                        type = it.type,
+                        amountMinor = it.amountMinor,
+                        feeMinor = it.feeMinor,
+                        walletId = it.walletId,
+                        toWalletId = it.toWalletId,
+                        deleted = it.deletedAt != null,
+                    )
+                },
+            )
+            var allActiveWalletTotal = 0L
+            var activeLiquidTotal = 0L
+            orderedWallets.forEach { wallet ->
+                if (!wallet.archived && wallet.deletedAt == null) {
+                    val balance = balances[wallet.id] ?: 0L
+                    allActiveWalletTotal = Math.addExact(allActiveWalletTotal, balance)
+                    if (wallet.type != WalletType.DEBT) {
+                        activeLiquidTotal = Math.addExact(activeLiquidTotal, balance)
+                    }
+                }
+            }
+        } catch (error: ArithmeticException) {
+            throw IllegalArgumentException(
+                "This change would exceed the supported wallet balance range.",
+                error,
+            )
+        }
+    }
+
+    private fun requireSupportedOpeningBalance(openingBalanceMinor: Long) {
+        require(openingBalanceMinor in -MoneyLimits.MAX_MINOR_AMOUNT..MoneyLimits.MAX_MINOR_AMOUNT) {
+            "Opening balance is outside the supported amount range"
+        }
+    }
+
+    private fun requireSupportedOpeningBalances(wallets: List<WalletEntity>) {
+        wallets.forEach { requireSupportedOpeningBalance(it.openingBalanceMinor) }
+    }
+
+    /** Inserts/replaces one active transaction in DAO order with a single linear pass. */
+    private fun List<TransactionEntity>.withProspectiveTransaction(
+        transaction: TransactionEntity,
+    ): List<TransactionEntity> {
+        val existingIndex = indexOfFirst { it.id == transaction.id }
+        if (existingIndex >= 0) {
+            val existing = this[existingIndex]
+            if (existing.localDateEpochDay == transaction.localDateEpochDay &&
+                existing.occurredAt == transaction.occurredAt
+            ) {
+                return toMutableList().also { it[existingIndex] = transaction }
+            }
+        }
+
+        val result = ArrayList<TransactionEntity>(size + 1)
+        var inserted = false
+        for (existing in this) {
+            if (existing.id == transaction.id) continue
+            if (!inserted && transaction.isBeforeInLedgerOrder(existing)) {
+                result += transaction
+                inserted = true
+            }
+            result += existing
+        }
+        if (!inserted) result += transaction
+        return result
+    }
+
+    private fun TransactionEntity.isBeforeInLedgerOrder(other: TransactionEntity): Boolean =
+        localDateEpochDay > other.localDateEpochDay ||
+            (localDateEpochDay == other.localDateEpochDay && occurredAt > other.occurredAt) ||
+            (localDateEpochDay == other.localDateEpochDay && occurredAt == other.occurredAt && id < other.id)
+
+    private suspend fun upsertTransactionWithBalanceValidation(transaction: TransactionEntity) {
+        val prospective = transactionDao.getAll().withProspectiveTransaction(transaction)
+        validateWalletBalances(walletDao.getAll(), prospective)
+        transactionDao.upsert(transaction)
     }
 
     /** Ensures a referenced category exists, is not tombstoned, and has the expected type. */

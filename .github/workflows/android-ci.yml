@@ -53,7 +53,7 @@ jobs:
         run: bash ./gradlew --no-daemon :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug
 
   ios-preview:
-    name: Build iOS preview and test shared code
+    name: Test iOS encrypted storage and build the client
     runs-on: macos-26
     timeout-minutes: 40
 
@@ -94,6 +94,9 @@ jobs:
 
       - name: Run shared rules on iOS Simulator
         run: bash ./gradlew --no-daemon :shared:iosSimulatorArm64Test
+
+      - name: Test iOS encrypted storage on macOS
+        run: swift test --package-path iosApp/MizaniCore
 
       - name: Build SwiftUI iOS preview
         run: |

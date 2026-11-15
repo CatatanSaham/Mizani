@@ -27,10 +27,10 @@ interface WorkspaceDao {
 
 @Dao
 interface WalletDao {
-    @Query("SELECT * FROM wallets WHERE deletedAt IS NULL ORDER BY sortOrder, createdAt")
+    @Query("SELECT * FROM wallets WHERE deletedAt IS NULL ORDER BY sortOrder, createdAt, id ASC")
     fun observe(): Flow<List<WalletEntity>>
 
-    @Query("SELECT * FROM wallets WHERE deletedAt IS NULL ORDER BY sortOrder, createdAt")
+    @Query("SELECT * FROM wallets WHERE deletedAt IS NULL ORDER BY sortOrder, createdAt, id ASC")
     suspend fun getAll(): List<WalletEntity>
 
     @Query("SELECT * FROM wallets WHERE id = :id AND deletedAt IS NULL")
@@ -125,17 +125,17 @@ interface IncomeSourceDao {
 interface TransactionDao {
     @Query(
         "SELECT * FROM transactions WHERE deletedAt IS NULL " +
-            "ORDER BY localDateEpochDay DESC, occurredAt DESC",
+            "ORDER BY localDateEpochDay DESC, occurredAt DESC, id ASC",
     )
     fun observe(): Flow<List<TransactionEntity>>
 
     @Query(
         "SELECT * FROM transactions WHERE deletedAt IS NULL " +
-            "ORDER BY localDateEpochDay DESC, occurredAt DESC LIMIT :limit",
+            "ORDER BY localDateEpochDay DESC, occurredAt DESC, id ASC LIMIT :limit",
     )
     fun observeRecent(limit: Int): Flow<List<TransactionEntity>>
 
-    @Query("SELECT * FROM transactions WHERE deletedAt IS NULL ORDER BY localDateEpochDay DESC, occurredAt DESC")
+    @Query("SELECT * FROM transactions WHERE deletedAt IS NULL ORDER BY localDateEpochDay DESC, occurredAt DESC, id ASC")
     suspend fun getAll(): List<TransactionEntity>
 
     @Query("SELECT * FROM transactions WHERE id = :id")

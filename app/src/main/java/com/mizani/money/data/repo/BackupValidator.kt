@@ -4,6 +4,7 @@ import com.mizani.money.core.model.CategoryType
 import com.mizani.money.core.model.TransactionType
 import com.mizani.money.core.importing.ImportIdentifiers
 import com.mizani.money.core.money.MoneyLimits
+import com.mizani.money.domain.finance.TransactionRules
 import java.time.LocalDate
 
 /**
@@ -99,10 +100,11 @@ internal object BackupValidator {
         val importReferences = mutableSetOf<Pair<String, String>>()
 
         bundle.transactions.forEach { transaction ->
+            TransactionRules.validateAmount(transaction.type, transaction.amountMinor)
+            TransactionRules.validateFee(transaction.feeMinor)
             require(transaction.walletId in walletIds) { "Transaction references a missing wallet" }
             require(transaction.currencyCode == workspaceCurrency) { "Transaction currency does not match the workspace" }
             if (transaction.type == TransactionType.TRANSFER) {
-                require(transaction.amountMinor > 0) { "Transfer amount must be positive" }
                 val destination = transaction.toWalletId
                 require(destination != null && destination in walletIds) {
                     "Transfer references a missing wallet"
@@ -111,11 +113,6 @@ internal object BackupValidator {
                     "Transfer must move between different wallets"
                 }
             }
-            if (transaction.type == TransactionType.REFUND) {
-                require(transaction.amountMinor > 0) { "Refund amount must be positive" }
-            }
-            require(transaction.amountMinor != 0L) { "Transaction has a zero amount" }
-            require(transaction.feeMinor >= 0) { "Transaction has a negative fee" }
             TransactionCurrencyRules.validate(
                 workspaceCurrencyCode = workspaceCurrency,
                 type = transaction.type,
@@ -172,12 +169,6 @@ internal object BackupValidator {
                 require(transaction.linkedTransactionId in transactionIds) {
                     "Transaction references a missing linked transaction"
                 }
-            }
-            if (transaction.type == TransactionType.INCOME) {
-                require(transaction.amountMinor > 0) { "Income must be positive" }
-            }
-            if (transaction.type == TransactionType.EXPENSE) {
-                require(transaction.amountMinor > 0) { "Expense must be positive" }
             }
         }
         val budgetIds = bundle.budgets.map { it.id }.toSet()

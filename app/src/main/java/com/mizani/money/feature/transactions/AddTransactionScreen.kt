@@ -122,11 +122,14 @@ fun AddTransactionScreen(
     val today by vm.today.collectAsStateWithLifecycle()
     val snapshot = state.snapshot
     val currency = state.currency
+    val importProviderLabel = importCandidate?.let {
+        TransactionMessageParser.providerLabel(it.provider)
+    }
     val existing = remember(initialTransactionId, snapshot.transactions) {
         initialTransactionId?.let { id -> snapshot.transactions.firstOrNull { it.id == id } }
     }
     val scope = rememberCoroutineScope()
-    val balances = remember(snapshot) { snapshot.walletBalances() }
+    val balances = remember(snapshot) { snapshot.walletBalancesOrNull() }
     val wallets = snapshot.activeWallets.ifEmpty { snapshot.wallets }
 
     var type by rememberSaveable(existing?.id, initialType, importCandidate?.reference) {
@@ -558,16 +561,9 @@ fun AddTransactionScreen(
                 }
             }
 
-            if (importCandidate != null && importCandidate.provider in setOf("mtn_momo", "airtel_money")) {
+            if (importCandidate != null && importProviderLabel != null) {
                 Text(
-                    "Suggested from ${if (importCandidate.provider == "mtn_momo") "MTN MoMo" else "Airtel Money"} · Ref ${importCandidate.reference}. Check the details before saving.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (importCandidate != null && importCandidate.provider !in setOf("mtn_momo", "airtel_money")) {
-                Text(
-                    "Suggested from ${TransactionMessageParser.providerOptions.firstOrNull { it.id == importCandidate.provider }?.label ?: importCandidate.provider} · Ref ${importCandidate.reference}. Check the details before saving.",
+                    "Suggested from $importProviderLabel · Ref ${importCandidate.reference}. Check the details before saving.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -696,7 +692,7 @@ fun AddTransactionScreen(
                     }
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
-                        "${amountWallet?.name ?: ""} · ${MoneyFormat.format(balances[walletId] ?: 0, currency)} available",
+                        "${amountWallet?.name ?: ""} · ${balances?.get(walletId)?.let { MoneyFormat.format(it, currency) } ?: "Balance unavailable"}",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                     )
@@ -1126,7 +1122,7 @@ private fun rateFailureMessage(error: Exception, hasCachedRate: Boolean): String
 private fun WalletPickerRow(
     wallets: List<com.mizani.money.data.local.WalletEntity>,
     selectedId: String?,
-    balances: Map<String, Long>,
+    balances: Map<String, Long>?,
     currency: com.mizani.money.core.money.Currency,
     onSelect: (String) -> Unit,
 ) {
@@ -1165,7 +1161,7 @@ private fun WalletPickerRow(
                         Column {
                             Text(wallet.name, style = MaterialTheme.typography.labelLarge, maxLines = 1)
                             Text(
-                                MoneyFormat.format(balances[wallet.id] ?: 0, currency),
+                                balances?.get(wallet.id)?.let { MoneyFormat.format(it, currency) } ?: "—",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
                                 else MaterialTheme.colorScheme.onSurfaceVariant,

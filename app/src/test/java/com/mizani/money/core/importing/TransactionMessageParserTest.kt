@@ -9,6 +9,14 @@ import java.time.LocalDate
 class TransactionMessageParserTest {
 
     @Test
+    fun `provider labels come from the selectable provider catalog`() {
+        TransactionMessageParser.providerOptions.forEach { option ->
+            assertEquals(option.label, TransactionMessageParser.providerLabel(option.id))
+        }
+        assertEquals("legacy_provider", TransactionMessageParser.providerLabel("legacy_provider"))
+    }
+
+    @Test
     fun `parses outgoing MTN confirmation and fee into editable expense suggestion`() {
         val result = TransactionMessageParser.parse(
             "MTN Mobile Money: You have sent UGX 50,000 to JOHN DOE. Transaction fee UGX 500. Ref: ABC123.",

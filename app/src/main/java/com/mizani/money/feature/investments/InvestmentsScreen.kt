@@ -1,6 +1,7 @@
 package com.mizani.money.feature.investments
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +62,8 @@ import com.mizani.money.ui.components.MizaniPageContent
 import com.mizani.money.ui.components.PickerOption
 import com.mizani.money.ui.components.Spacing
 import com.mizani.money.ui.components.StatusBanner
+import com.mizani.money.ui.guides.guideTarget
+import com.mizani.money.ui.guides.GuideHelpAction
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -70,6 +73,7 @@ fun InvestmentsScreen(
     state: AppUiState,
     onBack: () -> Unit,
     onSetupPin: () -> Unit,
+    onOpenGuide: () -> Unit,
 ) {
     val snapshot = state.snapshot
     val currency = state.currency
@@ -127,14 +131,18 @@ fun InvestmentsScreen(
             subtitle = "${active.size} active holding${if (active.size == 1) "" else "s"}",
             onBack = onBack,
             actions = {
+                GuideHelpAction("Investments", onOpenGuide)
                 WalletBalanceVisibilityControl(vm, state, onSetupPin)
-                IconButton(onClick = { error = null; editing = null; showDialog = true }) {
+                IconButton(
+                    modifier = Modifier.guideTarget("investments.add"),
+                    onClick = { error = null; editing = null; showDialog = true },
+                ) {
                     Icon(Icons.Rounded.Add, contentDescription = "Add investment")
                 }
             },
         )
         MizaniPageContent {
-            MizaniCard {
+            MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("investments.summary")) {
                 Text("Keep a private record of where your money is invested.", style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
@@ -169,21 +177,29 @@ fun InvestmentsScreen(
             }
 
             if (active.isEmpty()) {
-                EmptyState(
-                    title = "No investments yet",
-                    body = "Add a holding to record where it is placed and update its value over time.",
-                    iconRes = R.drawable.ic_ph_wallet,
-                    actionLabel = "Add investment",
-                    onAction = { error = null; editing = null; showDialog = true },
-                )
-            } else {
-                active.forEach { investment ->
-                    InvestmentCard(
-                        investment = investment,
-                        currency = currency,
-                        balanceVisible = state.walletBalancesVisible,
-                        onClick = { error = null; editing = investment; showDialog = true },
+                Box(Modifier.fillMaxWidth().guideTarget("investments.records")) {
+                    EmptyState(
+                        title = "No investments yet",
+                        body = "Add a holding to record where it is placed and update its value over time.",
+                        iconRes = R.drawable.ic_ph_wallet,
+                        actionLabel = "Add investment",
+                        onAction = { error = null; editing = null; showDialog = true },
                     )
+                }
+            } else {
+                active.forEachIndexed { index, investment ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .then(if (index == 0) Modifier.guideTarget("investments.records") else Modifier),
+                    ) {
+                        InvestmentCard(
+                            investment = investment,
+                            currency = currency,
+                            balanceVisible = state.walletBalancesVisible,
+                            onClick = { error = null; editing = investment; showDialog = true },
+                        )
+                    }
                 }
             }
 

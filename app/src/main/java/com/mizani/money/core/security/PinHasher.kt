@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec
  */
 object PinHasher {
 
-    const val DEFAULT_ITERATIONS = 120_000
+    const val DEFAULT_ITERATIONS = PinPolicyRules.PBKDF2_ITERATIONS
     private const val KEY_LENGTH = 32
 
     fun newSalt(size: Int = 16): ByteArray = ByteArray(size).also { SecureRandom().nextBytes(it) }
