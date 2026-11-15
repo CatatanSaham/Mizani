@@ -1976,7 +1976,7 @@ public actor EncryptedFinanceDatabase {
                 CREATE INDEX index_investment_holdings_asset_type ON investment_holdings(asset_type);
                 CREATE INDEX index_investment_holdings_valuation_date ON investment_holdings(valuation_date_epoch_day);
                 PRAGMA user_version = 5;
-                    """,
+                """,
                     on: database
                 )
                 try execute("COMMIT;", on: database)
