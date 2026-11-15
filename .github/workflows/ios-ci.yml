@@ -3,7 +3,25 @@ name: 'iOS CI'
 on:
   push:
     branches: [main]
+    paths:
+      - 'iosApp/**'
+      - 'shared/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+      - 'scripts/ios/**'
+      - '.github/workflows/ios-ci.yml'
   pull_request:
+    paths:
+      - 'iosApp/**'
+      - 'shared/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+      - 'scripts/ios/**'
+      - '.github/workflows/ios-ci.yml'
   workflow_dispatch:
 
 permissions:

@@ -136,7 +136,7 @@ final class IOSAppLockStoreTests: XCTestCase {
 
     func testMalformedSecureStateFailsClosed() async throws {
         let secureValues = MemoryAppLockSecureValues()
-        secureValues.write(Data("not-a-lock-record".utf8), service: "lock-tests", account: "app-lock-pin-v1")
+        try secureValues.write(Data("not-a-lock-record".utf8), service: "lock-tests", account: "app-lock-pin-v1")
         let store = makeStore(secureValues: secureValues)
 
         do {
