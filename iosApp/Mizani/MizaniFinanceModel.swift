@@ -1327,9 +1327,9 @@ private struct KmpFinanceRulesAdapter: IOSFinanceRulesProviding {
         active: [Bool]
     ) -> IOSInvestmentPortfolioSummary? {
         guard let summary = IosFinanceRules.shared.investmentPortfolioSummary(
-            costBasisMinor: costBasisMinor,
-            currentValueMinor: currentValueMinor,
-            active: active
+            costBasisMinor: costBasisMinor.map { KotlinLong(value: $0) },
+            currentValueMinor: currentValueMinor.map { KotlinLong(value: $0) },
+            active: active.map { KotlinBoolean(bool: $0) }
         ) else { return nil }
         return IOSInvestmentPortfolioSummary(
             holdingCount: Int(summary.holdingCount),
@@ -1352,11 +1352,11 @@ private struct KmpFinanceRulesAdapter: IOSFinanceRulesProviding {
             walletId: walletId,
             openingBalanceMinor: openingBalanceMinor,
             transactionTypes: transactions.map(\.typeName),
-            amountsMinor: transactions.map(\.amountMinor),
-            feesMinor: transactions.map(\.feeMinor),
+            amountsMinor: transactions.map { KotlinLong(value: $0.amountMinor) },
+            feesMinor: transactions.map { KotlinLong(value: $0.feeMinor) },
             sourceWalletIds: transactions.map(\.walletId),
             destinationWalletIds: transactions.map(\.destinationWalletId),
-            deleted: transactions.map(\.deleted)
+            deleted: transactions.map { KotlinBoolean(bool: $0.deleted) }
         )
     }
 
@@ -1367,12 +1367,12 @@ private struct KmpFinanceRulesAdapter: IOSFinanceRulesProviding {
     ) -> NativeLedgerAnalyticsSummary? {
         IosFinanceRules.shared.ledgerAnalyticsSummary(
             transactionTypes: snapshot.transactions.map(\.typeName),
-            amountsMinor: snapshot.transactions.map(\.amountMinor),
-            feesMinor: snapshot.transactions.map(\.feeMinor),
+            amountsMinor: snapshot.transactions.map { KotlinLong(value: $0.amountMinor) },
+            feesMinor: snapshot.transactions.map { KotlinLong(value: $0.feeMinor) },
             categoryIds: snapshot.transactions.map(\.categoryId),
             feeCategoryIds: snapshot.transactions.map(\.feeCategoryId),
-            localDateEpochDays: snapshot.transactions.map(\.localDateEpochDay),
-            deleted: snapshot.transactions.map(\.deleted),
+            localDateEpochDays: snapshot.transactions.map { KotlinLong(value: $0.localDateEpochDay) },
+            deleted: snapshot.transactions.map { KotlinBoolean(bool: $0.deleted) },
             startEpochDay: startEpochDay,
             endEpochDay: endEpochDay
         )
