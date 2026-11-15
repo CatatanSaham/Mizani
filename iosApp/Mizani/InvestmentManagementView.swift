@@ -230,7 +230,7 @@ struct InvestmentManagementView: View {
 
     private func protectedAmount(_ amount: Int64, currencyCode: String? = nil) -> String {
         let valueCurrency = currencyCode ?? self.currencyCode
-        balancesHidden ? "••••••" : "\(valueCurrency) \(formatted(amount))"
+        return balancesHidden ? "••••••" : "\(valueCurrency) \(formatted(amount))"
     }
 
     private func assetTypeLabel(_ name: String) -> String {
