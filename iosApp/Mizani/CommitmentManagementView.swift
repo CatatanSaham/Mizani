@@ -471,7 +471,7 @@ private struct CommitmentEditorView: View {
     private var categoryMenu: some View {
         Menu {
             Button("No category") { categoryId = nil }
-            ForEach(availableCategories) { category in
+            ForEach(availableCategories, id: \.id) { category in
                 Button(category.name) { categoryId = category.id }
             }
         } label: {
