@@ -371,6 +371,11 @@ private struct CommitmentEditorView: View {
         targetCurrencyCode != workspaceCurrencyCode
     }
 
+    private var targetCurrencyLabel: String {
+        guard let currency = targetCurrency else { return targetCurrencyCode }
+        return "\(currency.code) · \(currency.name)"
+    }
+
     private var availableCategories: [IOSCategoryRecord] {
         categories.filter { $0.typeName == "EXPENSE" && !$0.deleted }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
@@ -404,7 +409,7 @@ private struct CommitmentEditorView: View {
                         HStack {
                             Text("Target currency")
                             Spacer()
-                            Text(targetCurrency.map { "\($0.code) · \($0.name)" } ?? targetCurrencyCode)
+                            Text(targetCurrencyLabel)
                                 .foregroundStyle(MizaniColors.muted)
                         }
                     }

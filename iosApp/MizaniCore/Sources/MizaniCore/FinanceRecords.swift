@@ -207,7 +207,7 @@ public struct IOSCommitmentProgress: Equatable, Identifiable, Sendable {
     }
 }
 
-public struct IOSTransactionRecord: Equatable, Sendable {
+public struct IOSTransactionRecord: Equatable, Identifiable, Sendable {
     public let id: String
     public let typeName: String
     public let amountMinor: Int64
