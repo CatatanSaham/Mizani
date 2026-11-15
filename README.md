@@ -247,6 +247,19 @@ contract](docs/ARCHITECTURE_CONTRACT.md) when changing the app.
 - [Brand guide](docs/brand/BRAND_GUIDE.md)
 - [Illustration and asset credits](docs/ASSET_CREDITS.md)
 
+## ❤️ Support Mizani
+
+Mizani is an open-source project built and maintained by **Nyota Foundry**.
+
+If Mizani is useful to you and you'd like to support continued development,
+testing, documentation, design, and maintenance, you can support Nyota
+Foundry on Patreon.
+
+👉 [Support Nyota Foundry on Patreon](https://www.patreon.com/NyotaFoundry)
+
+Support is completely optional. Mizani's core open-source features remain
+freely available to everyone.
+
 ## License
 
 Mizani's original source code and executable forms of that code are licensed
