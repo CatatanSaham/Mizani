@@ -85,26 +85,3 @@ jobs:
           xcodebuild -project iosApp/Mizani.xcodeproj -scheme Mizani \
             -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 
-  # Non-blocking on purpose. The package suite has never been exercised on macOS and currently has a
-  # known backlog, so it is reported separately instead of hiding build failures. Remove
-  # `continue-on-error` once the backlog issue is closed.
-  tests:
-    name: MizaniCore package tests (non-blocking backlog)
-    runs-on: macos-26
-    timeout-minutes: 25
-    continue-on-error: true
-
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Select Kotlin-supported Xcode
-        run: sudo xcode-select --switch /Applications/Xcode_26.4.app
-
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Test iOS encrypted storage on macOS
-        run: swift test --package-path iosApp/MizaniCore

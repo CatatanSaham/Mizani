@@ -388,109 +388,126 @@ private struct CommitmentEditorView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Text("Payments must already exist as expenses. Linking them here will not create another ledger entry.")
-                        .font(.footnote)
-                        .foregroundStyle(MizaniColors.muted)
-                    TextField("Name", text: $name)
-                        .textInputAutocapitalization(.words)
-                        .accessibilityLabel("Commitment name")
-                    TextField("Target amount", text: $amount)
-                        .keyboardType(.decimalPad)
-                        .accessibilityLabel("Commitment target amount")
-                    Menu {
-                        ForEach(currencyOptions) { option in
-                            Button("\(option.code) · \(option.name)") {
-                                guard option.code != targetCurrencyCode else { return }
-                                targetCurrencyCode = option.code
-                                amount = ""
-                                exchangeRate = nil
-                                rateError = nil
-                                localError = nil
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Text("Target currency")
-                            Spacer()
-                            Text(targetCurrencyLabel)
-                                .foregroundStyle(MizaniColors.muted)
-                        }
+            commitmentForm
+                .navigationTitle(commitment == nil ? "Add commitment" : "Edit commitment")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                            .disabled(isSaving)
                     }
-                    if isForeignCurrency {
-                        exchangeRateStatus
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(isSaving ? "Saving…" : "Save") { save() }
+                            .disabled(isSaving || (isForeignCurrency && isRateLoading))
                     }
-                    DatePicker("Due date", selection: $dueDate, displayedComponents: .date)
-                    Menu {
-                        Button("No category") { categoryId = nil }
-                        ForEach(availableCategories) { category in
-                            Button(category.name) { categoryId = category.id }
-                        }
-                    } label: {
-                        HStack {
-                            Text("Expense category")
-                            Spacer()
-                            Text(selectedCategoryLabel)
-                                .foregroundStyle(MizaniColors.muted)
-                        }
-                    }
-                } header: {
-                    Text(commitment == nil ? "New commitment" : "Edit commitment")
-                } footer: {
-                    Text("Saved foreign-currency targets use the displayed daily reference rate. The rate request sends currency codes only.")
                 }
+                .task(id: targetCurrencyCode + "|" + workspaceCurrencyCode) {
+                    await refreshQuoteIfNeeded()
+                }
+        }
+    }
 
-                if let localError {
-                    Section { Text(localError).foregroundStyle(.red).font(.footnote) }
-                }
+    @ViewBuilder
+    private var commitmentForm: some View {
+        Form {
+            detailsSection
+            if let localError {
+                Section { Text(localError).foregroundStyle(.red).font(.footnote) }
+            }
+            Section {
+                Text("Scheduled reminders are not available in this iOS preview.")
+                    .font(.footnote)
+                    .foregroundStyle(MizaniColors.muted)
+            }
+        }
+    }
 
-                Section {
-                    Text("Scheduled reminders are not available in this iOS preview.")
-                        .font(.footnote)
-                        .foregroundStyle(MizaniColors.muted)
+    @ViewBuilder
+    private var detailsSection: some View {
+        Section {
+            TextField("Name", text: $name)
+                .textInputAutocapitalization(.words)
+                .accessibilityLabel("Commitment name")
+            TextField("Target amount", text: $amount)
+                .keyboardType(.decimalPad)
+                .accessibilityLabel("Commitment target amount")
+            currencyMenu
+            if isForeignCurrency {
+                exchangeRateStatus
+            }
+            DatePicker("Due date", selection: $dueDate, displayedComponents: .date)
+            categoryMenu
+        } header: {
+            Text(commitment == nil ? "New commitment" : "Edit commitment")
+        } footer: {
+            Text("Saved foreign-currency targets use the displayed daily reference rate. The rate request sends currency codes only.")
+        }
+    }
+
+    @ViewBuilder
+    private var currencyMenu: some View {
+        Menu {
+            ForEach(currencyOptions) { option in
+                Button("\(option.code) · \(option.name)") {
+                    guard option.code != targetCurrencyCode else { return }
+                    targetCurrencyCode = option.code
+                    amount = ""
+                    exchangeRate = nil
+                    rateError = nil
+                    localError = nil
                 }
             }
-            .navigationTitle(commitment == nil ? "Add commitment" : "Edit commitment")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .disabled(isSaving)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(isSaving ? "Saving…" : "Save") {
-                        Task {
-                            guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                                localError = "Enter a commitment name."
-                                return
-                            }
-                            guard !amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                                localError = "Enter a target amount."
-                                return
-                            }
-                            if isForeignCurrency && exchangeRate == nil {
-                                localError = rateError ?? "Wait for a reference rate before saving."
-                                return
-                            }
-                            let saved = await onSave(
-                                commitment,
-                                name,
-                                amount,
-                                targetCurrencyCode,
-                                isForeignCurrency ? exchangeRate : nil,
-                                dueDate,
-                                categoryId
-                            )
-                            if saved { dismiss() }
-                        }
-                    }
-                    .disabled(isSaving || (isForeignCurrency && isRateLoading))
-                }
+        } label: {
+            HStack {
+                Text("Target currency")
+                Spacer()
+                Text(targetCurrencyLabel)
+                    .foregroundStyle(MizaniColors.muted)
             }
-            .task(id: targetCurrencyCode + "|" + workspaceCurrencyCode) {
-                await refreshQuoteIfNeeded()
+        }
+    }
+
+    @ViewBuilder
+    private var categoryMenu: some View {
+        Menu {
+            Button("No category") { categoryId = nil }
+            ForEach(availableCategories) { category in
+                Button(category.name) { categoryId = category.id }
             }
+        } label: {
+            HStack {
+                Text("Expense category")
+                Spacer()
+                Text(selectedCategoryLabel)
+                    .foregroundStyle(MizaniColors.muted)
+            }
+        }
+    }
+
+    private func save() {
+        Task {
+            guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                localError = "Enter a commitment name."
+                return
+            }
+            guard !amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                localError = "Enter a target amount."
+                return
+            }
+            if isForeignCurrency && exchangeRate == nil {
+                localError = rateError ?? "Wait for a reference rate before saving."
+                return
+            }
+            let saved = await onSave(
+                commitment,
+                name,
+                amount,
+                targetCurrencyCode,
+                isForeignCurrency ? exchangeRate : nil,
+                dueDate,
+                categoryId
+            )
+            if saved { dismiss() }
         }
     }
 
