@@ -249,7 +249,7 @@ public actor IOSAppLockStore {
                           let outputAddress = outputBytes.bindMemory(to: UInt8.self).baseAddress else {
                         return Int32(kCCParamError)
                     }
-                    CCKeyDerivationPBKDF(
+                    return CCKeyDerivationPBKDF(
                         CCPBKDFAlgorithm(kCCPBKDF2),
                         password,
                         pin.utf8.count,
@@ -258,7 +258,7 @@ public actor IOSAppLockStore {
                         CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
                         UInt32(iterations),
                         outputAddress,
-                        derived.count
+                        outputBytes.count
                     )
                 }
             }
