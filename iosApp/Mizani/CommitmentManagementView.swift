@@ -376,6 +376,11 @@ private struct CommitmentEditorView: View {
         return "\(currency.code) · \(currency.name)"
     }
 
+    private var selectedCategoryLabel: String {
+        guard let category = availableCategories.first(where: { $0.id == categoryId }) else { return "None" }
+        return category.name
+    }
+
     private var availableCategories: [IOSCategoryRecord] {
         categories.filter { $0.typeName == "EXPENSE" && !$0.deleted }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
@@ -426,7 +431,7 @@ private struct CommitmentEditorView: View {
                         HStack {
                             Text("Expense category")
                             Spacer()
-                            Text(availableCategories.first(where: { $0.id == categoryId })?.name ?? "None")
+                            Text(selectedCategoryLabel)
                                 .foregroundStyle(MizaniColors.muted)
                         }
                     }
