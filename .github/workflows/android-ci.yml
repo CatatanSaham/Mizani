@@ -1,4 +1,4 @@
-name: 'Build & Tests'
+name: 'Android CI'
 
 on:
   push:
@@ -51,54 +51,3 @@ jobs:
 
       - name: Build and test
         run: bash ./gradlew --no-daemon :shared:testAndroidHostTest :app:testDebugUnitTest :app:assembleDebug
-
-  ios-preview:
-    name: Test iOS encrypted storage and build the client
-    runs-on: macos-26
-    timeout-minutes: 40
-
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Set up Java
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-          cache-dependency-path: |
-            gradle/wrapper/gradle-wrapper.properties
-            gradle/libs.versions.toml
-            gradle.properties
-            settings.gradle.kts
-            build.gradle.kts
-            app/build.gradle.kts
-            shared/build.gradle.kts
-
-      - name: Set up Android SDK tools
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-        with:
-          packages: ''
-
-      - name: Install Android 17 API 37.0 platform
-        run: android sdk install --canary platforms/android-37.0
-
-      - name: Select Kotlin-supported Xcode
-        run: sudo xcode-select --switch /Applications/Xcode_26.4.app
-
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Run shared rules on iOS Simulator
-        run: bash ./gradlew --no-daemon :shared:iosSimulatorArm64Test
-
-      - name: Test iOS encrypted storage on macOS
-        run: swift test --package-path iosApp/MizaniCore
-
-      - name: Build SwiftUI iOS preview
-        run: |
-          xcodebuild -project iosApp/Mizani.xcodeproj -scheme Mizani \
-            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build

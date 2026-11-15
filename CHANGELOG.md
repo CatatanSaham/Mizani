@@ -6,6 +6,16 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ## [Unreleased]
 
+### Changed
+
+- Split continuous integration into separate Android and iOS workflows so each platform reports its
+  own status instead of one badge going red for an unrelated platform failure.
+
+### Fixed
+
+- Fix the iOS Swift package manifest so `swift test --package-path iosApp/MizaniCore` compiles under
+  Swift 6.
+
 ## [1.13.0] - 2026-11-15
 
 ### Added

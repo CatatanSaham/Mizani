@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml"><img src="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml/badge.svg?branch=main&amp;event=push" alt="Build and tests workflow status"></a>
+  <a href="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml"><img src="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml/badge.svg?branch=main&amp;event=push" alt="Android CI status"></a>
+  <a href="https://github.com/OchiengPaul442/Mizani/actions/workflows/ios-ci.yml"><img src="https://github.com/OchiengPaul442/Mizani/actions/workflows/ios-ci.yml/badge.svg?branch=main&amp;event=push" alt="iOS CI status"></a>
   <img src="https://img.shields.io/badge/Android-API%2024%2B-087F72?logo=android&logoColor=white" alt="Android API 24 and newer">
   <img src="https://img.shields.io/badge/Kotlin-087F72?logo=kotlin&logoColor=white" alt="Built with Kotlin">
 </p>
@@ -128,12 +129,13 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ### Run checks
 
-The **Build & Tests** workflow runs on pull requests and pushes to <code>main</code>. Its Android
-job tests shared rules on the host, runs Android unit tests and builds the debug APK. Its macOS job
-runs the shared tests on an iOS simulator and builds the SwiftUI preview with the KMP framework.
-Android instrumentation tests remain a local check because they need a disposable emulator and
-clear its app data. The iOS job verifies compilation and shared rules only; the iOS client remains
-a preview, not a financial app ready for distribution.
+The **Android CI** workflow runs on pull requests and pushes to <code>main</code>: it tests shared
+rules on the host, runs Android unit tests and builds the debug APK. The separate **iOS CI** workflow
+runs on macOS: it executes the shared tests on an iOS simulator, runs the `MizaniCore` Swift package
+tests and builds the SwiftUI preview against the KMP framework. Android instrumentation tests remain a
+local check because they need a disposable emulator and clear its app data. The iOS job verifies
+compilation and shared rules only; the iOS client remains a preview, not a financial app ready for
+distribution.
 
 ```powershell
 .\gradlew.bat :app:testDebugUnitTest

@@ -24,7 +24,7 @@ let package = Package(
                 .define("SQLITE_HAS_CODEC", to: nil),
             ],
             swiftSettings: [
-                .define("SQLITE_HAS_CODEC", to: "1"),
+                .define("SQLITE_HAS_CODEC"),
             ],
             linkerSettings: [
                 .linkedFramework("Security"),
