@@ -131,12 +131,11 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 The **Android CI** workflow runs on pull requests and pushes to <code>main</code>: it tests shared
 rules on the host, runs Android unit tests and builds the debug APK. The separate **iOS CI** workflow
-runs on macOS: it builds the SwiftUI preview against the KMP framework and reports the `MizaniCore`
-package tests as a separate, non-blocking check while that suite is triaged. Android
-instrumentation tests remain a local check because they need a disposable emulator and clear its app
-data. The iOS job verifies
-compilation and shared rules only; the iOS client remains a preview, not a financial app ready for
-distribution.
+runs on macOS and builds the SwiftUI preview against the KMP framework, so a broken Apple build is
+caught before release. Its `MizaniCore` package test suite still has a known backlog and is tracked
+separately instead of failing every run. Android instrumentation tests remain a local check because
+they need a disposable emulator and clear its app data. The iOS job verifies compilation and shared
+rules only; the iOS client remains a preview, not a financial app ready for distribution.
 
 ```powershell
 .\gradlew.bat :app:testDebugUnitTest

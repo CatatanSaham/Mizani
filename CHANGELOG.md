@@ -10,7 +10,8 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 - Split continuous integration into separate Android and iOS workflows so each platform reports its
   own status instead of one badge going red for an unrelated platform failure.
-- Report the iOS build and the `MizaniCore` package tests as separate checks so a known test backlog cannot hide a build failure.
+- Keep the iOS workflow on the build gate while the `MizaniCore` package test backlog is triaged
+  outside CI.
 
 ### Fixed
 
