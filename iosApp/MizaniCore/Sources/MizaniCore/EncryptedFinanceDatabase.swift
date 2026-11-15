@@ -1722,7 +1722,8 @@ public actor EncryptedFinanceDatabase {
 
     private static func migrate(_ database: OpaquePointer, defaultCategories: [IOSCategorySeed]) throws {
         let currentVersion = try userVersion(database)
-        guard currentVersion <= 5 else {
+        // Keep in step with the latest migration: a migrated database must reopen.
+        guard currentVersion <= 6 else {
             throw EncryptedDatabaseError.unsupportedSchema(currentVersion)
         }
         if currentVersion < 2 {
