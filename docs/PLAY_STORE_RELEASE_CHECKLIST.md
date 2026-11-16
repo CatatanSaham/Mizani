@@ -17,7 +17,7 @@ The policy-specific evidence review is tracked in [Google Play policy audit](GOO
 | Provider | Paul Ochieng; confirm legal authority to publish |
 | Privacy contact | `paul.ochieng.dev@gmail.com`; confirm it is monitored |
 | Release address | Kampala, Uganda; owner-confirmed release value |
-| Privacy policy candidate | `https://github.com/OchiengPaul442/budgeting-application/blob/main/docs/PRIVACY_NOTICE.md`; use only after pushing the current policy and confirming the file is publicly accessible without login |
+| Privacy policy candidate | `https://github.com/NyotaFoundry/Mizani/blob/main/docs/PRIVACY_NOTICE.md`; use only after pushing the current policy and confirming the file is publicly accessible without login |
 
 ## Completed repository gates
 

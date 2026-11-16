@@ -8,6 +8,11 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ### Changed
 
+- Update project references for the repository's move to the Nyota Foundry organization
+  (`NyotaFoundry/Mizani`), including README badges and the clone URL, issue-template links,
+  release-checklist privacy-policy URLs, the Gradle root project name, and the sideloaded update
+  check. Sideloaded builds released before this change may report a failed update check because the
+  old GitHub API path redirects; install this build manually once.
 - Split continuous integration into separate Android and iOS workflows so each platform reports its
   own status instead of one badge going red for an unrelated platform failure.
 - Keep the iOS workflow on the build gate while the `MizaniCore` package test backlog is triaged

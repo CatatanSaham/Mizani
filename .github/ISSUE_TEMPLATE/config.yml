@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: Report a security vulnerability
-    url: https://github.com/OchiengPaul442/Mizani/blob/main/docs/SECURITY.md
+    url: https://github.com/NyotaFoundry/Mizani/blob/main/docs/SECURITY.md
     about: Please report vulnerabilities privately. Do not open a public issue for a security problem.
   - name: Verification and test commands
-    url: https://github.com/OchiengPaul442/Mizani/blob/main/docs/VERIFICATION.md
+    url: https://github.com/NyotaFoundry/Mizani/blob/main/docs/VERIFICATION.md
     about: How to run unit, shared-module and instrumentation checks before filing a build-related issue.
   - name: Architecture and package boundaries
-    url: https://github.com/OchiengPaul442/Mizani/blob/main/docs/ARCHITECTURE_CONTRACT.md
+    url: https://github.com/NyotaFoundry/Mizani/blob/main/docs/ARCHITECTURE_CONTRACT.md
     about: Read this before proposing changes to data flow, storage or module boundaries.

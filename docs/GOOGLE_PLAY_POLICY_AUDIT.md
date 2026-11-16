@@ -66,7 +66,7 @@ policy review does not change Mizani's user-facing data processing.
 ## Required owner actions before submission
 
 1. Push the current Privacy Notice to the public repository and verify the exact URL in an
-   incognito browser: `https://github.com/OchiengPaul442/budgeting-application/blob/main/docs/PRIVACY_NOTICE.md`.
+   incognito browser: `https://github.com/NyotaFoundry/Mizani/blob/main/docs/PRIVACY_NOTICE.md`.
 2. Complete the Financial features declaration for every track, including testing tracks. Explain
    that Mizani is an on-device budgeting and manual record-keeping app and does not move money,
    lend, trade, connect to brokers, or provide financial advice.

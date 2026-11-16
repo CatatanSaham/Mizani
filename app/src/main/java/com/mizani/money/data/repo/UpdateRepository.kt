@@ -98,8 +98,8 @@ class UpdateRepository(
 
     private companion object {
         const val GITHUB_HOST = "github.com"
-        const val LATEST_RELEASE_API = "https://api.github.com/repos/OchiengPaul442/budgeting-application/releases/latest"
-        const val RELEASE_PAGE_PATH = "/OchiengPaul442/budgeting-application/releases/tag/"
+        const val LATEST_RELEASE_API = "https://api.github.com/repos/NyotaFoundry/Mizani/releases/latest"
+        const val RELEASE_PAGE_PATH = "/NyotaFoundry/Mizani/releases/tag/"
         const val CONNECT_TIMEOUT_MILLIS = 3_000
         const val READ_TIMEOUT_MILLIS = 4_000
         const val RESPONSE_BUFFER_SIZE = 2_048

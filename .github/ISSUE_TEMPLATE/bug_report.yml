@@ -15,7 +15,7 @@ body:
         PINs or keystore material.
 
         **Security vulnerabilities do not belong here.** Read the
-        [security policy](https://github.com/OchiengPaul442/Mizani/blob/main/docs/SECURITY.md) and use
+        [security policy](https://github.com/NyotaFoundry/Mizani/blob/main/docs/SECURITY.md) and use
         a private advisory instead.
 
   - type: checkboxes

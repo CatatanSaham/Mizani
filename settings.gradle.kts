@@ -30,6 +30,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "budgeting-application"
+rootProject.name = "Mizani"
 include(":app")
 include(":shared")

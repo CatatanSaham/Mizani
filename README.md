@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml"><img src="https://github.com/OchiengPaul442/Mizani/actions/workflows/android-ci.yml/badge.svg?branch=main&amp;event=push" alt="Android CI status"></a>
-  <a href="https://github.com/OchiengPaul442/Mizani/actions/workflows/ios-ci.yml"><img src="https://github.com/OchiengPaul442/Mizani/actions/workflows/ios-ci.yml/badge.svg?branch=main&amp;event=push" alt="iOS CI status"></a>
+  <a href="https://github.com/NyotaFoundry/Mizani/actions/workflows/android-ci.yml"><img src="https://github.com/NyotaFoundry/Mizani/actions/workflows/android-ci.yml/badge.svg?branch=main&amp;event=push" alt="Android CI status"></a>
+  <a href="https://github.com/NyotaFoundry/Mizani/actions/workflows/ios-ci.yml"><img src="https://github.com/NyotaFoundry/Mizani/actions/workflows/ios-ci.yml/badge.svg?branch=main&amp;event=push" alt="iOS CI status"></a>
   <img src="https://img.shields.io/badge/Android-API%2024%2B-087F72?logo=android&logoColor=white" alt="Android API 24 and newer">
   <img src="https://img.shields.io/badge/Kotlin-087F72?logo=kotlin&logoColor=white" alt="Built with Kotlin">
 </p>
@@ -113,7 +113,7 @@ SDK location; that file is intentionally ignored by Git.
 Clone the repository and build with the Gradle wrapper:
 
 ```powershell
-git clone https://github.com/OchiengPaul442/Mizani.git
+git clone https://github.com/NyotaFoundry/Mizani.git
 cd Mizani
 .\gradlew.bat :app:assembleDebug
 ```
