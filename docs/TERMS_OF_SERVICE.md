@@ -1,8 +1,8 @@
 # Mizani Terms of Service
 
-**Version:** 2026-11-01-1
-**Effective:** 1 November 2026
-**Provider:** Paul Ochieng
+**Version:** 2026-11-19-1
+**Effective:** 19 November 2026
+**Provider:** Nyota Foundry
 **Address:** Kampala, Uganda
 **Contact:** paul.ochieng.dev@gmail.com
 
@@ -10,7 +10,7 @@ These Terms apply when you install or use Mizani. By tapping **Agree and continu
 
 ## 1. Provider and contact
 
-Provider: Paul Ochieng. Address: Kampala, Uganda. Contact: paul.ochieng.dev@gmail.com.
+Provider: Nyota Foundry. Address: Kampala, Uganda. Contact: paul.ochieng.dev@gmail.com.
 
 ## 2. Who may use Mizani
 

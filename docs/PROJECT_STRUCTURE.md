@@ -170,3 +170,11 @@ against the existing behavior so the KMP migration cannot change saved financial
 
 Keep `FinanceRepository` as the Android write boundary. iOS requires its own validated repository
 boundary. Do not add modules merely for aesthetics.
+
+## Website
+
+`website/` is an Angular project outside the Gradle build. It contains the promotional site,
+standalone local CSV analysis page, legal pages, and static-host security headers. The CSV page has
+no server endpoint; it reads Mizani's transaction export in browser memory and runs deterministic
+calculations. It does not persist data or accept provider API keys. See
+[`website/README.md`](../website/README.md) for the local preview command and limitations.

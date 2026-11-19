@@ -187,3 +187,25 @@ feature flows are implemented and validated.
   supported currency using the latest available daily Frankfurter reference rate. Bills and
   commitments may also use another supported currency and retain the rate used for their target.
 - No split transactions yet.
+
+## Static website boundary
+
+`website/` is a separate Angular application that builds to static files. It promotes the Android
+app and provides an optional CSV report page. It is not an account, sync service, backend, or
+replacement for the encrypted app database.
+
+- The report page accepts only the transaction CSV exported by Mizani. It reads the selected file
+  in the browser tab, validates rows, and computes deterministic summaries there. It does not send
+  the file or financial rows over the network, store them in browser storage, or write them to logs.
+- The CSV remains unencrypted and includes user-entered fields. The page must make this clear before
+  file selection and must offer a clear-session action. It must report accepted and rejected rows.
+- The report question helper is rule-based. A separate opt-in note may use desktop Google Chrome's
+  native Prompt API only when its on-device model is already ready. Supply only aggregate totals,
+  the currency, accepted-row count and up to six monthly figures. Exclude imported strings, individual
+  rows and helper questions. Destroy the model session after execution, cancellation or report change.
+  The website makes no cloud AI calls, accepts no provider credentials and triggers no model download.
+- Any future remote AI, server upload, account, or synchronization flow is a separate product and
+  security decision. It must define the exact fields leaving the device, purpose, retention,
+  deletion, provider terms, user consent, cost controls, and verification before implementation.
+  Never expose a provider secret in browser code. Keep the mobile app's existing offline/data
+  boundary unchanged unless a separate product decision updates this contract.

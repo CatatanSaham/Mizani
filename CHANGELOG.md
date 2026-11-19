@@ -6,8 +6,21 @@ The first recorded version is `1.1.0`; earlier history for the `v1.0.0` tag has 
 
 ## [Unreleased]
 
+### Added
+
+- Add an Angular promotional website and a browser-local dashboard for Mizani transaction CSV exports, with deterministic summaries, a local question helper, data-quality reporting, and separate website Terms and Privacy pages.
+- Configure the Angular website for Vercel builds, client-side route rewrites, and restrictive response security headers.
+- Add a sample report, printable reports, and opt-in on-device AI notes for the website workspace on supported desktop Chrome.
+
 ### Changed
 
+- Improve website search and link previews with focused metadata and a Mizani share image, add a practical FAQ about offline use and changing phones, use Google's official Play badge, and update app and website legal documents to name Nyota Foundry as provider.
+- Redesign the Mizani website around offline money tracking with responsive layouts, an interactive
+  Android screen preview, optimized WebP imagery, and direct links to the Google Play listing.
+- Simplify the landing-page hero with credited real photography, responsive crops, and no overlaid
+  app mockup or decorative grid; keep product screens in the dedicated app tour.
+- Keep app screen mockups visible by providing compressed JPEG fallbacks when WebP assets cannot load.
+- Identify the website footer as a Nyota Foundry product and link the public Mizani repository.
 - Update project references for the repository's move to the Nyota Foundry organization
   (`NyotaFoundry/Mizani`), including README badges and the clone URL, issue-template links,
   release-checklist privacy-policy URLs, the Gradle root project name, and the sideloaded update

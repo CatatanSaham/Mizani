@@ -18,6 +18,8 @@
 
 Mizani is an offline-first Android budgeting app. It needs no account: your ledger stays on your device, and core tracking works without a connection. The project now has a Kotlin Multiplatform shared foundation and an early native iOS preview; the iOS client is not yet ready for financial use or App Store distribution.
 
+The repository also includes an Angular promotional site and a browser-only report workspace in [`website/`](website/README.md). The workspace opens Mizani's unencrypted transaction CSV in the current tab and provides charts, rule-based questions, and downloadable or printable reports. Supported desktop Chrome browsers with a ready on-device model can optionally generate a note from the summary totals. The workspace does not upload or save ledger data.
+
 ## What you can do
 
 - **Track money in and out.** Record income and expenses, with transfers, refunds and balance
@@ -207,13 +209,14 @@ listing, and staged-rollout gates.
 
 ## Project structure
 
-Mizani has an Android app module, a Kotlin Multiplatform library, and a native iOS preview:
+Mizani has an Android app module, a Kotlin Multiplatform library, a native iOS preview, and an Angular website:
 
 | Project path | Responsibility |
 | ------------ | -------------- |
 | <code>:app</code> | Complete Android application: Compose UI, encrypted Room storage, repositories, analytics and platform services. |
 | <code>:shared</code> | Platform-independent money types and decimal parsing, featured country/currency defaults, finance enums, ledger validation, balances, search, and analytics rules consumed by Android and iOS. |
 | <code>iosApp/</code> | Native SwiftUI development preview, with local storage in <code>MizaniCore</code> and shared rules from <code>MizaniShared</code>. |
+| <code>website/</code> | Angular promotional site and local-only CSV analysis page. No backend, account, cloud sync, or provider API-key integration. |
 | <code>scripts/ios/</code> | Xcode build helper for locating the local JDK and compiling the shared framework. |
 
 Android packages within <code>:app</code> remain separated by responsibility:
@@ -226,6 +229,18 @@ Android packages within <code>:app</code> remain separated by responsibility:
 | <code>domain</code>     | Analytics, CSV/Excel export and encrypted backup                  |
 | <code>feature</code>    | Compose screens for onboarding, Home, Activity, Insights, Bills & commitments, Investments and More |
 | <code>ui</code>         | Navigation, theme and reusable components                         |
+
+## Website
+
+The Angular site lives in [`website/`](website/README.md) and is independent of the Android Gradle
+build. Its report dashboard reads the transaction CSV export in the browser, computes descriptive
+summaries locally, and provides a deterministic question helper. It does not accept Excel workbooks
+or encrypted backups, store a ledger, use accounts, send data to a backend, or connect AI providers.
+The app's CSV export is not encrypted; the dashboard explains this before opening a file.
+
+To preview the site, run `npm install` and `npm start` from `website/`. For hosting requirements and
+the website-specific data boundary, see [`website/README.md`](website/README.md); the site's Terms
+and Privacy pages are available from its navigation.
 
 Start with the [project structure](docs/PROJECT_STRUCTURE.md) and [architecture
 contract](docs/ARCHITECTURE_CONTRACT.md) when changing the app.
@@ -242,6 +257,7 @@ contract](docs/ARCHITECTURE_CONTRACT.md) when changing the app.
 - [Architecture contract](docs/ARCHITECTURE_CONTRACT.md)
 - [Design system](docs/DESIGN_SYSTEM.md)
 - [Project structure](docs/PROJECT_STRUCTURE.md)
+- [Website preview and data boundaries](website/README.md)
 - [Third-party notices](docs/THIRD_PARTY_NOTICES.md)
 - [Brand guide](docs/brand/BRAND_GUIDE.md)
 - [Illustration and asset credits](docs/ASSET_CREDITS.md)

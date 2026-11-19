@@ -1,8 +1,8 @@
 # Mizani Privacy Notice
 
-**Version:** 2026-11-15-1
-**Effective:** 15 November 2026
-**Provider:** Paul Ochieng
+**Version:** 2026-11-19-1
+**Effective:** 19 November 2026
+**Provider:** Nyota Foundry
 **Address:** Kampala, Uganda
 **Contact:** paul.ochieng.dev@gmail.com
 
@@ -10,7 +10,7 @@ This Notice explains how Mizani stores your information and the choices you have
 
 ## 1. Who is responsible
 
-Provider: Paul Ochieng. Address: Kampala, Uganda. Contact: paul.ochieng.dev@gmail.com.
+Provider: Nyota Foundry. Address: Kampala, Uganda. Contact: paul.ochieng.dev@gmail.com.
 
 ## 2. Information stored on your device
 

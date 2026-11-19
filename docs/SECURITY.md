@@ -59,6 +59,32 @@ use an encrypted Mizani backup before moving to another device or reinstalling.
 
 Encryption at rest does not protect data while the device is unlocked and the app is running. Malware with device-level access, a compromised operating system, screen-reading accessibility software, or someone who knows the backup passphrase may expose data. `FLAG_SECURE` is a platform deterrent, not a guarantee. Backups are user-managed, so Mizani cannot restore a lost file or forgotten passphrase.
 
+## Website report page
+
+The separate Angular `website/` dashboard accepts the app's human-readable transaction CSV only.
+That file is not encrypted and can contain dates, amounts, wallet and category names, payees, notes,
+and mobile money provider references. The page reads it in the current browser tab and calculates a
+report locally. It does not send financial rows to Mizani or an AI provider, persist the ledger in
+browser storage, or log imported values. The user can clear the in-memory session or close the tab.
+The ordinary website host can still process request metadata such as IP address and user agent; the
+selected file is not part of those page requests.
+
+The dashboard has a deterministic question helper and an optional, separately authorized AI note.
+The note is limited to supported desktop Google Chrome with an already-ready on-device model.
+Only five summary totals, currency, row count and up to six monthly spending totals enter the model.
+The CSV, individual transactions, user-entered labels and typed questions are excluded. Cancel and
+destroy the session when the report changes or the user clears it. Keep `connect-src 'none'` and
+do not add a model download, provider credentials or remote fallback.
+Before selecting a file, it links the website-specific Terms and Privacy Notice and asks the user to
+acknowledge that the export is unencrypted and results are descriptive. The page reports accepted
+and rejected rows and does not silently coerce invalid money values.
+
+If a future version adds remote AI, backend upload, accounts, or sync, perform a new threat model
+and privacy review before implementation. In particular, define the data sent to each provider,
+retention and deletion behavior, legal basis and consent, abuse controls, secret handling, key
+revocation guidance, and request-log redaction. Provider keys must not be shipped in public browser
+code.
+
 ## Security maintenance
 
 For changes to database encryption, backup format, PIN verification, exported Android components, or personal-data handling, review the threat model and recovery behavior alongside code changes. Run JVM unit tests and a debug build before release. Instrumentation tests in this repository reset the app database and settings; run them only with disposable test data, never against a device whose Mizani ledger must be preserved.

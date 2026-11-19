@@ -23,12 +23,12 @@ data class LegalDocument(
  * accept the revised document once before opening their ledger.
  */
 object LegalDocuments {
-    const val EFFECTIVE_DATE = "1 November 2026"
-    const val PRIVACY_EFFECTIVE_DATE = "15 November 2026"
-    const val TERMS_VERSION = "2026-11-01-1"
-    const val PRIVACY_VERSION = "2026-11-15-1"
+    const val EFFECTIVE_DATE = "19 November 2026"
+    const val PRIVACY_EFFECTIVE_DATE = "19 November 2026"
+    const val TERMS_VERSION = "2026-11-19-1"
+    const val PRIVACY_VERSION = "2026-11-19-1"
     const val PRIVACY_CONTACT = "paul.ochieng.dev@gmail.com"
-    const val PROVIDER_NAME = "Paul Ochieng"
+    const val PROVIDER_NAME = "Nyota Foundry"
     const val PROVIDER_ADDRESS = "Kampala, Uganda"
 
     val terms = LegalDocument(

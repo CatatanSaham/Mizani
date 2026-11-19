@@ -1,6 +1,6 @@
 # Play Store release checklist
 
-Status as of 8 November 2026: **NO-GO until the owner completes the external Play Console,
+Status as of 19 November 2026: **NO-GO until the owner completes the external Play Console,
 legal, signing, and device-testing gates below.** This document separates repository evidence from
 actions that cannot be performed from the source tree.
 
@@ -14,7 +14,7 @@ The policy-specific evidence review is tracked in [Google Play policy audit](GOO
 | Application ID | `com.mizani.money` |
 | Current version | `1.10.0` |
 | Current derived version code | `1010000`; confirm it is greater than the latest Play version code |
-| Provider | Paul Ochieng; confirm legal authority to publish |
+| Provider | Nyota Foundry; confirm legal authority to publish |
 | Privacy contact | `paul.ochieng.dev@gmail.com`; confirm it is monitored |
 | Release address | Kampala, Uganda; owner-confirmed release value |
 | Privacy policy candidate | `https://github.com/NyotaFoundry/Mizani/blob/main/docs/PRIVACY_NOTICE.md`; use only after pushing the current policy and confirming the file is publicly accessible without login |
@@ -28,7 +28,7 @@ The policy-specific evidence review is tracked in [Google Play policy audit](GOO
 - [x] Automatic app-data backup and device transfer are disabled.
 - [x] No account, cloud sync, advertising, analytics, SMS, contacts, location, camera, or storage feature was found.
 - [x] The app has an in-app local-data deletion flow.
-- [x] The in-app Terms and Privacy Notice use the supplied provider, email, address, and the 1 November 2026 document revisions.
+- [x] The in-app Terms and Privacy Notice name Nyota Foundry, retain the documented contact and address, and use the 19 November 2026 revisions.
 - [x] Navigation regression fix is covered by unit/build checks and a compiled Android UI regression test.
 - [x] Manual offline investment snapshots are isolated from ledger transactions, protected by the existing value-visibility control, and included in encrypted backups and Excel exports.
 - [x] Daily reminders default on only after onboarding creates a local workspace; existing explicit opt-outs remain authoritative.
@@ -80,7 +80,7 @@ release-owner gates and future-feature constraints:
 
 ### 3. Finish legal and privacy approval
 
-- [ ] Confirm Paul Ochieng is the correct legal provider/data controller.
+- [ ] Confirm Nyota Foundry's legal identity and authority, and identify the data controller.
 - [x] Apply the owner-confirmed release address `Kampala, Uganda` consistently in the app and public legal documents.
 - [ ] Confirm the email inbox is monitored for privacy requests and legal notices.
 - [ ] Review Uganda PDPO obligations and any requirements for Kenya, Tanzania, Rwanda, Nigeria, Ghana, and South Africa before selecting those markets.

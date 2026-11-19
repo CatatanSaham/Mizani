@@ -126,3 +126,15 @@ library. Kotlin is distributed under the [Apache License, Version 2.0](https://g
 Include the required license and notice material with the iOS distribution, and review the
 framework's resolved runtime contents before App Store submission. The Kotlin Multiplatform and
 Android KMP Gradle plugins are build-time tools and are not bundled in the iOS app.
+
+## Website dependencies
+
+The Angular website's direct dependencies are declared in `website/package.json`. They include
+Angular framework and CLI packages (MIT), RxJS (Apache-2.0), TypeScript (Apache-2.0), Zone.js
+(MIT), and tslib (0BSD). See the upstream [Angular license](https://github.com/angular/angular/blob/main/LICENSE),
+[RxJS license](https://github.com/ReactiveX/rxjs/blob/master/LICENSE.txt),
+[TypeScript license](https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt),
+[Zone.js license](https://github.com/angular/angular/blob/main/packages/zone.js/LICENSE), and
+[tslib license](https://github.com/microsoft/tslib/blob/main/LICENSE.txt). The website does not
+load third-party fonts, images, scripts, or analytics at runtime. Review the resolved npm dependency
+graph and include any required transitive notices before publishing a built website.
