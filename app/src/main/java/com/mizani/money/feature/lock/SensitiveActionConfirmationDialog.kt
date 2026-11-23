@@ -66,7 +66,7 @@ fun SensitiveActionConfirmationDialog(
     var message by remember { mutableStateOf<String?>(null) }
     var biometricMessage by remember { mutableStateOf<String?>(null) }
     var verifying by remember { mutableStateOf(false) }
-    var verificationPhase by remember { mutableStateOf("Verifying PIN") }
+    var verificationPhase by remember { mutableStateOf(UiStr.s(R.string.ui_caeca899b1)) }
     var blockedForMs by remember { mutableStateOf(0L) }
     var actionCompleted by remember { mutableStateOf(false) }
     var pinAccepted by remember { mutableStateOf(false) }
@@ -86,14 +86,14 @@ fun SensitiveActionConfirmationDialog(
             }
 
             override fun onAuthenticationFailed() {
-                biometricMessage = "Biometric not recognized. Try again or enter your PIN."
+                biometricMessage = UiStr.s(R.string.ui_e8a09d5daa)
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
                     biometricMessage = null
                 } else if (errorCode != BiometricPrompt.ERROR_USER_CANCELED) {
-                    biometricMessage = "Biometric confirmation did not finish. Enter your PIN or try again."
+                    biometricMessage = UiStr.s(R.string.ui_4723357a59)
                 }
             }
         }
@@ -130,7 +130,7 @@ fun SensitiveActionConfirmationDialog(
     fun submitPin(candidate: String) {
         if (verifying || blockedForMs > 0L) return
         verifying = true
-        verificationPhase = "Verifying PIN"
+        verificationPhase = UiStr.s(R.string.ui_caeca899b1)
         biometricMessage = null
         pinScope.launch {
             val result = try {
@@ -145,7 +145,7 @@ fun SensitiveActionConfirmationDialog(
                 verifying = false
                 pinAccepted = true
             } else {
-                verificationPhase = "Checking PIN retry status"
+                verificationPhase = UiStr.s(R.string.ui_40b4df5c34)
                 val remaining = try {
                     withContext(Dispatchers.IO) { pinBackoffRemainingMs() }
                 } catch (cancelled: CancellationException) {
@@ -158,9 +158,9 @@ fun SensitiveActionConfirmationDialog(
                     message = PIN_RETRY_MESSAGE
                 } else {
                     message = if (result.isFailure) {
-                        "Could not verify the PIN. Try again."
+                        UiStr.s(R.string.ui_63d19876f8)
                     } else {
-                        "Incorrect PIN. Try again."
+                        UiStr.s(R.string.ui_7693c77c63)
                     }
                 }
                 pin = ""

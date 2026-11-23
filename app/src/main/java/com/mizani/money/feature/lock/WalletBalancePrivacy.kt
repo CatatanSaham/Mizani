@@ -1,5 +1,7 @@
 package com.mizani.money.feature.lock
 
+import com.mizani.money.R
+import com.mizani.money.UiStr
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Visibility
@@ -36,9 +38,9 @@ fun WalletBalanceVisibilityControl(
     val visible = state.walletBalancesVisible
     val hasPin = state.settings.hasPin
     val description = when {
-        visible -> "Hide wallet balances"
-        hasPin -> "Show wallet balances; confirm with your app PIN or enabled biometrics"
-        else -> "Set up an app PIN to view wallet balances"
+        visible -> UiStr.s(R.string.ui_7d088982da)
+        hasPin -> UiStr.s(R.string.ui_fc9ae1893e)
+        else -> UiStr.s(R.string.ui_9c86d8532f)
     }
     val actionLabel = when {
         visible -> "Hide"

@@ -1,5 +1,6 @@
 package com.mizani.money.feature.home
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -183,7 +184,7 @@ fun HomeScreen(
         ) {
             EmptyState(
                 title = stringResource(R.string.ui_0395ff47b5),
-                body = "A saved entry is outside the supported balance range. Open Activity to edit or delete entries until balances can be calculated again. Your saved records are unchanged.",
+                body = UiStr.s(R.string.ui_3675e145c2),
                 iconRes = R.drawable.ic_ph_wallet,
                 actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
@@ -269,7 +270,7 @@ fun HomeScreen(
                 } else if (dashboardState is DashboardMetricsState.InvalidLedgerTotals) {
                     EmptyState(
                         title = stringResource(R.string.ui_2b4ba9f259),
-                        body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
+                        body = UiStr.s(R.string.ui_baac56c7ed),
                         iconRes = R.drawable.ic_ph_wallet,
                         actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                         onAction = onOpenTransactions,
@@ -414,7 +415,7 @@ private fun HomeHeader(
     onStartHomeGuide: () -> Unit,
 ) {
     val greeting = DateText.greeting(LocalTime.now().hour)
-    val subtitle = "${DateText.weekday(today)} · ${workspaceName ?: "My money"}"
+    val subtitle = "${DateText.weekday(today)} · ${workspaceName ?: UiStr.s(R.string.ui_16a8a16b7b)}"
     if (stackHeader) {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1447,7 +1448,7 @@ private fun WalletShortcutBalance(
     visible: Boolean,
     horizontalAlignment: Alignment.Horizontal,
 ) {
-    val label = if (wallet.type == WalletType.DEBT) "Amount owed" else "Balance"
+    val label = if (wallet.type == WalletType.DEBT) UiStr.s(R.string.ui_68c6aae1ce) else "Balance"
     Column(
         modifier = Modifier.widthIn(max = 140.dp),
         horizontalAlignment = horizontalAlignment,

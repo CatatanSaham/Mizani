@@ -231,8 +231,8 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                             try {
                                 prompt.authenticate(
                                     BiometricPrompt.PromptInfo.Builder()
-                                        .setTitle("Unlock Mizani")
-                                        .setSubtitle("Use your fingerprint or face")
+                                        .setTitle(UiStr.s(R.string.ui_7ec7eda01b))
+                                        .setSubtitle(UiStr.s(R.string.ui_ba9848b787))
                                         .setNegativeButtonText(UiStr.s(R.string.ui_0708da885b))
                                         .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                         .build(),
@@ -393,7 +393,7 @@ fun PinSetupDialog(
             if (pin == first) {
                 onConfirm(pin)
             } else {
-                error = "PINs do not match. Start again."
+                error = UiStr.s(R.string.ui_10eff8c1a9)
                 first = ""
                 current = ""
                 stage = 0
@@ -426,7 +426,7 @@ fun PinSetupDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        if (stage == 0) "Create a 6-digit PIN" else "Confirm your PIN",
+                        if (stage == 0) UiStr.s(R.string.ui_df84e46ee4) else UiStr.s(R.string.ui_55654eed05),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Spacer(Modifier.height(Spacing.xs))

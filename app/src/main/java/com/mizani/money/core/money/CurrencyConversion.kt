@@ -1,5 +1,7 @@
 package com.mizani.money.core.money
 
+import com.mizani.money.R
+import com.mizani.money.UiStr
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -12,8 +14,8 @@ object CurrencyConversion {
         target: Currency,
         rate: BigDecimal,
     ): Long {
-        require(amountMinor >= 0L) { "Amount cannot be negative" }
-        require(rate.signum() > 0) { "Exchange rate must be positive" }
+        require(amountMinor >= 0L) { UiStr.s(R.string.ui_92590f9e4e) }
+        require(rate.signum() > 0) { UiStr.s(R.string.ui_566bda951b) }
 
         return BigDecimal.valueOf(amountMinor)
             .multiply(rate)

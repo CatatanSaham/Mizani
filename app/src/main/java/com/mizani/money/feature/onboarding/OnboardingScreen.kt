@@ -1,5 +1,6 @@
 package com.mizani.money.feature.onboarding
 
+import com.mizani.money.UiStr
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
@@ -118,7 +119,7 @@ fun OnboardingScreen(
         scope.launch {
             val result = vm.acceptCurrentLegalDocuments()
             acceptingLegal = false
-            result.exceptionOrNull()?.let { legalError = "Could not save your agreement. Please try again." }
+            result.exceptionOrNull()?.let { legalError = UiStr.s(R.string.ui_a5bf429ea0) }
                 ?: run {
                     acceptedCurrentDocumentsThisSession = true
                     step = 2

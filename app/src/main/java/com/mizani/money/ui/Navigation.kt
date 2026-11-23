@@ -1,5 +1,6 @@
 package com.mizani.money.ui
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.EnterTransition
@@ -650,7 +651,7 @@ fun MizaniNavHost(
                     if (candidate == null) {
                         MessageImportScreen(
                             vm = vm,
-                            initialNotice = "Paste a transaction message to begin.",
+                            initialNotice = UiStr.s(R.string.ui_a28541b688),
                             onReview = { navController.navigate("import-review") { launchSingleTop = true } },
                             onOpenGuide = { startGuideById("mobile-money-import") },
                             onBack = ::navigateBack,

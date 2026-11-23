@@ -1,5 +1,7 @@
 package com.mizani.money.ui.components
 
+import com.mizani.money.R
+import com.mizani.money.UiStr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -205,8 +207,8 @@ private fun FlowLegendItem(color: Color, label: String) {
 
 /** Screen-reader equivalent of the chart: every month's income and expenses. */
 private fun cashFlowDescription(months: List<MonthBar>, currency: Currency): String {
-    if (months.isEmpty()) return "Monthly cash flow chart. No months to show yet."
-    return "Monthly cash flow chart. " + months.joinToString("; ") { month ->
+    if (months.isEmpty()) return UiStr.s(R.string.ui_f69fa37bc5)
+    return UiStr.s(R.string.ui_b68604d5e4) + months.joinToString("; ") { month ->
         "${month.label}: income ${MoneyFormat.format(month.incomeMinor, currency)}, " +
             "expenses ${MoneyFormat.format(month.expenseMinor, currency)}"
     }

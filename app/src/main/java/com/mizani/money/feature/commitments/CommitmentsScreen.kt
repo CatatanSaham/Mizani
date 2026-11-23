@@ -193,7 +193,7 @@ fun CommitmentsScreen(
                             editor = null
                             editError = null
                         }
-                        .onFailure { editError = it.message ?: "Could not save this commitment." }
+                        .onFailure { editError = it.message ?: UiStr.s(R.string.ui_218fc09ce8) }
                     savingId = null
                 }
             },
@@ -223,7 +223,7 @@ fun CommitmentsScreen(
                             recurringEditor = null
                             recurringEditError = null
                         }
-                        .onFailure { recurringEditError = it.message ?: "Could not save this repeating item." }
+                        .onFailure { recurringEditError = it.message ?: UiStr.s(R.string.ui_26e8429eae) }
                     recurringSaving = false
                 }
             },
@@ -233,10 +233,10 @@ fun CommitmentsScreen(
     if (deleteTarget != null) {
         MizaniConfirmDialog(
             title = "Delete ${deleteTarget?.name}?",
-            body = "This removes the commitment and its payment links. The linked expenses stay in your activity and balances.",
-            confirmLabel = "Delete commitment",
+            body = UiStr.s(R.string.ui_1a7b6c2ca9),
+            confirmLabel = UiStr.s(R.string.ui_5b4c991c33),
             destructive = true,
-            dismissLabel = "Keep it",
+            dismissLabel = UiStr.s(R.string.ui_d9f3692497),
             onDismiss = { if (!pendingDelete) deleteTarget = null },
             onConfirm = {
                 val selected = deleteTarget ?: return@MizaniConfirmDialog
@@ -244,7 +244,7 @@ fun CommitmentsScreen(
                 scope.launch {
                     runCatching { vm.finance.deleteCommitment(selected.id) }
                         .onSuccess { deleteTarget = null; error = null }
-                        .onFailure { error = it.message ?: "Could not delete this commitment." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_918d317e74) }
                     pendingDelete = false
                 }
             },
@@ -254,10 +254,10 @@ fun CommitmentsScreen(
     if (recurringDeleteTarget != null) {
         MizaniConfirmDialog(
             title = "Delete ${recurringDeleteTarget?.name}?",
-            body = "This removes the schedule only. Any transactions you already recorded stay in Activity and your balances.",
-            confirmLabel = "Delete schedule",
+            body = UiStr.s(R.string.ui_d346c03911),
+            confirmLabel = UiStr.s(R.string.ui_e41c880e70),
             destructive = true,
-            dismissLabel = "Keep it",
+            dismissLabel = UiStr.s(R.string.ui_d9f3692497),
             onDismiss = { if (!recurringDeleteBusy) recurringDeleteTarget = null },
             onConfirm = {
                 val selected = recurringDeleteTarget ?: return@MizaniConfirmDialog
@@ -265,7 +265,7 @@ fun CommitmentsScreen(
                 scope.launch {
                     runCatching { vm.finance.deleteRecurring(selected.id) }
                         .onSuccess { recurringDeleteTarget = null; recurringActionError = null }
-                        .onFailure { recurringActionError = it.message ?: "Could not delete this schedule." }
+                        .onFailure { recurringActionError = it.message ?: UiStr.s(R.string.ui_da8ed664fd) }
                     recurringDeleteBusy = false
                 }
             },
@@ -276,9 +276,9 @@ fun CommitmentsScreen(
         MizaniTopBar(
             title = UiStr.s(R.string.ui_39ff9c58e8),
             subtitle = if (selectedSection == 0) {
-                "Track one-off bills and payment progress"
+                UiStr.s(R.string.ui_758b4ab640)
             } else {
-                "Remember repeating bills and expected income"
+                UiStr.s(R.string.ui_735db0f097)
             },
             actions = {
                 GuideHelpAction("Bills and commitments", onOpenGuide)
@@ -298,7 +298,7 @@ fun CommitmentsScreen(
                 ) {
                     Icon(
                         Icons.Rounded.Add,
-                        contentDescription = if (selectedSection == 0) "Add one-off bill" else "Add repeating item",
+                        contentDescription = if (selectedSection == 0) UiStr.s(R.string.ui_bdde4b16f8) else "Add repeating item",
                     )
                 }
             },
@@ -339,16 +339,16 @@ fun CommitmentsScreen(
             if (active.isEmpty()) {
                 MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("commitments.records")) {
                     Text(
-                        if (archived.isEmpty()) "No bills or commitments yet"
-                        else "No active bills or commitments",
+                        if (archived.isEmpty()) UiStr.s(R.string.ui_991417d99e)
+                        else UiStr.s(R.string.ui_53254fc510),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
                         if (archived.isEmpty()) {
-                            "Add a one-off bill or commitment to keep its due date and payment progress in one place."
+                            UiStr.s(R.string.ui_a4a3438d0b)
                         } else {
-                            "Archived items are saved below. Add a new one when you need to plan another due date."
+                            UiStr.s(R.string.ui_0f0840f243)
                         },
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
@@ -385,7 +385,7 @@ fun CommitmentsScreen(
                                 savingId = item.commitment.id
                                 scope.launch {
                                     runCatching { vm.finance.setCommitmentArchived(item.commitment.id, archivedValue) }
-                                        .onFailure { error = it.message ?: "Could not update this commitment." }
+                                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_e50da42c32) }
                                     savingId = null
                                 }
                             },
@@ -399,7 +399,7 @@ fun CommitmentsScreen(
                                         .onFailure {
                                             actionError = item.commitment.id to commitmentActionMessage(
                                                 it,
-                                                "Could not link this expense. Please try again.",
+                                                UiStr.s(R.string.ui_1efc1f55eb),
                                             )
                                         }
                                     savingId = null
@@ -414,7 +414,7 @@ fun CommitmentsScreen(
                                         .onFailure {
                                             actionError = item.commitment.id to commitmentActionMessage(
                                                 it,
-                                                "Could not unlink this expense. Please try again.",
+                                                UiStr.s(R.string.ui_6c4e86c7f8),
                                             )
                                         }
                                     savingId = null
@@ -442,7 +442,7 @@ fun CommitmentsScreen(
                             savingId = item.commitment.id
                             scope.launch {
                                 runCatching { vm.finance.setCommitmentArchived(item.commitment.id, archivedValue) }
-                                    .onFailure { error = it.message ?: "Could not update this commitment." }
+                                    .onFailure { error = it.message ?: UiStr.s(R.string.ui_e50da42c32) }
                                 savingId = null
                             }
                         },
@@ -456,7 +456,7 @@ fun CommitmentsScreen(
                                     .onFailure {
                                         actionError = item.commitment.id to commitmentActionMessage(
                                             it,
-                                            "Could not unlink this expense. Please try again.",
+                                            UiStr.s(R.string.ui_6c4e86c7f8),
                                         )
                                     }
                                 savingId = null
@@ -488,7 +488,7 @@ fun CommitmentsScreen(
                     recurringBusyId = rule.id
                     scope.launch {
                         runCatching { vm.finance.setRecurringArchived(rule.id, archivedValue) }
-                            .onFailure { recurringActionError = it.message ?: "Could not update this schedule." }
+                            .onFailure { recurringActionError = it.message ?: UiStr.s(R.string.ui_23f5b48053) }
                         recurringBusyId = null
                     }
                 },
@@ -497,7 +497,7 @@ fun CommitmentsScreen(
                     recurringBusyId = rule.id
                     scope.launch {
                         runCatching { vm.finance.markRecurringPaid(rule.id, today) }
-                            .onFailure { recurringActionError = it.message ?: "Could not record this item." }
+                            .onFailure { recurringActionError = it.message ?: UiStr.s(R.string.ui_1acfccd2bc) }
                         recurringBusyId = null
                     }
                 },
@@ -634,7 +634,7 @@ private fun CommitmentCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             MizaniPicker(
-                selectedText = if (busy) "Updating..." else "Choose expense to link",
+                selectedText = if (busy) "Updating..." else UiStr.s(R.string.ui_97ab8e44bc),
                 options = linkableExpenses.map { expense ->
                     val label = expense.payee.ifBlank { state.snapshot.categoryName(expense.categoryId) }
                     PickerOption(
@@ -653,7 +653,7 @@ private fun CommitmentCard(
                     if (hasRecordedExpenses) {
                         "No recorded expense matches the remaining ${MoneyFormat.format(item.remainingMinor, currency)}. Record the payment in ${currency.code}, or choose an expense within the converted target."
                     } else {
-                        "Record the payment as an expense first, then link it here."
+                        UiStr.s(R.string.ui_a4fb02d63d)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -687,21 +687,21 @@ private fun CommitmentCard(
 }
 
 private fun commitmentActionMessage(error: Throwable, fallback: String): String = when (error.message) {
-    "Payment is greater than the remaining commitment" ->
-        "This expense is greater than the amount still due. Choose a smaller expense or increase the target."
-    "This expense has no remaining value after refunds" ->
-        "This expense has already been fully refunded and cannot be linked."
-    "Currency mismatch" ->
-        "This expense uses a different currency and cannot be linked to this bill."
-    "This expense is already linked to a commitment" ->
-        "This expense is already linked to another bill."
+    UiStr.s(R.string.ui_ccaddd144b) ->
+        UiStr.s(R.string.ui_d8207b6623)
+    UiStr.s(R.string.ui_1b4ef264ce) ->
+        UiStr.s(R.string.ui_88ab34f81f)
+    UiStr.s(R.string.ui_137e53ecf1) ->
+        UiStr.s(R.string.ui_9c5a7618d7)
+    UiStr.s(R.string.ui_8d1e1cc000) ->
+        UiStr.s(R.string.ui_25f1c34439)
     else -> fallback
 }
 
 private fun commitmentRateFailureMessage(error: Exception, hasCachedRate: Boolean): String = when {
-    hasCachedRate -> "Saved rate in use. Refresh failed."
-    error is ExchangeRateUnavailableException -> "No reference rate is available for this currency pair."
-    else -> "No rate available. Check your connection."
+    hasCachedRate -> UiStr.s(R.string.ui_cd0fdac9da)
+    error is ExchangeRateUnavailableException -> UiStr.s(R.string.ui_fed145a04c)
+    else -> UiStr.s(R.string.ui_3f2da1e44b)
 }
 
 @Composable
@@ -738,9 +738,9 @@ private fun CommitmentEditorDialog(
     val nameFocusRequester = remember(initial?.id) { FocusRequester() }
     val amountFocusRequester = remember(initial?.id) { FocusRequester() }
     val reminderFocusRequester = remember(initial?.id) { FocusRequester() }
-    val nameError = validationError?.takeIf { it.startsWith("Enter a name") }
-    val amountError = validationError?.takeIf { it.startsWith("Enter an amount") }
-    val reminderError = validationError?.takeIf { it.startsWith("Choose a reminder") }
+    val nameError = validationError?.takeIf { it.startsWith(UiStr.s(R.string.ui_7e5fe97f0e)) }
+    val amountError = validationError?.takeIf { it.startsWith(UiStr.s(R.string.ui_65472fb06d)) }
+    val reminderError = validationError?.takeIf { it.startsWith(UiStr.s(R.string.ui_c8fd4cdcd0)) }
 
     LaunchedEffect(targetCurrency.code, workspaceCurrency.code, initial?.id) {
         if (!isForeignCurrency) {
@@ -796,7 +796,7 @@ private fun CommitmentEditorDialog(
 
     MizaniAlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
-        title = { Text(if (initial == null) "Add commitment" else "Edit commitment") },
+        title = { Text(if (initial == null) UiStr.s(R.string.ui_9aaf28de93) else UiStr.s(R.string.ui_04d8501263)) },
         text = {
             Column(
                 modifier = Modifier
@@ -845,19 +845,19 @@ private fun CommitmentEditorDialog(
                         validationError = null
                         rateError = null
                     },
-                    fieldLabel = "Target currency",
+                    fieldLabel = UiStr.s(R.string.ui_3da2599f1c),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 if (isForeignCurrency) {
                     val rate = exchangeRate
                     Text(
                         when {
-                            isRateLoading && rate == null -> "Getting the latest daily reference rate..."
+                            isRateLoading && rate == null -> UiStr.s(R.string.ui_683961e638)
                             rate != null -> buildString {
                                 append("1 ${rate.baseCurrencyCode} = ${rate.rate} ${rate.quoteCurrencyCode} · ${DateText.medium(rate.date)}. The target will be saved using this rate.")
                                 rateError?.let { append(" $it") }
                             }
-                            else -> rateError ?: "No reference rate is available for this currency pair."
+                            else -> rateError ?: UiStr.s(R.string.ui_fed145a04c)
                         },
                         color = if (rate == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
@@ -872,14 +872,14 @@ private fun CommitmentEditorDialog(
                 }
                 val selectedCategory = categories.firstOrNull { it.id == categoryId }
                 MizaniPicker(
-                    selectedText = selectedCategory?.name ?: "No category",
+                    selectedText = selectedCategory?.name ?: UiStr.s(R.string.ui_fdc24c707e),
                     options = categories.map { PickerOption(it.id, it.name) },
                     onSelect = { categoryId = it; validationError = null },
                     modifier = Modifier.fillMaxWidth(),
-                    noneLabel = "No category",
+                    noneLabel = UiStr.s(R.string.ui_fdc24c707e),
                     onSelectNone = { categoryId = null; validationError = null },
                     searchable = categories.size > 6,
-                    searchHint = "Search expense categories",
+                    searchHint = UiStr.s(R.string.ui_bdfb85040a),
                     fieldLabel = "Category",
                 )
                 OutlinedTextField(
@@ -889,7 +889,7 @@ private fun CommitmentEditorDialog(
                     isError = reminderError != null,
                     supportingText = {
                         Text(
-                            reminderError ?: "Enter 0 to turn reminders off (maximum 30 days).",
+                            reminderError ?: UiStr.s(R.string.ui_a95d0a3dfb),
                             modifier = if (reminderError != null) Modifier.semantics {
                                 liveRegion = LiveRegionMode.Polite
                             } else Modifier,
@@ -931,25 +931,25 @@ private fun CommitmentEditorDialog(
                     val days = reminderDays.toIntOrNull()
                     when {
                         name.isBlank() -> {
-                            validationError = "Enter a name for this commitment."
+                            validationError = UiStr.s(R.string.ui_2d0fa53fca)
                             nameFocusRequester.requestFocus()
                         }
                         parsedAmount == null || parsedAmount <= 0L -> {
-                            validationError = "Enter an amount greater than zero."
+                            validationError = UiStr.s(R.string.ui_7a670b3aea)
                             amountFocusRequester.requestFocus()
                         }
                         isForeignCurrency && isRateLoading -> {
-                            validationError = "Wait for the latest exchange rate before saving."
+                            validationError = UiStr.s(R.string.ui_170a741cb4)
                         }
                         isForeignCurrency && conversionRate == null -> {
-                            validationError = rateError ?: "No reference rate is available for this currency pair."
+                            validationError = rateError ?: UiStr.s(R.string.ui_fed145a04c)
                         }
                         convertedTargetWorkspace == null || convertedTargetWorkspace <= 0L -> {
                             validationError = "This amount is too small to convert into ${workspaceCurrency.code}."
                             amountFocusRequester.requestFocus()
                         }
                         days == null || days !in 0..30 -> {
-                            validationError = "Choose a reminder from 0 to 30 days."
+                            validationError = UiStr.s(R.string.ui_e26682f70f)
                             reminderFocusRequester.requestFocus()
                         }
                         else -> {
@@ -980,7 +980,7 @@ private fun CommitmentEditorDialog(
                     )
                     Spacer(Modifier.padding(horizontal = 2.dp))
                     Text(stringResource(R.string.ui_ae7e887517))
-                } else Text(if (initial == null) "Save commitment" else "Save changes")
+                } else Text(if (initial == null) UiStr.s(R.string.ui_e6532c4f56) else UiStr.s(R.string.ui_179359b39e))
             }
         },
         dismissButton = {

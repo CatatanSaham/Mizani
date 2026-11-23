@@ -1,5 +1,6 @@
 package com.mizani.money.feature.wallets
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -142,14 +143,14 @@ fun WalletsScreen(
                         showDialog = false
                         editing = null
                         error = null
-                    }.onFailure { error = it.message ?: "Could not save this wallet. Try again." }
+                    }.onFailure { error = it.message ?: UiStr.s(R.string.ui_ab52a1acfd) }
                 }
             },
             onArchive = { wallet, archived ->
                 scope.launch {
                     runCatching { vm.finance.setWalletArchived(wallet.id, archived) }
                         .onSuccess { showDialog = false; editing = null }
-                        .onFailure { error = it.message ?: "Could not update this wallet. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_a65fe33a2a) }
                 }
             },
         )
@@ -181,14 +182,14 @@ fun WalletsScreen(
                                     type = TransactionType.ADJUSTMENT,
                                     amountMinor = adjustment,
                                     walletId = wallet.id,
-                                    note = "Balance reconciliation",
+                                    note = UiStr.s(R.string.ui_9858d40e6a),
                                 ),
                             )
                         }.onSuccess {
                             reconcilingWallet = null
                             reconciliationError = null
                         }.onFailure {
-                            reconciliationError = it.message ?: "Could not save the balance adjustment. Try again."
+                            reconciliationError = it.message ?: UiStr.s(R.string.ui_f862813e8a)
                         }
                         savingReconciliation = false
                     }
@@ -239,9 +240,9 @@ fun WalletsScreen(
                     labelRowMinHeight = 48.dp,
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                     valueContentDescription = when {
-                        total == null -> "Across wallet balance unavailable; review Activity"
+                        total == null -> UiStr.s(R.string.ui_287edb4a35)
                         state.walletBalancesVisible -> "Across wallets ${MoneyFormat.format(total, currency)}"
-                        else -> "Across wallet balances hidden"
+                        else -> UiStr.s(R.string.ui_be604b7a25)
                     },
                 )
                 MizaniStatCard(
@@ -257,9 +258,9 @@ fun WalletsScreen(
                     infoTitle = stringResource(R.string.info_liquid_title),
                     infoBody = stringResource(R.string.info_liquid_body),
                     valueContentDescription = when {
-                        liquid == null -> "Liquid balance unavailable; review Activity"
+                        liquid == null -> UiStr.s(R.string.ui_31df1c5dde)
                         state.walletBalancesVisible -> "Liquid balance ${MoneyFormat.format(liquid, currency)}"
-                        else -> "Liquid balance hidden"
+                        else -> UiStr.s(R.string.ui_f055dde632)
                     },
                 )
             }
@@ -275,7 +276,7 @@ fun WalletsScreen(
                 Box(Modifier.fillMaxWidth().guideTarget("wallets.rows")) {
                     EmptyState(
                         title = stringResource(R.string.ui_e5c8318756),
-                        body = "Create a cash, mobile-money, bank, card or savings wallet to start.",
+                        body = UiStr.s(R.string.ui_9dab3c5aed),
                         iconRes = R.drawable.ic_ph_wallet,
                         actionLabel = stringResource(R.string.ui_6fe27a1a61),
                         onAction = { editing = null; showDialog = true },
@@ -321,9 +322,9 @@ fun WalletsScreen(
                                 },
                                 modifier = Modifier.semantics {
                                     contentDescription = when {
-                                        balances == null -> "Balance unavailable; review Activity"
+                                        balances == null -> UiStr.s(R.string.ui_709a57ece0)
                                         state.walletBalancesVisible -> "Balance ${MoneyFormat.format(balances[wallet.id] ?: 0, currency)}"
-                                        else -> "Balance hidden"
+                                        else -> UiStr.s(R.string.ui_2c0a6215fa)
                                     }
                                 },
                                 style = MaterialTheme.typography.labelMedium,
@@ -422,7 +423,7 @@ private fun WalletDialog(
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.large,
-        title = { Text(if (initial == null) "Add wallet" else "Edit wallet") },
+        title = { Text(if (initial == null) "Add wallet" else UiStr.s(R.string.ui_fe840bb9d0)) },
         text = {
             Column(
                 modifier = Modifier
@@ -456,18 +457,18 @@ private fun WalletDialog(
                         value = openingText,
                         onValueChange = { openingText = it },
                         label = when {
-                            type == WalletType.DEBT -> "Amount owed when tracking began"
-                            initial != null -> "Starting balance"
-                            else -> "Opening balance"
+                            type == WalletType.DEBT -> UiStr.s(R.string.ui_7f6c00ff5e)
+                            initial != null -> UiStr.s(R.string.ui_7d5451bcf8)
+                            else -> UiStr.s(R.string.ui_7622a75da6)
                         },
                         currency = currency,
                     )
                 }
                 Text(
                     if (type == WalletType.DEBT) {
-                        "Debt is stored as a negative balance. This is what you owed when tracking began; saved activity is added to it."
+                        UiStr.s(R.string.ui_2cca9280db)
                     } else {
-                        "This is the amount in the wallet when you began tracking. Saved activity is added to it; changing it does not set today's balance."
+                        UiStr.s(R.string.ui_1a1a1d1149)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -555,7 +556,7 @@ private fun WalletDialog(
         confirmButton = {
             TextButton(onClick = {
                 if (name.isBlank()) {
-                    error = "Give this wallet a name"
+                    error = UiStr.s(R.string.ui_7cea0132e9)
                 } else {
                     val signedOpening = if (type == WalletType.DEBT) -opening else opening
                     onSave(name, type, signedOpening, colorHex, iconKey)
@@ -572,13 +573,13 @@ private fun BalanceBreakdownRows(
     currency: Currency,
 ) {
     val rows = listOf(
-        "Starting balance" to breakdown.openingBalanceMinor,
-        "Income after fees" to breakdown.incomeNetMinor,
-        "Expenses and fees" to breakdown.expenseOutflowMinor,
-        "Transfers in" to breakdown.transferInMinor,
-        "Transfers out and fees" to breakdown.transferOutMinor,
-        "Refunds after fees" to breakdown.refundNetMinor,
-        "Balance adjustments" to breakdown.adjustmentMinor,
+        UiStr.s(R.string.ui_7d5451bcf8) to breakdown.openingBalanceMinor,
+        UiStr.s(R.string.ui_fc240c4a4d) to breakdown.incomeNetMinor,
+        UiStr.s(R.string.ui_6138dbe875) to breakdown.expenseOutflowMinor,
+        UiStr.s(R.string.ui_9566569ad6) to breakdown.transferInMinor,
+        UiStr.s(R.string.ui_85f73bd5f7) to breakdown.transferOutMinor,
+        UiStr.s(R.string.ui_564b5ac2af) to breakdown.refundNetMinor,
+        UiStr.s(R.string.ui_e5f2b255db) to breakdown.adjustmentMinor,
     )
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
         rows.filter { (_, amount) -> amount != 0L }.forEach { (label, amount) ->
@@ -630,7 +631,7 @@ private fun ReconcileBalanceDialog(
                 MizaniAmountField(
                     value = targetText,
                     onValueChange = { targetText = it },
-                    label = if (wallet.type == WalletType.DEBT) "Amount you currently owe" else "Balance shown by MoMo or your provider",
+                    label = if (wallet.type == WalletType.DEBT) UiStr.s(R.string.ui_bccec53a70) else UiStr.s(R.string.ui_ed17a3c774),
                     currency = currency,
                 )
                 when {
@@ -675,7 +676,7 @@ private fun ReconcileBalanceDialog(
                 enabled = adjustment != null && adjustment != 0L && !saving,
                 onClick = { targetBalance?.let(onConfirm) },
             ) {
-                Text(if (saving) "Saving…" else "Record adjustment")
+                Text(if (saving) "Saving…" else UiStr.s(R.string.ui_3a6a811742))
             }
         },
         dismissButton = {

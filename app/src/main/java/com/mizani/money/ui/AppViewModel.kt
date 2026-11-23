@@ -1,5 +1,7 @@
 package com.mizani.money.ui
 
+import com.mizani.money.R
+import com.mizani.money.UiStr
 import androidx.lifecycle.ViewModel
 import com.mizani.money.core.security.PinPolicyRules
 import androidx.lifecycle.ViewModelProvider
@@ -82,7 +84,7 @@ sealed interface PinAttemptResult {
 }
 
 /** User-safe message shown while the failed-PIN backoff is active. */
-const val PIN_RETRY_MESSAGE = "Too many attempts. Please wait a moment, then try again."
+const val PIN_RETRY_MESSAGE = UiStr.s(R.string.ui_f3f6c2ef26)
 
 private sealed interface SettingsReadState {
     object Loading : SettingsReadState
@@ -383,7 +385,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         providerHint: String? = null,
     ): Result<ImportedTransactionCandidate> = runCatching {
         require(message.length <= TransactionMessageParser.MAX_MESSAGE_LENGTH) {
-            "This message is too long to import. Paste only the transaction confirmation."
+            UiStr.s(R.string.ui_b942e3cd8b)
         }
         val parsed = withContext(Dispatchers.Default) {
             TransactionMessageParser.parse(message, today.value, providerHint)
@@ -392,15 +394,15 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
             is MessageParseResult.Parsed -> parsed.candidate
             is MessageParseResult.Rejected -> throw IllegalArgumentException(
                 when (parsed.reason) {
-                    MessageParseResult.Reason.TOO_LONG -> "This message is too long to import."
-                    MessageParseResult.Reason.UNSUPPORTED_PROVIDER -> "This message is not from a supported mobile money provider."
-                    MessageParseResult.Reason.UNSUPPORTED_MESSAGE -> "We couldn't identify a complete transaction confirmation."
+                    MessageParseResult.Reason.TOO_LONG -> UiStr.s(R.string.ui_11781e5727)
+                    MessageParseResult.Reason.UNSUPPORTED_PROVIDER -> UiStr.s(R.string.ui_0ad6e3c6ca)
+                    MessageParseResult.Reason.UNSUPPORTED_MESSAGE -> UiStr.s(R.string.ui_7dc2a30530)
                 },
             )
         }
-        val workspace = finance.currentWorkspace() ?: error("Set up a workspace before importing transactions")
+        val workspace = finance.currentWorkspace() ?: error(UiStr.s(R.string.ui_e5686a8fc6))
         require(!finance.hasImportedReference(candidate.provider, candidate.reference)) {
-            "This transaction reference has already been imported."
+            UiStr.s(R.string.ui_b71eff06d0)
         }
         _sharedImportNotice.value = null
         _sharedImportReady.value = false
@@ -417,7 +419,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         prepareTransactionImport(message, providerHint)
             .onSuccess { _sharedImportReady.value = true }
             .onFailure {
-                _sharedImportNotice.value = it.message ?: "We couldn't read this transaction message."
+                _sharedImportNotice.value = it.message ?: UiStr.s(R.string.ui_853a065c52)
             }
     }
 

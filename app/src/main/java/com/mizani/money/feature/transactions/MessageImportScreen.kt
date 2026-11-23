@@ -1,5 +1,6 @@
 package com.mizani.money.feature.transactions
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,7 +60,7 @@ fun MessageImportScreen(
         MizaniTopBar(
             title = stringResource(R.string.ui_113eb2fda2),
             onBack = onBack,
-            actions = { GuideHelpAction("Mobile-money import", onOpenGuide) },
+            actions = { GuideHelpAction(UiStr.s(R.string.ui_8dab9e4ab1), onOpenGuide) },
         )
         Column(
             modifier = Modifier
@@ -88,14 +89,14 @@ fun MessageImportScreen(
             MizaniPicker(
                 selectedText = providerHint?.let { id ->
                     TransactionMessageParser.providerLabel(id)
-                } ?: "Provider detected automatically",
+                } ?: UiStr.s(R.string.ui_e66b374a8b),
                 options = TransactionMessageParser.providerOptions.map { PickerOption(it.id, it.label) },
                 onSelect = { providerHint = it },
-                noneLabel = "Detect automatically",
+                noneLabel = UiStr.s(R.string.ui_25a360333e),
                 onSelectNone = { providerHint = null },
                 searchable = true,
-                searchHint = "Search mobile-money networks",
-                fieldLabel = "Provider hint (optional)",
+                searchHint = UiStr.s(R.string.ui_7dafc226c6),
+                fieldLabel = UiStr.s(R.string.ui_1a16c0d569),
                 modifier = Modifier.fillMaxWidth().guideTarget("import.provider"),
             )
             Column(
@@ -147,7 +148,7 @@ fun MessageImportScreen(
                                     message = ""
                                     onReview()
                                 }
-                                .onFailure { error = it.message ?: "Could not read this transaction message." }
+                                .onFailure { error = it.message ?: UiStr.s(R.string.ui_9908af361a) }
                             reading = false
                         }
                     }

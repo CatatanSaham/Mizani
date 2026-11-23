@@ -1,5 +1,6 @@
 package com.mizani.money.feature.settings
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import android.content.Intent
@@ -53,9 +54,9 @@ enum class FeedbackTopic(
     val subjectLabel: String,
 ) {
     SUGGESTION("Suggestion", "suggestion"),
-    PROBLEM("Report a problem", "problem report"),
+    PROBLEM(UiStr.s(R.string.ui_24f3f52de5), "problem report"),
     QUESTION("Question", "question"),
-    OTHER("Something else", "feedback"),
+    OTHER(UiStr.s(R.string.ui_48f88ac322), "feedback"),
 }
 
 data class FeedbackValidationResult(
@@ -68,8 +69,8 @@ object FeedbackComposer {
     const val OFFICIAL_EMAIL = LegalDocuments.PRIVACY_CONTACT
 
     fun validate(topic: FeedbackTopic?, message: String): FeedbackValidationResult {
-        if (topic == null) return FeedbackValidationResult("Choose what you would like to share.")
-        if (message.isBlank()) return FeedbackValidationResult("Write a few words so we know how to help.")
+        if (topic == null) return FeedbackValidationResult(UiStr.s(R.string.ui_6e4c6d3317))
+        if (message.isBlank()) return FeedbackValidationResult(UiStr.s(R.string.ui_37dab00479))
         if (message.length > MAX_MESSAGE_LENGTH) {
             return FeedbackValidationResult("Keep your feedback under $MAX_MESSAGE_LENGTH characters.")
         }
@@ -91,7 +92,7 @@ object FeedbackComposer {
         appendLine("Mizani version: $appVersion")
         appendLine("Android version: $androidVersion")
         appendLine()
-        append("Please do not reply with balances, transaction details, PINs, or backup passphrases.")
+        append(UiStr.s(R.string.ui_8f0fa660cb))
     }
 
     fun createIntent(
@@ -136,17 +137,17 @@ fun FeedbackScreen(onBack: () -> Unit) {
             androidVersion = android.os.Build.VERSION.RELEASE ?: "unknown",
         )
         if (intent.resolveActivity(context.packageManager) == null) {
-            status = "No email app is available on this device. Install one to continue."
+            status = UiStr.s(R.string.ui_dd8a512e43)
             statusIsError = true
             return
         }
         runCatching { context.startActivity(intent) }
             .onSuccess {
-                status = "Your email app is ready. Review the message and tap Send to deliver it."
+                status = UiStr.s(R.string.ui_e33afabfa2)
                 statusIsError = false
             }
             .onFailure {
-                status = "We couldn't open an email app. Try again to continue."
+                status = UiStr.s(R.string.ui_2b98fe8656)
                 statusIsError = true
             }
     }

@@ -1,5 +1,6 @@
 package com.mizani.money.feature.categories
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
@@ -106,21 +107,21 @@ fun CategoriesScreen(
                     }.onSuccess {
                         showDialog = false
                         editing = null
-                    }.onFailure { error = it.message ?: "Could not save this category. Try again." }
+                    }.onFailure { error = it.message ?: UiStr.s(R.string.ui_9eeb1e8219) }
                 }
             },
             onArchive = { category, archivedFlag ->
                 scope.launch {
                     runCatching { vm.finance.setCategoryArchived(category.id, archivedFlag) }
                         .onSuccess { showDialog = false; editing = null }
-                        .onFailure { error = it.message ?: "Could not archive this category. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_1f856ebd82) }
                 }
             },
             onMove = { category, direction ->
                 scope.launch {
                     runCatching { vm.finance.moveCategory(category.id, direction) }
                         .onSuccess { error = null }
-                        .onFailure { error = it.message ?: "Could not change the category order. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_ef6c9614d6) }
                 }
             },
         )
@@ -251,7 +252,7 @@ private fun CategoryDialog(
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.large,
-        title = { Text(if (initial == null) "Add ${fixedType.label.lowercase()} category" else "Edit category") },
+        title = { Text(if (initial == null) "Add ${fixedType.label.lowercase()} category" else UiStr.s(R.string.ui_c6071d61a0)) },
         text = {
             Column(
                 modifier = Modifier
@@ -374,14 +375,14 @@ private fun CategoryDialog(
                             modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(4.dp))
-                        Text(if (initial.archived) "Restore category" else "Archive category")
+                        Text(if (initial.archived) UiStr.s(R.string.ui_c9399bbc5c) else UiStr.s(R.string.ui_63a994867d))
                     }
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                if (name.isBlank()) error = "Give this category a name" else onSave(name, icon, colorHex)
+                if (name.isBlank()) error = UiStr.s(R.string.ui_02a9ca6771) else onSave(name, icon, colorHex)
             }) { Text(if (initial == null) "Add" else "Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },

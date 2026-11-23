@@ -356,11 +356,11 @@ fun AddTransactionScreen(
         if (saving) return
         error = null
         if (enteredAmountMinor <= 0) {
-            error = "Enter an amount greater than zero"
+            error = UiStr.s(R.string.ui_1e0501b4ad)
             return
         }
         if (isForeignCurrency && conversionRate == null) {
-            error = rateError ?: if (isRateLoading) "Getting rate…" else "Rate unavailable."
+            error = rateError ?: if (isRateLoading) "Getting rate…" else UiStr.s(R.string.ui_154aa2c5d8)
             return
         }
         if (amountMinor <= 0) {
@@ -368,25 +368,25 @@ fun AddTransactionScreen(
             return
         }
         if (walletId == null) {
-            error = "Create a wallet first"
+            error = UiStr.s(R.string.ui_9c39244109)
             return
         }
         if (type == TransactionType.TRANSFER) {
             if (toWalletId == null || toWalletId == walletId) {
-                error = "Choose a different destination wallet"
+                error = UiStr.s(R.string.ui_7f3b8fdb01)
                 return
             }
         }
         if ((type == TransactionType.EXPENSE || type == TransactionType.REFUND) && categoryId == null) {
-            error = "Choose a category"
+            error = UiStr.s(R.string.ui_b91bf5d476)
             return
         }
         if (type == TransactionType.INCOME && importCandidate != null && categoryId == null) {
-            error = "Choose an income category so we can classify this received money"
+            error = UiStr.s(R.string.ui_9b284fab69)
             return
         }
         if (!validFee) {
-            error = "Enter a valid fee, or leave it blank"
+            error = UiStr.s(R.string.ui_06d39a9bc1)
             return
         }
         val draft = TransactionDraft(
@@ -423,7 +423,7 @@ fun AddTransactionScreen(
                     showCelebration = true
                 }.onFailure {
                     saving = false
-                    error = it.message ?: "Could not save this transaction"
+                    error = it.message ?: UiStr.s(R.string.ui_bf34b8810f)
                 }
             }
         }
@@ -432,7 +432,7 @@ fun AddTransactionScreen(
     if (showDelete && existing != null) {
         MizaniConfirmDialog(
             title = UiStr.s(R.string.ui_7bbc0c1f35),
-            body = "This transaction will be removed from balances and insights.",
+            body = UiStr.s(R.string.ui_70a093ad2b),
             confirmLabel = "Delete",
             dismissLabel = "Keep",
             destructive = true,
@@ -454,9 +454,9 @@ fun AddTransactionScreen(
     Column(Modifier.fillMaxSize().imePadding()) {
         MizaniTopBar(
             title = when {
-                existing != null -> "Edit transaction"
-                importCandidate != null -> "Review imported transaction"
-                else -> "New transaction"
+                existing != null -> UiStr.s(R.string.ui_f6bd9c51aa)
+                importCandidate != null -> UiStr.s(R.string.ui_36dd171d7a)
+                else -> UiStr.s(R.string.ui_87101cf1e6)
             },
             subtitle = if (existing == null) null else DateText.medium(date),
             onBack = onBack,
@@ -479,7 +479,7 @@ fun AddTransactionScreen(
             if (wallets.isEmpty()) {
                 EmptyState(
                     title = UiStr.s(R.string.ui_06cc94f2fe),
-                    body = "Add a wallet from More → Wallets before recording a transaction.",
+                    body = UiStr.s(R.string.ui_ba845b1822),
                     iconRes = R.drawable.ic_ph_wallet,
                     actionLabel = UiStr.s(R.string.ui_e84712fbf4),
                     onAction = onBack,
@@ -546,7 +546,7 @@ fun AddTransactionScreen(
                 if (type != TransactionType.REFUND && type != TransactionType.ADJUSTMENT) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = { showAdvancedTypes = !showAdvancedTypes }) {
-                            Text(if (showAdvancedTypes) "Fewer types" else "More types")
+                            Text(if (showAdvancedTypes) UiStr.s(R.string.ui_43d919af17) else UiStr.s(R.string.ui_2d8abd82cf))
                             Icon(
                                 imageVector = if (showAdvancedTypes) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
                                 contentDescription = null,
@@ -610,9 +610,9 @@ fun AddTransactionScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             when (type) {
-                                TransactionType.TRANSFER -> "Amount to move"
-                                TransactionType.REFUND -> "Refund amount"
-                                TransactionType.ADJUSTMENT -> "Balance adjustment"
+                                TransactionType.TRANSFER -> UiStr.s(R.string.ui_f46cf24c23)
+                                TransactionType.REFUND -> UiStr.s(R.string.ui_b7a4c981da)
+                                TransactionType.ADJUSTMENT -> UiStr.s(R.string.ui_cd0528cc9f)
                                 else -> "Amount"
                             },
                             style = MaterialTheme.typography.labelMedium,
@@ -693,7 +693,7 @@ fun AddTransactionScreen(
                     }
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
-                        "${amountWallet?.name ?: ""} · ${balances?.get(walletId)?.let { MoneyFormat.format(it, currency) } ?: "Balance unavailable"}",
+                        "${amountWallet?.name ?: ""} · ${balances?.get(walletId)?.let { MoneyFormat.format(it, currency) } ?: UiStr.s(R.string.ui_ec0e50f398)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                     )
@@ -807,7 +807,7 @@ fun AddTransactionScreen(
                             )
                             else -> {
                                 Text(
-                                    rateError ?: "Rate unavailable. Check your connection.",
+                                    rateError ?: UiStr.s(R.string.ui_a595471c14),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.error,
                                 )
@@ -878,7 +878,7 @@ fun AddTransactionScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            if (type == TransactionType.INCOME) "Income category" else "Category",
+                            if (type == TransactionType.INCOME) UiStr.s(R.string.ui_284b0cbfe2) else "Category",
                             style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier.weight(1f),
                         )
@@ -924,7 +924,7 @@ fun AddTransactionScreen(
                     if (extra.isNotEmpty()) {
                         var expanded by remember { mutableStateOf(false) }
                         TextButton(onClick = { expanded = !expanded }) {
-                            Text(if (expanded) "Show fewer categories" else "More categories (${extra.size})")
+                            Text(if (expanded) UiStr.s(R.string.ui_488616be7c) else "More categories (${extra.size})")
                         }
                         if (expanded) {
                             FlowRow(
@@ -966,14 +966,14 @@ fun AddTransactionScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    if (showMore) "Hide details" else "Optional details",
+                    if (showMore) UiStr.s(R.string.ui_f8c2483312) else UiStr.s(R.string.ui_da3042ae0e),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.weight(1f),
                 )
                 Icon(
                     if (showMore) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
-                    contentDescription = if (showMore) "Hide details" else "Show details",
+                    contentDescription = if (showMore) UiStr.s(R.string.ui_f8c2483312) else UiStr.s(R.string.ui_42c9c9254f),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -1002,19 +1002,19 @@ fun AddTransactionScreen(
                     label = UiStr.s(R.string.ui_d2bb1510ad),
                     currency = entryCurrency,
                     supportingText = if (isForeignCurrency) {
-                        "Fee is converted using the same daily rate and included in spending."
+                        UiStr.s(R.string.ui_b659c23e65)
                     } else {
-                        "Fees are counted as spending and tracked separately. A transfer itself is not spending."
+                        UiStr.s(R.string.ui_112e26a798)
                     },
                 )
                 if (type == TransactionType.INCOME) {
                     Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                         Text(UiStr.s(R.string.ui_db79ac2b85), style = MaterialTheme.typography.labelLarge)
                         MizaniPicker(
-                            selectedText = incomeSourceId?.let { snapshot.incomeSourceName(it) } ?: "Not specified",
+                            selectedText = incomeSourceId?.let { snapshot.incomeSourceName(it) } ?: UiStr.s(R.string.ui_60f1e913db),
                             options = snapshot.incomeSources.map { PickerOption(it.id, it.name) },
                             onSelect = { incomeSourceId = it },
-                            noneLabel = "Not specified",
+                            noneLabel = UiStr.s(R.string.ui_60f1e913db),
                             onSelectNone = { incomeSourceId = null },
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -1028,7 +1028,7 @@ fun AddTransactionScreen(
                             MizaniPicker(
                                 selectedText = linked?.let {
                                     "${it.payee.ifBlank { snapshot.categoryName(it.categoryId) }} · ${MoneyFormat.format(it.amountMinor, currency)} · ${DateText.short(LocalDate.ofEpochDay(it.localDateEpochDay))}"
-                                } ?: "Link an earlier expense",
+                                } ?: UiStr.s(R.string.ui_53facfdcdb),
                                 options = recentExpenses.map { expense ->
                                     PickerOption(
                                         id = expense.id,
@@ -1092,12 +1092,12 @@ fun AddTransactionScreen(
                         Text(
                             when {
                                 saving -> "Saving…"
-                                existing != null -> "Save changes"
-                                type == TransactionType.TRANSFER -> "Transfer money"
-                                type == TransactionType.INCOME -> "Save income"
-                                type == TransactionType.REFUND -> "Save refund"
-                                type == TransactionType.ADJUSTMENT -> "Save adjustment"
-                                else -> "Save expense"
+                                existing != null -> UiStr.s(R.string.ui_179359b39e)
+                                type == TransactionType.TRANSFER -> UiStr.s(R.string.ui_9324b64839)
+                                type == TransactionType.INCOME -> UiStr.s(R.string.ui_9c4d5fdea4)
+                                type == TransactionType.REFUND -> UiStr.s(R.string.ui_34e5c4efc5)
+                                type == TransactionType.ADJUSTMENT -> UiStr.s(R.string.ui_818a86d779)
+                                else -> UiStr.s(R.string.ui_0402d1095c)
                             },
                         )
                     }
@@ -1113,9 +1113,9 @@ fun AddTransactionScreen(
 }
 
 private fun rateFailureMessage(error: Exception, hasCachedRate: Boolean): String = when {
-    hasCachedRate -> "Saved rate in use. Refresh failed."
-    error is ExchangeRateUnavailableException -> "No reference rate is available for this currency pair."
-    else -> "No rate available. Check your connection."
+    hasCachedRate -> UiStr.s(R.string.ui_cd0fdac9da)
+    error is ExchangeRateUnavailableException -> UiStr.s(R.string.ui_fed145a04c)
+    else -> UiStr.s(R.string.ui_3f2da1e44b)
 }
 
 @OptIn(ExperimentalLayoutApi::class)

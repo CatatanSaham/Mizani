@@ -1,5 +1,6 @@
 package com.mizani.money.feature.investments
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -112,14 +113,14 @@ fun InvestmentsScreen(
                         showDialog = false
                         editing = null
                         error = null
-                    }.onFailure { error = it.message ?: "Could not save this investment. Try again." }
+                    }.onFailure { error = it.message ?: UiStr.s(R.string.ui_513f1fca5f) }
                 }
             },
             onArchive = { investment, archivedValue ->
                 scope.launch {
                     runCatching { vm.finance.setInvestmentHoldingArchived(investment.id, archivedValue) }
                         .onSuccess { showDialog = false; editing = null }
-                        .onFailure { error = it.message ?: "Could not update this investment. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_f05e49b5eb) }
                 }
             },
         )
@@ -157,14 +158,14 @@ fun InvestmentsScreen(
                     label = stringResource(R.string.ui_ed2757f1ed),
                     value = protectedMoney(summary.currentValueMinor, currency, state.walletBalancesVisible),
                     labelRowMinHeight = 48.dp,
-                    valueContentDescription = protectedMoneyDescription("Current investment value", summary.currentValueMinor, currency, state.walletBalancesVisible),
+                    valueContentDescription = protectedMoneyDescription(UiStr.s(R.string.ui_c48f352041), summary.currentValueMinor, currency, state.walletBalancesVisible),
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 MizaniStatCard(
                     label = stringResource(R.string.ui_5c2db3060d),
                     value = protectedMoney(summary.gainLossMinor, currency, state.walletBalancesVisible),
                     labelRowMinHeight = 48.dp,
-                    valueContentDescription = protectedMoneyDescription("Investment gain or loss", summary.gainLossMinor, currency, state.walletBalancesVisible),
+                    valueContentDescription = protectedMoneyDescription(UiStr.s(R.string.ui_d85c4a5aad), summary.gainLossMinor, currency, state.walletBalancesVisible),
                     accent = if (summary.gainLossMinor >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     infoTitle = stringResource(R.string.info_investment_gain_title),
                     infoBody = stringResource(R.string.info_investment_gain_body),
@@ -180,7 +181,7 @@ fun InvestmentsScreen(
                 Box(Modifier.fillMaxWidth().guideTarget("investments.records")) {
                     EmptyState(
                         title = stringResource(R.string.ui_bd028bb854),
-                        body = "Add a holding to record where it is placed and update its value over time.",
+                        body = UiStr.s(R.string.ui_e34d954fbf),
                         iconRes = R.drawable.ic_ph_wallet,
                         actionLabel = stringResource(R.string.ui_f2409dca38),
                         onAction = { error = null; editing = null; showDialog = true },
@@ -311,7 +312,7 @@ private fun InvestmentDialog(
 
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (initial == null) "Add investment" else "Edit investment") },
+        title = { Text(if (initial == null) "Add investment" else UiStr.s(R.string.ui_85a913198b)) },
         text = {
             Column(
                 modifier = Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState()),
@@ -394,7 +395,7 @@ private fun InvestmentDialog(
                             modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.size(Spacing.xs))
-                        Text(if (initial.archived) "Restore investment" else "Archive investment")
+                        Text(if (initial.archived) UiStr.s(R.string.ui_9e786944db) else UiStr.s(R.string.ui_b7986f8393))
                     }
                 }
             }
@@ -404,11 +405,11 @@ private fun InvestmentDialog(
                 val costBasis = if (initial != null && !balanceVisible) initial.costBasisMinor else MoneyFormat.parse(costBasisText, currency)
                 val currentValue = if (initial != null && !balanceVisible) initial.currentValueMinor else MoneyFormat.parse(currentValueText, currency)
                 when {
-                    name.isBlank() -> error = "Give this investment a name"
-                    provider.isBlank() -> error = "Enter where this investment is held"
-                    costBasis == null || costBasis <= 0L -> error = "Enter a cost basis greater than zero"
-                    currentValue == null || currentValue < 0L -> error = "Enter a current value"
-                    valuationDate.isAfter(LocalDate.now()) -> error = "Valuation date cannot be in the future"
+                    name.isBlank() -> error = UiStr.s(R.string.ui_ec90b2db48)
+                    provider.isBlank() -> error = UiStr.s(R.string.ui_e6cba2df7d)
+                    costBasis == null || costBasis <= 0L -> error = UiStr.s(R.string.ui_447978dba2)
+                    currentValue == null || currentValue < 0L -> error = UiStr.s(R.string.ui_2ac2aacceb)
+                    valuationDate.isAfter(LocalDate.now()) -> error = UiStr.s(R.string.ui_5da8c3969f)
                     else -> onSave(name, provider, assetType, costBasis, currentValue, valuationDate, note)
                 }
             }) { Text(if (initial == null) "Add" else "Save") }

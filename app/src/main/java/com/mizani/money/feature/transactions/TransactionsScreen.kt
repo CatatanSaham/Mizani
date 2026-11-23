@@ -1,5 +1,6 @@
 package com.mizani.money.feature.transactions
 
+import com.mizani.money.UiStr
 import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.horizontalScroll
@@ -74,9 +75,9 @@ import java.time.LocalDate
 private const val SEARCH_DEBOUNCE_MS = 120L
 
 private enum class DateFilter(val label: String) {
-    ALL("All time"),
-    THIS_MONTH("This month"),
-    LAST_MONTH("Last month"),
+    ALL(UiStr.s(R.string.ui_dbad49d891)),
+    THIS_MONTH(UiStr.s(R.string.ui_1b4785331d)),
+    LAST_MONTH(UiStr.s(R.string.ui_9cce45bf8d)),
     CUSTOM("Custom"),
 }
 
@@ -299,11 +300,11 @@ fun TransactionsScreen(
                 item {
                     Box(Modifier.fillMaxWidth()) {
                         EmptyState(
-                            title = if (snapshot.transactions.isEmpty()) "No transactions yet" else "No matching transactions",
+                            title = if (snapshot.transactions.isEmpty()) "No transactions yet" else UiStr.s(R.string.ui_084a31c5a6),
                             body = if (snapshot.transactions.isEmpty()) {
-                                "Add income or expenses to start tracking."
+                                UiStr.s(R.string.ui_883790cacd)
                             } else {
-                                "Try a different search, date range or filter."
+                                UiStr.s(R.string.ui_bf6fe816eb)
                             },
                             iconRes = R.drawable.ic_ph_receipt,
                             actionLabel = if (snapshot.transactions.isEmpty()) "Add transaction" else null,
@@ -475,18 +476,18 @@ private fun FilterPanel(
         Spacer(Modifier.height(Spacing.md))
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             MizaniPicker(
-                selectedText = walletId?.let { snapshot.walletName(it) } ?: "Any wallet",
+                selectedText = walletId?.let { snapshot.walletName(it) } ?: UiStr.s(R.string.ui_20d4670088),
                 options = snapshot.wallets.map { PickerOption(it.id, it.name) },
                 onSelect = { onWalletChange(it) },
-                noneLabel = "Any wallet",
+                noneLabel = UiStr.s(R.string.ui_20d4670088),
                 onSelectNone = { onWalletChange(null) },
                 modifier = Modifier.weight(1f),
             )
             MizaniPicker(
-                selectedText = categoryId?.let { snapshot.categoryName(it) } ?: "Any category",
+                selectedText = categoryId?.let { snapshot.categoryName(it) } ?: UiStr.s(R.string.ui_5f319de0e3),
                 options = snapshot.categories.map { PickerOption(it.id, it.name) },
                 onSelect = { onCategoryChange(it) },
-                noneLabel = "Any category",
+                noneLabel = UiStr.s(R.string.ui_5f319de0e3),
                 onSelectNone = { onCategoryChange(null) },
                 modifier = Modifier.weight(1f),
             )

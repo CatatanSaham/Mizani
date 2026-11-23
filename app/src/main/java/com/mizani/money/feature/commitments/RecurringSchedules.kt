@@ -1,5 +1,6 @@
 package com.mizani.money.feature.commitments
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
@@ -186,7 +187,7 @@ internal fun RecurringSchedulesPanel(
         }
 
         if (archived.isNotEmpty()) {
-            SectionHeader("Archived repeating items")
+            SectionHeader(UiStr.s(R.string.ui_3ed5e8ba25))
             archived.forEach { rule ->
                 RecurringScheduleCard(
                     rule = rule,
@@ -220,11 +221,11 @@ private fun RecurringScheduleCard(
     val overdue = date.isBefore(today)
     val isIncome = rule.type == RecurringType.INCOME
     val dueLabel = when {
-        date == today -> "Due today"
+        date == today -> UiStr.s(R.string.ui_11ea0f15f8)
         overdue -> "Overdue · ${DateText.relative(date, today)}"
         else -> "Next ${DateText.relative(date, today)}"
     }
-    val typeLabel = if (isIncome) "Expected income" else "Recurring bill"
+    val typeLabel = if (isIncome) "Expected income" else UiStr.s(R.string.ui_4671188196)
     val amountLabel = MoneyFormat.format(rule.amountMinor, currency)
     val categoryLabel = categoryName?.let { " · $it" }.orEmpty()
 
@@ -274,7 +275,7 @@ private fun RecurringScheduleCard(
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.size(Spacing.xs))
                 }
-                Text(if (isIncome) "Record income received" else "Record payment")
+                Text(if (isIncome) UiStr.s(R.string.ui_de427ed42c) else "Record payment")
             }
         }
         Row(
@@ -327,7 +328,7 @@ internal fun RecurringEditorDialog(
 
     MizaniAlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
-        title = { Text(if (initial == null) "Add repeating item" else "Edit repeating item") },
+        title = { Text(if (initial == null) "Add repeating item" else UiStr.s(R.string.ui_678214652b)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth().heightIn(max = 600.dp).verticalScroll(rememberScrollState()),
@@ -386,24 +387,24 @@ internal fun RecurringEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 MizaniPicker(
-                    selectedText = selectedCategory?.name ?: "No category",
+                    selectedText = selectedCategory?.name ?: UiStr.s(R.string.ui_fdc24c707e),
                     options = categories.map { PickerOption(it.id, it.name) },
                     onSelect = { categoryId = it; validationError = null },
-                    noneLabel = "No category",
+                    noneLabel = UiStr.s(R.string.ui_fdc24c707e),
                     onSelectNone = { categoryId = null; validationError = null },
                     searchable = categories.size > 6,
-                    searchHint = "Search categories",
+                    searchHint = UiStr.s(R.string.ui_259c54d92c),
                     fieldLabel = "Category",
                     modifier = Modifier.fillMaxWidth(),
                 )
                 MizaniPicker(
-                    selectedText = selectedWallet?.name ?: "No wallet chosen",
+                    selectedText = selectedWallet?.name ?: UiStr.s(R.string.ui_7a42f701a7),
                     options = wallets.map { PickerOption(it.id, it.name) },
                     onSelect = { walletId = it; validationError = null },
-                    noneLabel = "No wallet chosen",
+                    noneLabel = UiStr.s(R.string.ui_7a42f701a7),
                     onSelectNone = { walletId = null; validationError = null },
                     searchable = wallets.size > 6,
-                    searchHint = "Search wallets",
+                    searchHint = UiStr.s(R.string.ui_28f9876e55),
                     fieldLabel = "Wallet",
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -426,8 +427,8 @@ internal fun RecurringEditorDialog(
                 onClick = {
                     val parsedAmount = MoneyFormat.parse(amount, currency)
                     when {
-                        name.isBlank() -> validationError = "Enter a name for this repeating item."
-                        parsedAmount == null || parsedAmount <= 0L -> validationError = "Enter an amount greater than zero."
+                        name.isBlank() -> validationError = UiStr.s(R.string.ui_b9560bb35a)
+                        parsedAmount == null || parsedAmount <= 0L -> validationError = UiStr.s(R.string.ui_7a670b3aea)
                         else -> onSave(
                             RecurringDraft(
                                 name = name,
@@ -448,7 +449,7 @@ internal fun RecurringEditorDialog(
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.size(Spacing.xs))
                 }
-                Text(if (initial == null) "Save repeating item" else "Save changes")
+                Text(if (initial == null) UiStr.s(R.string.ui_f34dff62a8) else UiStr.s(R.string.ui_179359b39e))
             }
         },
         dismissButton = { TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.ui_77dfd2135f)) } },

@@ -90,8 +90,8 @@ fun AboutScreen(
                 when (val result = withContext(Dispatchers.IO) {
                     updateRepository.checkForUpdate(BuildConfig.VERSION_CODE)
                 }) {
-                    UpdateCheckResult.NoReleases -> updateMessage = "No release is available yet."
-                    UpdateCheckResult.UpToDate -> updateMessage = "You’re up to date."
+                    UpdateCheckResult.NoReleases -> updateMessage = UiStr.s(R.string.ui_02af9721ff)
+                    UpdateCheckResult.UpToDate -> updateMessage = UiStr.s(R.string.ui_af04d57ab2)
                     is UpdateCheckResult.Available -> {
                         updateMessage = "Version ${result.release.versionName} is available."
                         releasePageUrl = result.release.pageUrl
@@ -102,7 +102,7 @@ fun AboutScreen(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
-                updateMessage = "Couldn’t check for updates. Try again later."
+                updateMessage = UiStr.s(R.string.ui_56b5f3704e)
             } finally {
                 isCheckingForUpdate = false
             }
@@ -114,7 +114,7 @@ fun AboutScreen(
         try {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (_: ActivityNotFoundException) {
-            updateMessage = "No browser is available to open the release."
+            updateMessage = UiStr.s(R.string.ui_25db89dad9)
         }
     }
 
@@ -123,7 +123,7 @@ fun AboutScreen(
         try {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(playListingUrl)))
         } catch (_: ActivityNotFoundException) {
-            updateMessage = "No browser is available to open the Play Store listing."
+            updateMessage = UiStr.s(R.string.ui_33d3b147ee)
         }
     }
 
@@ -143,7 +143,7 @@ fun AboutScreen(
             MizaniSectionCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.Download,
-                    title = if (installedFromPlay) "App updates" else "Check for updates",
+                    title = if (installedFromPlay) UiStr.s(R.string.ui_16213f85d7) else UiStr.s(R.string.ui_736b9062b3),
                     modifier = if (installedFromPlay) {
                         Modifier.semantics {
                             contentDescription = UiStr.s(R.string.ui_2651cd315e)
@@ -153,7 +153,7 @@ fun AboutScreen(
                     },
                     subtitle = when {
                         installedFromPlay -> "Installed from Google Play · build ${BuildConfig.VERSION_CODE}. Play checks when online and prompts you when an update is ready."
-                        isCheckingForUpdate -> "Checking for a new version…"
+                        isCheckingForUpdate -> UiStr.s(R.string.ui_1ae91be264)
                         else -> "Sideloaded build ${BuildConfig.VERSION_CODE}. Play updates require a Play-installed copy; use the official release check below."
                     },
                     onClick = when {

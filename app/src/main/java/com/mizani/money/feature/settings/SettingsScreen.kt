@@ -370,7 +370,7 @@ fun SettingsScreen(
                     message = UiStr.s(R.string.ui_550302309f)
                     error = null
                 }.onFailure {
-                    error = it.message ?: "Could not write the CSV"
+                    error = it.message ?: UiStr.s(R.string.ui_22fee5f34c)
                 }
             }
         }
@@ -385,13 +385,13 @@ fun SettingsScreen(
                     withContext(Dispatchers.IO) {
                         context.contentResolver.openOutputStream(uri, "w")?.use { output ->
                             vm.exporter.writeExcel(output)
-                        } ?: throw IOException("Could not open the selected file for writing")
+                        } ?: throw IOException(UiStr.s(R.string.ui_b6e587f84b))
                     }
                 }.onSuccess {
                     message = UiStr.s(R.string.ui_56c4e5c4bd)
                     error = null
                 }.onFailure {
-                    error = it.message ?: "Could not create the Excel workbook"
+                    error = it.message ?: UiStr.s(R.string.ui_c965a722ca)
                 }
             }
         }
@@ -413,7 +413,7 @@ fun SettingsScreen(
                 message = UiStr.s(R.string.ui_19d4048ffb)
                 try {
                     runCatching {
-                        if (passphrase.isBlank()) throw IOException("The passphrase was cleared. Please try again.")
+                        if (passphrase.isBlank()) throw IOException(UiStr.s(R.string.ui_0b8496936b))
                         val bytes = vm.exporter.buildBackup(passphrase)
                         writeBytes(context, uri, bytes)
                     }.onSuccess {
@@ -421,7 +421,7 @@ fun SettingsScreen(
                         error = null
                     }.onFailure {
                         message = null
-                        error = it.message ?: "Could not create the backup"
+                        error = it.message ?: UiStr.s(R.string.ui_15d13a3ec3)
                     }
                 } finally {
                     creatingBackup = false
@@ -438,7 +438,7 @@ fun SettingsScreen(
                 runCatching {
                     withContext(Dispatchers.IO) {
                         context.contentResolver.openInputStream(uri)?.use { BackupFileReader.read(it) }
-                            ?: throw IOException("Could not open the selected file")
+                            ?: throw IOException(UiStr.s(R.string.ui_91fa71198c))
                     }
                 }.onSuccess { bytes ->
                     pendingRestoreBytes = bytes
@@ -447,7 +447,7 @@ fun SettingsScreen(
                     error = null
                 }.onFailure {
                     discardPendingRestore()
-                    error = it.message ?: "Could not read the selected file"
+                    error = it.message ?: UiStr.s(R.string.ui_be443a8c42)
                 }
             }
         }
@@ -475,8 +475,8 @@ fun SettingsScreen(
             text = {
                 Text(
                     "A 6-digit app PIN is required to confirm exports and encrypted backup creation. " +
-                        "Setting one up also turns on app lock when you reopen Mizani. " +
-                        "After setup, choose the action again and confirm with your PIN or enabled biometrics.",
+                        UiStr.s(R.string.ui_05987f5b3a) +
+                        UiStr.s(R.string.ui_d1796e8e12),
                 )
             },
             confirmButton = {
@@ -506,7 +506,7 @@ fun SettingsScreen(
                         .onSuccess {
                             showPinSetup = false
                             message = if (settingUpPinForSensitiveAction) {
-                                "PIN set up. Choose the export or backup again and confirm your identity."
+                                UiStr.s(R.string.ui_297cf93243)
                             } else {
                                 "App lock is on."
                             }
@@ -518,7 +518,7 @@ fun SettingsScreen(
                             // message user-safe (no raw exception details).
                             showPinSetup = false
                             settingUpPinForSensitiveAction = false
-                            error = "App lock could not be turned on. Your data is unchanged — try again."
+                            error = UiStr.s(R.string.ui_543e0139f7)
                         }
                 }
             },
@@ -544,7 +544,7 @@ fun SettingsScreen(
                     } else if (vm.settingsRepository.pinBackoffRemainingMs() > 0L) {
                         error = PIN_RETRY_MESSAGE
                     } else {
-                        error = "Incorrect PIN"
+                        error = UiStr.s(R.string.ui_2de1d18c42)
                     }
                 }
             },
@@ -562,7 +562,7 @@ fun SettingsScreen(
                     when {
                         ok -> showPinSetup = true
                         vm.settingsRepository.pinBackoffRemainingMs() > 0L -> error = PIN_RETRY_MESSAGE
-                        else -> error = "Incorrect PIN"
+                        else -> error = UiStr.s(R.string.ui_2de1d18c42)
                     }
                 }
             },
@@ -582,7 +582,7 @@ fun SettingsScreen(
                             message = UiStr.s(R.string.ui_86ece351bb)
                             error = null
                         }
-                        .onFailure { error = it.message ?: "Could not update your region. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_8b66c22d62) }
                 }
             },
         )
@@ -633,8 +633,8 @@ fun SettingsScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(
                         "Encrypted with a key derived from this passphrase. " +
-                            "A memorable phrase of 12 or more characters is easier to remember. " +
-                            "There is no recovery if you forget it.",
+                            UiStr.s(R.string.ui_92782d303e) +
+                            UiStr.s(R.string.ui_d1b2b64870),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -664,8 +664,8 @@ fun SettingsScreen(
             confirmButton = {
                 TextButton(onClick = {
                     when {
-                        backupPassphrase.length < 12 -> error = "Use at least 12 characters"
-                        backupPassphrase != backupPassphraseConfirm -> error = "Passphrases do not match"
+                        backupPassphrase.length < 12 -> error = UiStr.s(R.string.ui_08280f3ecf)
+                        backupPassphrase != backupPassphraseConfirm -> error = UiStr.s(R.string.ui_42a0ba8299)
                         else -> {
                             error = null
                             pendingBackupPassphrase = backupPassphrase
@@ -714,7 +714,7 @@ fun SettingsScreen(
                         val bytes = pendingRestoreBytes
                         val passphrase = restorePassphrase
                         if (bytes == null) {
-                            error = "Choose a backup file first"
+                            error = UiStr.s(R.string.ui_87cc1aedf5)
                         } else {
                             checkingBackup = true
                             scope.launch {
@@ -730,7 +730,7 @@ fun SettingsScreen(
                                     throw cancelled
                                 } catch (failure: Exception) {
                                     if (showRestorePassphrase) {
-                                        error = failure.message ?: "Could not read this backup"
+                                        error = failure.message ?: UiStr.s(R.string.ui_779200833c)
                                     }
                                 } finally {
                                     checkingBackup = false
@@ -739,7 +739,7 @@ fun SettingsScreen(
                         }
                     }
                 }, enabled = !checkingBackup) {
-                    Text(if (checkingBackup) "Checking…" else "Check backup")
+                    Text(if (checkingBackup) "Checking…" else UiStr.s(R.string.ui_264295dbe6))
                 }
             },
             dismissButton = {
@@ -772,7 +772,7 @@ fun SettingsScreen(
                     Spacer(Modifier.height(Spacing.sm))
                     Text(
                         "This replaces every wallet, transaction, and other saved record on this phone. " +
-                            "Create a backup first if you want to keep your current data.",
+                            UiStr.s(R.string.ui_211351b86c),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -796,12 +796,12 @@ fun SettingsScreen(
                                         vm.setCountry(workspace.countryCode, workspace.currencyCode)
                                     }
                                 } catch (failure: Exception) {
-                                    error = "Backup restored, but settings could not refresh. Restart the app to reload them."
+                                    error = UiStr.s(R.string.ui_d283566087)
                                 }
                             } catch (cancelled: CancellationException) {
                                 throw cancelled
                             } catch (failure: Exception) {
-                                error = failure.message ?: "Could not restore this backup"
+                                error = failure.message ?: UiStr.s(R.string.ui_10b120a7d0)
                                 discardPendingRestore()
                             } finally {
                                 restoringBackup = false
@@ -809,7 +809,7 @@ fun SettingsScreen(
                         }
                     }
                 }, enabled = !restoringBackup) {
-                    Text(if (restoringBackup) "Restoring…" else "Restore backup")
+                    Text(if (restoringBackup) "Restoring…" else UiStr.s(R.string.ui_a65eaa8807))
                 }
             },
             dismissButton = {
@@ -821,8 +821,8 @@ fun SettingsScreen(
     if (showDeleteConfirm) {
         MizaniConfirmDialog(
             title = UiStr.s(R.string.ui_87bf3ef2aa),
-            body = "This deletes all wallets, transactions, and other saved records on this phone. Without a backup, you cannot restore them. App lock and settings also reset.",
-            confirmLabel = "Delete everything",
+            body = UiStr.s(R.string.ui_441d2280db),
+            confirmLabel = UiStr.s(R.string.ui_554393a215),
             destructive = true,
             onConfirm = {
                 scope.launch {
@@ -835,7 +835,7 @@ fun SettingsScreen(
                         .onFailure {
                             // Close so the failure banner is visible instead of hidden behind the dialog.
                             showDeleteConfirm = false
-                            error = it.message ?: "Could not delete local data. Nothing was removed."
+                            error = it.message ?: UiStr.s(R.string.ui_d26bf7d2f0)
                         }
                 }
             },
@@ -888,8 +888,8 @@ fun SettingsScreen(
                     MizaniSectionDivider()
                     MizaniInfoRow(
                         icon = Icons.Rounded.Backup,
-                        title = if (creatingBackup) "Creating encrypted backup…" else "Create encrypted backup",
-                        subtitle = if (creatingBackup) "Keep Mizani open while the backup is saved" else "Protect the file with a passphrase",
+                        title = if (creatingBackup) "Creating encrypted backup…" else UiStr.s(R.string.ui_56c337132e),
+                        subtitle = if (creatingBackup) UiStr.s(R.string.ui_b3cbd71d50) else UiStr.s(R.string.ui_bfe0641082),
                         onClick = {
                             if (!creatingBackup) requestSensitiveAction(SensitiveDataAction.ENCRYPTED_BACKUP)
                         },
@@ -1112,7 +1112,7 @@ fun SettingsScreen(
                 MizaniInfoRow(
                     icon = Icons.Rounded.Lock,
                     title = UiStr.s(R.string.ui_a34fa2ead1),
-                    subtitle = if (settings.lockEnabled) "On · 6-digit PIN" else "Off",
+                    subtitle = if (settings.lockEnabled) UiStr.s(R.string.ui_f5e1958913) else "Off",
                 )
                 if (settings.hasPin) {
                     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
@@ -1657,7 +1657,7 @@ private suspend fun writeBytes(context: Context, uri: Uri, bytes: ByteArray) {
             context.contentResolver.openOutputStream(uri, "w")?.use { output ->
                 output.write(bytes)
                 output.flush()
-            } ?: throw IOException("Could not open the selected file for writing")
+            } ?: throw IOException(UiStr.s(R.string.ui_b6e587f84b))
         }
     } finally {
         // The helper consumes a caller-owned buffer so clear both encrypted backups and CSV copies.

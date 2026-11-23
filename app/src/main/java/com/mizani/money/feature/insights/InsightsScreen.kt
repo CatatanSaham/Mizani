@@ -1,5 +1,6 @@
 package com.mizani.money.feature.insights
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -126,7 +127,7 @@ fun InsightsScreen(
             )
             EmptyState(
                 title = stringResource(R.string.ui_b2b7769984),
-                body = "Some saved entries exceed the supported balance range. Review Activity and edit or delete an entry before relying on these insights.",
+                body = UiStr.s(R.string.ui_61c5287f0a),
                 icon = Icons.Rounded.BarChart,
                 actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
@@ -143,7 +144,7 @@ fun InsightsScreen(
             )
             EmptyState(
                 title = stringResource(R.string.ui_2b4ba9f259),
-                body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
+                body = UiStr.s(R.string.ui_baac56c7ed),
                 icon = Icons.Rounded.BarChart,
                 actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
@@ -152,7 +153,7 @@ fun InsightsScreen(
         return
     }
 
-    // Secondary metrics stay behind a "More detail" toggle. rememberSaveable keeps the
+    // Secondary metrics stay behind a UiStr.s(R.string.ui_d62219189f) toggle. rememberSaveable keeps the
     // choice across scrolling, tab switches and process death within the screen session.
     var showMoreMetrics by rememberSaveable { mutableStateOf(false) }
 
@@ -190,7 +191,7 @@ fun InsightsScreen(
             .map { (key, list) ->
                 val label = snapshot.incomeSources.firstOrNull { it.id == key }?.name
                     ?: snapshot.categories.firstOrNull { it.id == key }?.name
-                    ?: "Other income"
+                    ?: UiStr.s(R.string.ui_9eb09b3e0a)
                 label to list.sumOf { it.amountMinor }
             }
             .sortedByDescending { it.second }
@@ -273,7 +274,7 @@ fun InsightsScreen(
                             ) {
                                 EmptyState(
                                     title = stringResource(R.string.ui_494bb679a0),
-                                    body = "Add income or expenses to see your cash flow and analysis.",
+                                    body = UiStr.s(R.string.ui_b1b9f24842),
                                     icon = Icons.Rounded.BarChart,
                                     illustrationAsset = "financial_data_cuate.svg",
                                 )
@@ -363,7 +364,7 @@ fun InsightsScreen(
                         onClick = { showMoreMetrics = !showMoreMetrics },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(if (showMoreMetrics) "Show less detail" else "More detail")
+                        Text(if (showMoreMetrics) UiStr.s(R.string.ui_0e8345784f) else UiStr.s(R.string.ui_d62219189f))
                     }
 
                     if (showMoreMetrics) {
@@ -591,7 +592,7 @@ private fun IncomeTrendsSection(
     MizaniCard(modifier = Modifier.fillMaxWidth()) {
         Text(
             metrics.incomeVariability?.let { "${it.monthsWithIncome} months with income" }
-                ?: "Record income to build a monthly trend",
+                ?: UiStr.s(R.string.ui_4d54a22c10),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -600,9 +601,9 @@ private fun IncomeTrendsSection(
         if (variability == null) {
             Text(
                 if (metrics.incomeMinor > 0) {
-                    "Keep recording income across months to compare your income history."
+                    UiStr.s(R.string.ui_8873722f82)
                 } else {
-                    "Record income to see your history."
+                    UiStr.s(R.string.ui_3d076e53fd)
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -634,7 +635,7 @@ private fun IncomeTrendsSection(
 @Composable
 private fun WalletContent(metrics: DashboardMetrics, currency: Currency) {
     Row {
-        MetricValue("Total tracked", MoneyFormat.format(metrics.walletTotalMinor, currency), MaterialTheme.colorScheme.onSurface, Modifier.weight(1f))
+        MetricValue(UiStr.s(R.string.ui_d29e4801bd), MoneyFormat.format(metrics.walletTotalMinor, currency), MaterialTheme.colorScheme.onSurface, Modifier.weight(1f))
         MetricValue("Liquid", MoneyFormat.format(metrics.walletLiquidMinor, currency), MaterialTheme.colorScheme.primary, Modifier.weight(1f))
     }
     Spacer(Modifier.height(Spacing.sm))
@@ -669,9 +670,9 @@ private fun FeesContent(
     currency: Currency,
 ) {
     Row {
-        MetricValue("This month", MoneyFormat.format(feeNow, currency), MaterialTheme.colorScheme.onSurface, Modifier.weight(1f))
+        MetricValue(UiStr.s(R.string.ui_1b4785331d), MoneyFormat.format(feeNow, currency), MaterialTheme.colorScheme.onSurface, Modifier.weight(1f))
         MetricValue(
-            "Last month",
+            UiStr.s(R.string.ui_9cce45bf8d),
             MoneyFormat.format(feeBefore, currency),
             MaterialTheme.colorScheme.onSurfaceVariant,
             Modifier.weight(1f),
@@ -682,11 +683,11 @@ private fun FeesContent(
         if (feeBefore > 0) {
             if (feeNow > feeBefore) "Up ${MoneyFormat.format(feeNow - feeBefore, currency)} from last month."
             else if (feeNow < feeBefore) "Down ${MoneyFormat.format(feeBefore - feeNow, currency)} from last month."
-            else "The same as last month."
+            else UiStr.s(R.string.ui_df174f7126)
         } else if (feeNow > 0) {
-            "No fees were recorded last month, so no percentage change is shown."
+            UiStr.s(R.string.ui_f2f39acb25)
         } else {
-            "No fees recorded this month. Add the fee separately when a provider charges you."
+            UiStr.s(R.string.ui_a514552920)
         },
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -763,7 +764,7 @@ private fun MoneyOutlookCard(
                 daysCovered = outlook.daysCovered,
                 visible = state.walletBalancesVisible,
                 basis = if (outlook.usesDailyTarget) {
-                    "Using your daily target"
+                    UiStr.s(R.string.ui_9662867f91)
                 } else {
                     "Based on recorded spending over ${outlook.observedDays} days"
                 },
@@ -789,7 +790,7 @@ private fun MoneyOutlookCard(
         )
         if (dailyCost != null) {
             OutlookAmountRow(
-                label = if (outlook.usesDailyTarget) "Daily target" else "Average per day",
+                label = if (outlook.usesDailyTarget) UiStr.s(R.string.ui_b031e71a97) else UiStr.s(R.string.ui_cfe24c7172),
                 amountMinor = dailyCost,
                 currency = currency,
                 visible = outlook.usesDailyTarget || state.walletBalancesVisible,
@@ -805,7 +806,7 @@ private fun MoneyOutlookCard(
         }
         if (outlook.daysCovered != null && outlook.dailyTargetMinor != null) {
             TextButton(onClick = onEditTarget) {
-                Text(if (outlook.usesDailyTarget) "Edit daily target" else "Edit fallback target")
+                Text(if (outlook.usesDailyTarget) UiStr.s(R.string.ui_a63dc589da) else UiStr.s(R.string.ui_358b63af7c))
             }
         }
     }
@@ -831,7 +832,7 @@ private fun OutlookEstimatePanel(daysCovered: Long, visible: Boolean, basis: Str
                     contentDescription = if (visible) {
                         "Estimated coverage $coverageText"
                     } else {
-                        "Estimated coverage hidden"
+                        UiStr.s(R.string.ui_086b087473)
                     }
                 },
                 style = MaterialTheme.typography.headlineMedium,
@@ -842,17 +843,17 @@ private fun OutlookEstimatePanel(daysCovered: Long, visible: Boolean, basis: Str
 }
 
 private fun coverageLabel(daysCovered: Long): String = when (daysCovered) {
-    0L -> "Less than a day"
-    1L -> "About 1 day"
+    0L -> UiStr.s(R.string.ui_f809c65e3b)
+    1L -> UiStr.s(R.string.ui_164932e668)
     else -> "About $daysCovered days"
 }
 
 @Composable
 private fun OutlookSetupPanel(observedDays: Int, onEditTarget: () -> Unit) {
     val historyGuidance = if (observedDays >= 7) {
-        "A history estimate needs recorded spending. Set a daily target to see an estimate now."
+        UiStr.s(R.string.ui_5b616012fa)
     } else {
-        "A history estimate needs records spanning 7 days and some spending. Set a daily target to see an estimate now."
+        UiStr.s(R.string.ui_25d4871649)
     }
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -981,13 +982,13 @@ private fun DailyTargetDialog(
                 onClick = {
                     val target = if (amount.isBlank()) null else MoneyFormat.parse(amount, currency)
                     if (amount.isNotBlank() && (target == null || target <= 0L)) {
-                        error = "Enter an amount greater than zero."
+                        error = UiStr.s(R.string.ui_7a670b3aea)
                     } else {
                         saving = true
                         scope.launch {
                             runCatching { vm.finance.setOutlookDailyTarget(target) }
                                 .onSuccess { onDismiss() }
-                                .onFailure { error = it.message ?: "Could not save the target." }
+                                .onFailure { error = it.message ?: UiStr.s(R.string.ui_67319d803a) }
                             saving = false
                         }
                     }
@@ -1219,11 +1220,11 @@ private fun HeroComparison(
         Text(
             when {
                 hasIncomePrevious && hasExpensePrevious ->
-                    "Income and net spending are both compared with recorded prior-period data."
+                    UiStr.s(R.string.ui_05f265020e)
                 hasIncomePrevious ->
-                    "Income has a recorded prior value; net spending has no recorded prior value."
+                    UiStr.s(R.string.ui_7807b20667)
                 else ->
-                    "Net spending has a recorded prior value; income has no recorded prior value."
+                    UiStr.s(R.string.ui_94ba123e49)
             },
             style = MaterialTheme.typography.labelSmall,
             color = Color.White,
@@ -1292,7 +1293,7 @@ private fun VariabilityContent(variability: IncomeVariability, currency: Currenc
     }
     Spacer(Modifier.height(Spacing.sm))
     Text(
-        variability.daysSinceLastIncome?.let { "Last recorded income: $it days ago." } ?: "No income recorded yet.",
+        variability.daysSinceLastIncome?.let { "Last recorded income: $it days ago." } ?: UiStr.s(R.string.ui_7c5fcc1104),
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )

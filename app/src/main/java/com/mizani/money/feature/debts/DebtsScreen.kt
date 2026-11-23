@@ -1,5 +1,6 @@
 package com.mizani.money.feature.debts
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
@@ -122,14 +123,14 @@ fun DebtsScreen(
                         showDebtDialog = false
                         editing = null
                         error = null
-                    }.onFailure { error = it.message ?: "Could not save this debt. Try again." }
+                    }.onFailure { error = it.message ?: UiStr.s(R.string.ui_3f2a26e2bb) }
                 }
             },
             onArchive = { debt, archivedValue ->
                 scope.launch {
                     runCatching { vm.finance.setDebtArchived(debt.id, archivedValue) }
                         .onSuccess { showDebtDialog = false; editing = null; error = null }
-                        .onFailure { error = it.message ?: "Could not update this debt. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_d767d42961) }
                 }
             },
         )
@@ -147,7 +148,7 @@ fun DebtsScreen(
                 scope.launch {
                     runCatching { vm.finance.recordDebtPayment(debt.id, walletId, amount, date) }
                         .onSuccess { paymentDebt = null; error = null }
-                        .onFailure { error = it.message ?: "Could not record this payment. Try again." }
+                        .onFailure { error = it.message ?: UiStr.s(R.string.ui_47e2f91480) }
                 }
             },
         )
@@ -184,14 +185,14 @@ fun DebtsScreen(
                 MizaniStatCard(
                     label = stringResource(R.string.ui_e8a92f018d),
                     value = protectedMoney(totalOwed, currency, state.walletBalancesVisible),
-                    valueContentDescription = protectedMoneyDescription("Total debt", totalOwed, currency, state.walletBalancesVisible),
+                    valueContentDescription = protectedMoneyDescription(UiStr.s(R.string.ui_6090f0c89a), totalOwed, currency, state.walletBalancesVisible),
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 MizaniStatCard(
                     label = stringResource(R.string.ui_ce1f14355f),
                     value = protectedMoney(plannedPayments, currency, state.walletBalancesVisible),
                     caption = "per payment schedule",
-                    valueContentDescription = protectedMoneyDescription("Planned debt payments", plannedPayments, currency, state.walletBalancesVisible),
+                    valueContentDescription = protectedMoneyDescription(UiStr.s(R.string.ui_306a314c92), plannedPayments, currency, state.walletBalancesVisible),
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
@@ -204,7 +205,7 @@ fun DebtsScreen(
                 Box(Modifier.fillMaxWidth().guideTarget("debts.records")) {
                     EmptyState(
                         title = stringResource(R.string.ui_7f14cec22e),
-                        body = "If you owe money, add it here and record payments as you make them.",
+                        body = UiStr.s(R.string.ui_c694033df5),
                         icon = Icons.Rounded.AccountBalance,
                         actionLabel = stringResource(R.string.ui_031b82131b),
                         onAction = { editing = null; error = null; showDebtDialog = true },
@@ -289,14 +290,14 @@ private fun DebtCard(
             visible = balanceVisible,
             style = MaterialTheme.typography.headlineSmall,
             color = if (debt.currentBalanceMinor > 0L) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            amountLabel = "Current debt balance",
+            amountLabel = UiStr.s(R.string.ui_11e2ede254),
         )
         if (progress != null) {
             Spacer(Modifier.height(Spacing.md))
             ProgressBar(fraction = progress)
             Spacer(Modifier.height(Spacing.xs))
             Text(
-                if (balanceVisible) "${(progress * 100).roundToInt()}% of the original balance paid" else "Payment progress hidden",
+                if (balanceVisible) "${(progress * 100).roundToInt()}% of the original balance paid" else UiStr.s(R.string.ui_cda1e59753),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -310,7 +311,7 @@ private fun DebtCard(
             )
             DebtDetail(
                 label = stringResource(R.string.ui_7649b3bea0),
-                value = debt.nextDueEpochDay?.let { DateText.short(LocalDate.ofEpochDay(it)) } ?: "Not set",
+                value = debt.nextDueEpochDay?.let { DateText.short(LocalDate.ofEpochDay(it)) } ?: UiStr.s(R.string.ui_93039e609d),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -378,7 +379,7 @@ private fun DebtDialog(
 
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (initial == null) "Add debt" else "Edit debt") },
+        title = { Text(if (initial == null) "Add debt" else UiStr.s(R.string.ui_a85afcbbb9)) },
         text = {
             Column(
                 modifier = Modifier.heightIn(max = 600.dp).verticalScroll(rememberScrollState()),
@@ -477,7 +478,7 @@ private fun DebtDialog(
                             modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(Spacing.xs))
-                        Text(if (initial.archived) "Restore debt" else "Archive debt")
+                        Text(if (initial.archived) UiStr.s(R.string.ui_b4e931cb84) else UiStr.s(R.string.ui_5aeffa886c))
                     }
                 }
             }
@@ -495,15 +496,15 @@ private fun DebtDialog(
                 }
                 val interest = interestText.replace(',', '.').takeIf { it.isNotBlank() }?.toDoubleOrNull()
                 when {
-                    name.isBlank() -> validationError = "Enter a name for this debt."
-                    balance == null || balance <= 0L -> validationError = "Enter a current balance greater than zero."
-                    original == null && originalText.isNotBlank() -> validationError = "Enter a valid original amount."
-                    original != null && original < 0L -> validationError = "Original amount cannot be negative."
-                    payment == null || payment < 0L -> validationError = "Enter a valid regular payment."
-                    interestText.isNotBlank() && (interest == null || interest < 0.0) -> validationError = "Enter a valid non-negative interest rate."
+                    name.isBlank() -> validationError = UiStr.s(R.string.ui_e11e4f58c6)
+                    balance == null || balance <= 0L -> validationError = UiStr.s(R.string.ui_744f6b6b4d)
+                    original == null && originalText.isNotBlank() -> validationError = UiStr.s(R.string.ui_bc58458b15)
+                    original != null && original < 0L -> validationError = UiStr.s(R.string.ui_d852b94284)
+                    payment == null || payment < 0L -> validationError = UiStr.s(R.string.ui_7d4b1997a7)
+                    interestText.isNotBlank() && (interest == null || interest < 0.0) -> validationError = UiStr.s(R.string.ui_1d9b7dc409)
                     else -> onSave(name, lender, balance, original, payment ?: 0L, if (hasDueDate) dueDate else null, interest, note)
                 }
-            }) { Text(if (initial == null) "Add debt" else "Save changes") }
+            }) { Text(if (initial == null) "Add debt" else UiStr.s(R.string.ui_179359b39e)) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
@@ -544,11 +545,11 @@ private fun DebtPaymentDialog(
                     currency = currency,
                 )
                 MizaniPicker(
-                    selectedText = wallet?.name ?: "Choose a wallet",
+                    selectedText = wallet?.name ?: UiStr.s(R.string.ui_880e2bf59e),
                     options = wallets.map { PickerOption(it.id, it.name) },
                     onSelect = { walletId = it; validationError = null },
                     enabled = wallets.isNotEmpty(),
-                    fieldLabel = "Payment wallet",
+                    fieldLabel = UiStr.s(R.string.ui_8b478bacb4),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 DateField(
@@ -559,7 +560,7 @@ private fun DebtPaymentDialog(
                 )
                 Text(
                     if (balanceVisible) "Remaining before this payment: ${MoneyFormat.format(debt.currentBalanceMinor, currency)}."
-                    else "Debt balance is hidden while the app is locked.",
+                    else UiStr.s(R.string.ui_28b51aee0b),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -571,11 +572,11 @@ private fun DebtPaymentDialog(
             TextButton(onClick = {
                 val amount = MoneyFormat.parse(amountText, currency)
                 when {
-                    wallets.isEmpty() -> validationError = "Add a non-debt wallet before recording a payment."
-                    walletId == null -> validationError = "Choose the wallet used for this payment."
-                    amount == null || amount <= 0L -> validationError = "Enter a payment greater than zero."
-                    amount > debt.currentBalanceMinor -> validationError = "Payment cannot be greater than the current debt balance."
-                    date.isAfter(LocalDate.now()) -> validationError = "Payment date cannot be in the future."
+                    wallets.isEmpty() -> validationError = UiStr.s(R.string.ui_2bac785eff)
+                    walletId == null -> validationError = UiStr.s(R.string.ui_a36e7875bd)
+                    amount == null || amount <= 0L -> validationError = UiStr.s(R.string.ui_a849cee698)
+                    amount > debt.currentBalanceMinor -> validationError = UiStr.s(R.string.ui_466f7b35b9)
+                    date.isAfter(LocalDate.now()) -> validationError = UiStr.s(R.string.ui_aeaa1a2745)
                     else -> onSave(walletId!!, amount, date)
                 }
             }) {
