@@ -84,7 +84,7 @@ sealed interface PinAttemptResult {
 }
 
 /** User-safe message shown while the failed-PIN backoff is active. */
-const val PIN_RETRY_MESSAGE = UiStr.s(R.string.ui_f3f6c2ef26)
+val PIN_RETRY_MESSAGE = UiStr.s(R.string.ui_f3f6c2ef26)
 
 private sealed interface SettingsReadState {
     object Loading : SettingsReadState
