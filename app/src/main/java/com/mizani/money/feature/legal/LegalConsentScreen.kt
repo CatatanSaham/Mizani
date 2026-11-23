@@ -1,5 +1,7 @@
 package com.mizani.money.feature.legal
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -72,10 +74,10 @@ fun LegalConsentScreen(
                 modifier = Modifier.size(30.dp),
             )
             Spacer(Modifier.height(10.dp))
-            Text("Review terms and privacy", style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.ui_54193ce965), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
             Spacer(Modifier.height(8.dp))
             Text(
-                "Read both documents before continuing.",
+                stringResource(R.string.ui_90eef4b544),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -90,14 +92,14 @@ fun LegalConsentScreen(
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     LegalLinkRow(
                         icon = Icons.Rounded.Description,
-                        title = "Terms of Service",
-                        subtitle = "Your agreement for using Mizani",
+                        title = stringResource(R.string.ui_0c8a9a95e2),
+                        subtitle = stringResource(R.string.ui_a4ed4ccff8),
                         onClick = { openedDocument = LegalDocumentId.TERMS },
                     )
                     LegalLinkRow(
                         icon = Icons.Rounded.PrivacyTip,
-                        title = "Privacy Notice",
-                        subtitle = "What stays on your device and what leaves it",
+                        title = stringResource(R.string.ui_14862f7224),
+                        subtitle = stringResource(R.string.ui_e4a6978a9b),
                         onClick = { openedDocument = LegalDocumentId.PRIVACY },
                     )
                 }
@@ -105,7 +107,7 @@ fun LegalConsentScreen(
 
             Spacer(Modifier.height(16.dp))
             Text(
-                "Continuing means you agree to the Terms of Service and acknowledge the Privacy Notice.",
+                stringResource(R.string.ui_5426ca56ab),
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -121,7 +123,7 @@ fun LegalConsentScreen(
                     CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(10.dp))
                 }
-                Text("Agree and continue", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_b812e8fecc), fontWeight = FontWeight.SemiBold)
             }
             if (!error.isNullOrBlank()) {
                 Spacer(Modifier.height(8.dp))

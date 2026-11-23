@@ -109,9 +109,9 @@ internal fun RecurringSchedulesPanel(
                     modifier = Modifier.size(28.dp),
                 )
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    Text("Repeating money, made simple", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.ui_495eaef5d7), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "A schedule is a reminder and forecast. It never changes your balance until you record the actual payment or receipt.",
+                        stringResource(R.string.ui_c34def94c7),
                         style = MaterialTheme.typography.bodySmall.copy(lineHeight = 19.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -140,13 +140,13 @@ internal fun RecurringSchedulesPanel(
                 StorysetIllustration(
                     assetName = "financial_data_cuate.svg",
                     modifier = Modifier.fillMaxWidth().height(132.dp),
-                    contentDescription = "An illustration about planning and understanding money",
+                    contentDescription = stringResource(R.string.ui_2883a65735),
                 )
                 Spacer(Modifier.height(Spacing.sm))
-                Text("Nothing repeating yet", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.ui_a60ffab483), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
-                    "Add rent, data, school fees, subscriptions, salary or any other money movement that happens on a pattern.",
+                    stringResource(R.string.ui_b3623f5527),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -334,11 +334,11 @@ internal fun RecurringEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(Spacing.md),
             ) {
                 Text(
-                    "Use this for a pattern, not a transaction. Mizani changes the schedule after you record what actually happened.",
+                    stringResource(R.string.ui_5efed50e11),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Text("What repeats?", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.ui_896460d927), style = MaterialTheme.typography.labelLarge)
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     FilterChip(
                         selected = type == RecurringType.BILL,
@@ -364,7 +364,7 @@ internal fun RecurringEditorDialog(
                     onValueChange = { amount = it; validationError = null },
                     label = "Amount (${currency.code})",
                     currency = currency,
-                    supportingText = "Enter the usual amount; adjust it before recording if it changes.",
+                    supportingText = stringResource(R.string.ui_a01711343a),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
                 MizaniPicker(
@@ -375,12 +375,12 @@ internal fun RecurringEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    "After you record an occurrence, the next date advances by this interval. Monthly and yearly dates clamp to the last valid day of shorter months.",
+                    stringResource(R.string.ui_c236a15bab),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 DateField(
-                    label = "Next expected date",
+                    label = stringResource(R.string.ui_0e0cea0971),
                     date = nextDue,
                     onDateSelected = { nextDue = it; validationError = null },
                     modifier = Modifier.fillMaxWidth(),
@@ -408,7 +408,7 @@ internal fun RecurringEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    "Wallet is optional. If you leave it blank, Mizani uses the first active wallet when you record it.",
+                    stringResource(R.string.ui_c1e8d27db7),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

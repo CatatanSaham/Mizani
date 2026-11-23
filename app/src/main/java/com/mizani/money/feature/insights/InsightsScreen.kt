@@ -121,14 +121,14 @@ fun InsightsScreen(
     if (walletBalances == null) {
         Column(Modifier.fillMaxSize()) {
             MizaniTopBar(
-                title = "Insights",
+                title = stringResource(R.string.ui_b4510362a5),
                 actions = { GuideHelpAction("Insights", onOpenGuide) },
             )
             EmptyState(
-                title = "Balances need review",
+                title = stringResource(R.string.ui_b2b7769984),
                 body = "Some saved entries exceed the supported balance range. Review Activity and edit or delete an entry before relying on these insights.",
                 icon = Icons.Rounded.BarChart,
-                actionLabel = "Review Activity",
+                actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
             )
         }
@@ -138,14 +138,14 @@ fun InsightsScreen(
     if (dashboardState is DashboardMetricsState.InvalidLedgerTotals) {
         Column(Modifier.fillMaxSize()) {
             MizaniTopBar(
-                title = "Insights",
+                title = stringResource(R.string.ui_b4510362a5),
                 actions = { GuideHelpAction("Insights", onOpenGuide) },
             )
             EmptyState(
-                title = "Totals could not be calculated",
+                title = stringResource(R.string.ui_2b4ba9f259),
                 body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
                 icon = Icons.Rounded.BarChart,
-                actionLabel = "Review Activity",
+                actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
             )
         }
@@ -206,12 +206,12 @@ fun InsightsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Insights",
+            title = stringResource(R.string.ui_b4510362a5),
             subtitle = stringResource(R.string.insights_subtitle),
             actions = {
                 GuideHelpAction("Insights", onOpenGuide)
                 IconButton(onClick = onExportData) {
-                    Icon(Icons.Rounded.Download, contentDescription = "Export data")
+                    Icon(Icons.Rounded.Download, contentDescription = stringResource(R.string.ui_deadb4817c))
                 }
             },
         )
@@ -272,7 +272,7 @@ fun InsightsScreen(
                                     .guideTarget("insights.cashflow"),
                             ) {
                                 EmptyState(
-                                    title = "No transactions yet",
+                                    title = stringResource(R.string.ui_494bb679a0),
                                     body = "Add income or expenses to see your cash flow and analysis.",
                                     icon = Icons.Rounded.BarChart,
                                     illustrationAsset = "financial_data_cuate.svg",
@@ -367,22 +367,22 @@ fun InsightsScreen(
                     }
 
                     if (showMoreMetrics) {
-                        SectionHeader(title = "Advanced detail", accent = true)
+                        SectionHeader(title = stringResource(R.string.ui_7ea3fbce58), accent = true)
                         if (twoColumn) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(Spacing.lg),
                             ) {
                                 MetricCard(
-                                    title = "Wallets",
+                                    title = stringResource(R.string.ui_98d5a197e5),
                                     subtitle = "${current.walletBalances.size} active wallets",
                                     modifier = Modifier.weight(1f),
                                 ) {
                                     WalletContent(metrics = current, currency = currency)
                                 }
                                 MetricCard(
-                                    title = "Fees",
-                                    subtitle = "Fees on transactions and transfers",
+                                    title = stringResource(R.string.ui_72abbc9284),
+                                    subtitle = stringResource(R.string.ui_2127bdf4cc),
                                     modifier = Modifier.weight(1f),
                                 ) {
                                     FeesContent(
@@ -395,23 +395,23 @@ fun InsightsScreen(
                                 }
                             }
                             MetricCard(
-                                title = "Forecast",
-                                subtitle = "Estimate for this period",
+                                title = stringResource(R.string.ui_528bc4bc38),
+                                subtitle = stringResource(R.string.ui_8ff252f1d2),
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 ForecastContent(metrics = current, currency = currency)
                             }
                         } else {
                             MetricCard(
-                                title = "Wallets",
+                                title = stringResource(R.string.ui_98d5a197e5),
                                 subtitle = "${current.walletBalances.size} active wallets",
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 WalletContent(metrics = current, currency = currency)
                             }
                             MetricCard(
-                                title = "Fees",
-                                subtitle = "Fees on transactions and transfers",
+                                title = stringResource(R.string.ui_72abbc9284),
+                                subtitle = stringResource(R.string.ui_2127bdf4cc),
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 FeesContent(
@@ -423,8 +423,8 @@ fun InsightsScreen(
                                 )
                             }
                             MetricCard(
-                                title = "Forecast",
-                                subtitle = "Estimate for this period",
+                                title = stringResource(R.string.ui_528bc4bc38),
+                                subtitle = stringResource(R.string.ui_8ff252f1d2),
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 ForecastContent(metrics = current, currency = currency)
@@ -432,7 +432,7 @@ fun InsightsScreen(
                         }
                         if (current.incomeVariability == null && current.transactionCount == 0) {
                             Text(
-                                "Record more transactions to see your insights.",
+                                stringResource(R.string.ui_457b07405f),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -454,7 +454,7 @@ private fun OutlookSection(
     onSetupPin: () -> Unit,
     onEditTarget: () -> Unit,
 ) {
-    SectionHeader(title = "Money Outlook", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_d776d69a95), accent = true)
     Box(Modifier.fillMaxWidth().guideTarget("insights.outlook")) {
         MoneyOutlookCard(
             vm = vm,
@@ -469,7 +469,7 @@ private fun OutlookSection(
 @Composable
 private fun WhatChangedSection(insights: List<Insight>) {
     if (insights.isEmpty()) return
-    SectionHeader(title = "What changed", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_7e4b91991b), accent = true)
     insights.take(3).forEach { insight ->
         InsightCard(
             title = insight.title,
@@ -483,10 +483,10 @@ private fun WhatChangedSection(insights: List<Insight>) {
 
 @Composable
 private fun SpendingSection(metrics: DashboardMetrics, currency: Currency) {
-    SectionHeader(title = "Spending", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_456145bef7), accent = true)
     MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("insights.spending")) {
         Text(
-            "Spending by category",
+            stringResource(R.string.ui_d4aadf6b31),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -496,7 +496,7 @@ private fun SpendingSection(metrics: DashboardMetrics, currency: Currency) {
         val positiveSlices = metrics.categorySlices.filter { it.amountMinor > 0 }
         if (positiveSlices.isEmpty()) {
             Text(
-                "No net spending recorded in this period.",
+                stringResource(R.string.ui_b046786b39),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -539,10 +539,10 @@ private fun SpendingSection(metrics: DashboardMetrics, currency: Currency) {
 
 @Composable
 private fun CashFlowSection(monthly: List<MonthFlow>, currency: Currency) {
-    SectionHeader(title = "Six-month cash flow", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_41e395f23e), accent = true)
     MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("insights.cashflow")) {
         Text(
-            "Income versus expenses",
+            stringResource(R.string.ui_391585047c),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -559,7 +559,7 @@ private fun CashFlowSection(monthly: List<MonthFlow>, currency: Currency) {
         val monthsWithData = monthly.count { it.incomeMinor > 0 || it.expenseMinor > 0 }
         if (monthsWithData < 2) {
             Text(
-                "Add another month of records to see cash-flow trends.",
+                stringResource(R.string.ui_8bc3cf4685),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -587,7 +587,7 @@ private fun IncomeTrendsSection(
     currency: Currency,
     incomeSources: List<Pair<String, Long>>,
 ) {
-    SectionHeader(title = "Income trends", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_ac108ad1d1), accent = true)
     MizaniCard(modifier = Modifier.fillMaxWidth()) {
         Text(
             metrics.incomeVariability?.let { "${it.monthsWithIncome} months with income" }
@@ -612,7 +612,7 @@ private fun IncomeTrendsSection(
         }
         if (incomeSources.isNotEmpty()) {
             Spacer(Modifier.height(Spacing.md))
-            Text("This month by source", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.ui_799a927ce7), style = MaterialTheme.typography.labelLarge)
             val total = incomeSources.sumOf { it.second }.coerceAtLeast(1)
             incomeSources.take(5).forEach { (label, amount) ->
                 Row(
@@ -693,7 +693,7 @@ private fun FeesContent(
     )
     if (feeTransactions.isNotEmpty()) {
         Spacer(Modifier.height(Spacing.md))
-        Text("Largest fees this month", style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.ui_f5a8c0d100), style = MaterialTheme.typography.labelLarge)
         feeTransactions.take(4).forEach { transaction ->
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
@@ -720,7 +720,7 @@ private fun ForecastContent(metrics: DashboardMetrics, currency: Currency) {
     val forecast = metrics.forecastMinor
     if (forecast == null) {
         Text(
-            "Record more expenses to see your estimate.",
+            stringResource(R.string.ui_78e6ee69ad),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -730,7 +730,7 @@ private fun ForecastContent(metrics: DashboardMetrics, currency: Currency) {
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            "Your spending may finish around this amount.",
+            stringResource(R.string.ui_e935eb0b80),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -750,7 +750,7 @@ private fun MoneyOutlookCard(
     MizaniCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "See how long your money may last at your current daily spending.",
+                stringResource(R.string.ui_747dd080b4),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
@@ -776,13 +776,13 @@ private fun MoneyOutlookCard(
         }
         Spacer(Modifier.height(Spacing.md))
         OutlookAmountRow(
-            label = "Left after upcoming payments",
+            label = stringResource(R.string.ui_349f6648f9),
             amountMinor = outlook.spendableBalanceMinor,
             currency = currency,
             visible = state.walletBalancesVisible,
         )
         OutlookAmountRow(
-            label = "Due in the next 30 days",
+            label = stringResource(R.string.ui_f1efb7c2b7),
             amountMinor = outlook.reservedCommitmentsMinor,
             currency = currency,
             visible = state.walletBalancesVisible,
@@ -823,7 +823,7 @@ private fun OutlookEstimatePanel(daysCovered: Long, visible: Boolean, basis: Str
             modifier = Modifier.padding(Spacing.md),
             verticalArrangement = Arrangement.spacedBy(Spacing.xs),
         ) {
-            Text("Estimated coverage", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.ui_a1e85dd854), style = MaterialTheme.typography.labelLarge)
             val coverageText = if (visible) coverageLabel(daysCovered) else "••••••"
             Text(
                 coverageText,
@@ -864,7 +864,7 @@ private fun OutlookSetupPanel(observedDays: Int, onEditTarget: () -> Unit) {
             modifier = Modifier.padding(Spacing.md),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
-            Text("Start with a daily target", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.ui_0475e4dde0), style = MaterialTheme.typography.titleSmall)
             Text(historyGuidance, style = MaterialTheme.typography.bodySmall)
             Button(
                 onClick = onEditTarget,
@@ -895,12 +895,12 @@ private fun OutlookPaymentGap(
             verticalArrangement = Arrangement.spacedBy(Spacing.xs),
         ) {
             Text(
-                "Upcoming payments exceed money in your active wallets.",
+                stringResource(R.string.ui_07f148681c),
                 style = MaterialTheme.typography.bodySmall,
             )
             if (visible) {
                 OutlookAmountRow(
-                    label = "Gap to cover",
+                    label = stringResource(R.string.ui_f63dbf9a10),
                     amountMinor = amountMinor,
                     currency = currency,
                     visible = true,
@@ -1110,7 +1110,7 @@ private fun CashFlowHero(
 private fun HeroTitle(periodLabel: String) {
     Column {
         Text(
-            "Cash flow",
+            stringResource(R.string.ui_a94d50cfba),
             style = MaterialTheme.typography.labelMedium,
             color = Color.White,
         )
@@ -1167,7 +1167,7 @@ private fun HeroStatsRow(metrics: DashboardMetrics, currency: Currency) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         HeroStat(
-            label = "Income",
+            label = stringResource(R.string.ui_1c89b1f2aa),
             value = MoneyFormat.format(metrics.incomeMinor, currency),
             modifier = Modifier.weight(1f).padding(end = Spacing.lg),
         )
@@ -1178,7 +1178,7 @@ private fun HeroStatsRow(metrics: DashboardMetrics, currency: Currency) {
                 .background(Color.White.copy(alpha = 0.12f)),
         )
         HeroStat(
-            label = "Net spending",
+            label = stringResource(R.string.ui_1c1d0b217a),
             value = MoneyFormat.format(metrics.expenseMinor, currency),
             modifier = Modifier.weight(1f).padding(start = Spacing.lg),
         )
@@ -1201,7 +1201,7 @@ private fun HeroComparison(
             color = Color.White,
         )
         ComparisonLine(
-            label = "Income",
+            label = stringResource(R.string.ui_1c89b1f2aa),
             current = metrics.incomeMinor,
             previous = metrics.previousIncomeMinor,
             currency = currency,
@@ -1209,7 +1209,7 @@ private fun HeroComparison(
             showPercent = showPercentChange,
         )
         ComparisonLine(
-            label = "Net spending",
+            label = stringResource(R.string.ui_1c1d0b217a),
             current = metrics.expenseMinor,
             previous = metrics.previousExpenseMinor,
             currency = currency,
@@ -1231,7 +1231,7 @@ private fun HeroComparison(
         )
     } else {
         Text(
-            "No prior period with recorded activity.",
+            stringResource(R.string.ui_141d160314),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White,
             modifier = Modifier.padding(top = 2.dp),

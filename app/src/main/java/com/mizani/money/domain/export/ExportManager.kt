@@ -1,5 +1,7 @@
 package com.mizani.money.domain.export
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import com.mizani.money.core.model.BudgetPeriodType
 import com.mizani.money.core.model.CategoryType
@@ -128,29 +130,29 @@ class ExportManager(
                 name = "Overview",
                 headers = listOf("Field", "Value"),
                 rows = listOf(
-                    listOf(ExcelCell.Text("Workspace"), ExcelCell.Text(snapshot.workspace?.name ?: "My money")),
-                    listOf(ExcelCell.Text("Primary currency"), ExcelCell.Text(workspaceCurrency)),
-                    listOf(ExcelCell.Text("Exported on"), ExcelCell.Date(LocalDate.now())),
-                    listOf(ExcelCell.Text("Transactions"), ExcelCell.Number(snapshot.transactions.size.toString())),
-                    listOf(ExcelCell.Text("Recurring schedules"), ExcelCell.Number(snapshot.recurring.size.toString())),
-                    listOf(ExcelCell.Text("Wallets"), ExcelCell.Number(snapshot.wallets.size.toString())),
-                    listOf(ExcelCell.Text("Investments"), ExcelCell.Number(snapshot.activeInvestments.size.toString())),
-                    listOf(ExcelCell.Text("Budgets"), ExcelCell.Number(snapshot.budgets.size.toString())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_4ca0a75c2b)), ExcelCell.Text(snapshot.workspace?.name ?: "My money")),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_73076f0d94)), ExcelCell.Text(workspaceCurrency)),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_7c82f7ea41)), ExcelCell.Date(LocalDate.now())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_1e3281a962)), ExcelCell.Number(snapshot.transactions.size.toString())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_f018c94bab)), ExcelCell.Number(snapshot.recurring.size.toString())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_98d5a197e5)), ExcelCell.Number(snapshot.wallets.size.toString())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_5de64aff09)), ExcelCell.Number(snapshot.activeInvestments.size.toString())),
+                    listOf(ExcelCell.Text(stringResource(R.string.ui_c13c824248)), ExcelCell.Number(snapshot.budgets.size.toString())),
                     listOf(
-                        ExcelCell.Text("How to read this workbook"),
-                        ExcelCell.Text("Transactions are entries recorded in Mizani. Recurring schedules are forecasts; they do not affect balances until recorded."),
+                        ExcelCell.Text(stringResource(R.string.ui_c3d0718c59)),
+                        ExcelCell.Text(stringResource(R.string.ui_e1d55fa445)),
                     ),
                     listOf(
-                        ExcelCell.Text("Records included"),
-                        ExcelCell.Text("Archived records are included and marked in their sheets. Soft-deleted records remain in encrypted backups, not in this analysis workbook."),
+                        ExcelCell.Text(stringResource(R.string.ui_e68ea3ce3c)),
+                        ExcelCell.Text(stringResource(R.string.ui_2a68f39976)),
                     ),
                     listOf(
-                        ExcelCell.Text("File protection"),
-                        ExcelCell.Text("This workbook is not encrypted. Keep it in a private location."),
+                        ExcelCell.Text(stringResource(R.string.ui_9efd4c6b24)),
+                        ExcelCell.Text(stringResource(R.string.ui_0b353a30ec)),
                     ),
                     listOf(
-                        ExcelCell.Text("Long text"),
-                        ExcelCell.Text("Excel limits a cell to 32,767 characters. Longer text is truncated to fit."),
+                        ExcelCell.Text(stringResource(R.string.ui_862b905c96)),
+                        ExcelCell.Text(stringResource(R.string.ui_bec7d3f73f)),
                     ),
                 ),
             ),

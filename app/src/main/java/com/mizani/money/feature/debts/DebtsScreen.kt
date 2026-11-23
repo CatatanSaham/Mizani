@@ -155,7 +155,7 @@ fun DebtsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Debts",
+            title = stringResource(R.string.ui_787aab25f6),
             subtitle = "${active.size} active ${if (active.size == 1) "debt" else "debts"}",
             onBack = onBack,
             actions = {
@@ -165,16 +165,16 @@ fun DebtsScreen(
                     modifier = Modifier.guideTarget("debts.add"),
                     onClick = { editing = null; error = null; showDebtDialog = true },
                 ) {
-                    Icon(Icons.Rounded.Add, contentDescription = "Add debt")
+                    Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.ui_031b82131b))
                 }
             },
         )
         MizaniPageContent {
             MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("debts.summary")) {
-                Text("See what you owe and how it is changing.", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_7a54f49f71), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
-                    "Add a loan, mortgage or purchase on credit, then record each payment from the wallet you used. Payments become one normal expense in your ledger.",
+                    stringResource(R.string.ui_ac918a98a4),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -182,13 +182,13 @@ fun DebtsScreen(
 
             MizaniStatRow {
                 MizaniStatCard(
-                    label = "Total owed",
+                    label = stringResource(R.string.ui_e8a92f018d),
                     value = protectedMoney(totalOwed, currency, state.walletBalancesVisible),
                     valueContentDescription = protectedMoneyDescription("Total debt", totalOwed, currency, state.walletBalancesVisible),
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 MizaniStatCard(
-                    label = "Planned payments",
+                    label = stringResource(R.string.ui_ce1f14355f),
                     value = protectedMoney(plannedPayments, currency, state.walletBalancesVisible),
                     caption = "per payment schedule",
                     valueContentDescription = protectedMoneyDescription("Planned debt payments", plannedPayments, currency, state.walletBalancesVisible),
@@ -203,15 +203,15 @@ fun DebtsScreen(
             if (active.isEmpty()) {
                 Box(Modifier.fillMaxWidth().guideTarget("debts.records")) {
                     EmptyState(
-                        title = "No debts yet",
+                        title = stringResource(R.string.ui_7f14cec22e),
                         body = "If you owe money, add it here and record payments as you make them.",
                         icon = Icons.Rounded.AccountBalance,
-                        actionLabel = "Add debt",
+                        actionLabel = stringResource(R.string.ui_031b82131b),
                         onAction = { editing = null; error = null; showDebtDialog = true },
                     )
                 }
             } else {
-                Text("Active debts", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.ui_00302fa555), style = MaterialTheme.typography.titleMedium)
                 active.forEachIndexed { index, debt ->
                     Box(
                         Modifier
@@ -230,7 +230,7 @@ fun DebtsScreen(
             }
 
             if (archived.isNotEmpty()) {
-                Text("Archived", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.titleSmall)
                 archived.forEach { debt ->
                     DebtCard(
                         debt = debt,
@@ -243,7 +243,7 @@ fun DebtsScreen(
             }
 
             Text(
-                "Debt records are kept on this device. Recording a payment creates one expense and reduces the debt balance; it does not create a second ledger entry.",
+                stringResource(R.string.ui_0e910f328f),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -282,7 +282,7 @@ private fun DebtCard(
             }
         }
         Spacer(Modifier.height(Spacing.md))
-        Text("Current balance", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(R.string.ui_a234f73399), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         ProtectedBalanceValue(
             amountMinor = debt.currentBalanceMinor,
             currency = currency,
@@ -304,12 +304,12 @@ private fun DebtCard(
         Spacer(Modifier.height(Spacing.md))
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.lg)) {
             DebtDetail(
-                label = "Regular payment",
+                label = stringResource(R.string.ui_f2c175f664),
                 value = protectedMoney(debt.periodicPaymentMinor, currency, balanceVisible),
                 modifier = Modifier.weight(1f),
             )
             DebtDetail(
-                label = "Next due",
+                label = stringResource(R.string.ui_7649b3bea0),
                 value = debt.nextDueEpochDay?.let { DateText.short(LocalDate.ofEpochDay(it)) } ?: "Not set",
                 modifier = Modifier.weight(1f),
             )
@@ -324,7 +324,7 @@ private fun DebtCard(
         }
         if (debt.archived) {
             Spacer(Modifier.height(Spacing.xs))
-            Text("Archived", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (onRecordPayment != null && debt.currentBalanceMinor > 0L) {
             Spacer(Modifier.height(Spacing.md))
@@ -385,7 +385,7 @@ private fun DebtDialog(
                 verticalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 Text(
-                    "Track the balance separately from your wallet. A payment will be recorded as one expense and reduce this debt.",
+                    stringResource(R.string.ui_de598bf661),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -405,7 +405,7 @@ private fun DebtDialog(
                 )
                 if (initial != null && !balanceVisible) {
                     Text(
-                        "Balance values are hidden. Confirm with your PIN before changing them.",
+                        stringResource(R.string.ui_ae27551554),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -413,19 +413,19 @@ private fun DebtDialog(
                     MizaniAmountField(
                         value = balanceText,
                         onValueChange = { balanceText = it; validationError = null },
-                        label = "Current balance",
+                        label = stringResource(R.string.ui_a234f73399),
                         currency = currency,
                     )
                     MizaniAmountField(
                         value = originalText,
                         onValueChange = { originalText = it; validationError = null },
-                        label = "Original amount (optional)",
+                        label = stringResource(R.string.ui_b2bfcd7f34),
                         currency = currency,
                     )
                     MizaniAmountField(
                         value = paymentText,
                         onValueChange = { paymentText = it; validationError = null },
-                        label = "Regular payment (optional)",
+                        label = stringResource(R.string.ui_707d7585a9),
                         currency = currency,
                     )
                 }
@@ -437,11 +437,11 @@ private fun DebtDialog(
                             if (checked && dueDate == null) dueDate = LocalDate.now()
                         },
                     )
-                    Text("Set next payment date", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.ui_1141f1bd36), style = MaterialTheme.typography.bodyMedium)
                 }
                 if (hasDueDate && dueDate != null) {
                     DateField(
-                        label = "Next payment",
+                        label = stringResource(R.string.ui_30363f0c9a),
                         date = dueDate!!,
                         onDateSelected = { dueDate = it },
                         modifier = Modifier.fillMaxWidth(),
@@ -540,7 +540,7 @@ private fun DebtPaymentDialog(
                 MizaniAmountField(
                     value = amountText,
                     onValueChange = { amountText = it; validationError = null },
-                    label = "Payment amount",
+                    label = stringResource(R.string.ui_bd3948c033),
                     currency = currency,
                 )
                 MizaniPicker(
@@ -552,7 +552,7 @@ private fun DebtPaymentDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 DateField(
-                    label = "Payment date",
+                    label = stringResource(R.string.ui_33ab083954),
                     date = date,
                     onDateSelected = { date = it; validationError = null },
                     modifier = Modifier.fillMaxWidth(),

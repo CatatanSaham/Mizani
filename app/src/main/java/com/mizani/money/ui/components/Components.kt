@@ -462,7 +462,7 @@ fun MizaniCelebration(
             )
             // Polite live region announces the save without interrupting reading.
             .semantics(mergeDescendants = true) {
-                contentDescription = "Saved"
+                contentDescription = stringResource(R.string.ui_c0ae8f6ea8)
                 liveRegion = LiveRegionMode.Polite
             },
         contentAlignment = Alignment.Center,

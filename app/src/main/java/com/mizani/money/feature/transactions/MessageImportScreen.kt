@@ -57,7 +57,7 @@ fun MessageImportScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Import transaction",
+            title = stringResource(R.string.ui_113eb2fda2),
             onBack = onBack,
             actions = { GuideHelpAction("Mobile-money import", onOpenGuide) },
         )
@@ -70,7 +70,7 @@ fun MessageImportScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Paste or share a mobile-money confirmation. Mizani reads it on this device; the original message is not saved.",
+                    stringResource(R.string.ui_59d02e37d3),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -82,7 +82,7 @@ fun MessageImportScreen(
                 )
             }
             Text(
-                "Mizani detects the provider when it can. Otherwise, search for and select it here.",
+                stringResource(R.string.ui_fbdbb309d0),
                 style = MaterialTheme.typography.labelLarge,
             )
             MizaniPicker(
@@ -102,9 +102,9 @@ fun MessageImportScreen(
                 modifier = Modifier.fillMaxWidth().guideTarget("import.message"),
                 verticalArrangement = Arrangement.spacedBy(Spacing.xs),
             ) {
-                Text("Transaction message", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_95d3bdb584), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "Paste the confirmation exactly as shown, including the amount and reference. You can review it before saving.",
+                    stringResource(R.string.ui_7dcc8c6d1f),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

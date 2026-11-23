@@ -101,7 +101,7 @@ fun MizaniCurrencyPicker(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.width(4.dp))
-        Icon(Icons.Rounded.ArrowDropDown, contentDescription = "Open options")
+        Icon(Icons.Rounded.ArrowDropDown, contentDescription = stringResource(R.string.ui_26daf43e7e))
     }
 
     if (open) {
@@ -158,7 +158,7 @@ fun MizaniCurrencyPicker(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                "Choose currency",
+                                stringResource(R.string.ui_2deb5a3322),
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.weight(1f),
                             )
@@ -172,7 +172,7 @@ fun MizaniCurrencyPicker(
                                 query = ""
                                 open = false
                             }) {
-                                Icon(Icons.Rounded.Close, contentDescription = "Close currency picker")
+                                Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_7364a5dfb2))
                             }
                         }
                         Spacer(Modifier.height(12.dp))
@@ -184,7 +184,7 @@ fun MizaniCurrencyPicker(
                             trailingIcon = {
                                 if (query.isNotEmpty()) {
                                     IconButton(onClick = { query = "" }) {
-                                        Icon(Icons.Rounded.Close, contentDescription = "Clear search")
+                                        Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_67300d0fed))
                                     }
                                 }
                             },
@@ -206,10 +206,10 @@ fun MizaniCurrencyPicker(
                                             .padding(vertical = 24.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                     ) {
-                                        Text("No currencies match", style = MaterialTheme.typography.titleSmall)
+                                        Text(stringResource(R.string.ui_cafc0d1b23), style = MaterialTheme.typography.titleSmall)
                                         Spacer(Modifier.height(4.dp))
                                         Text(
-                                            "Try a different code, name or symbol.",
+                                            stringResource(R.string.ui_d8dac1ae6d),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )

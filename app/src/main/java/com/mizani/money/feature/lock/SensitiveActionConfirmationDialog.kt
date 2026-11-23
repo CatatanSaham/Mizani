@@ -1,5 +1,7 @@
 package com.mizani.money.feature.lock
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
@@ -187,7 +189,7 @@ fun SensitiveActionConfirmationDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Text("Confirm your identity", style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.ui_9a69c71a2e), style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
                         if (allowBiometrics && prompt != null) {
@@ -208,7 +210,7 @@ fun SensitiveActionConfirmationDialog(
                                 val promptInfo = BiometricPrompt.PromptInfo.Builder()
                                     .setTitle("Confirm your identity")
                                     .setSubtitle("Confirm to $actionDescription or choose PIN.")
-                                    .setNegativeButtonText("Use PIN")
+                                    .setNegativeButtonText(stringResource(R.string.ui_0708da885b))
                                     .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                     .build()
                                 prompt.authenticate(promptInfo)
@@ -219,7 +221,7 @@ fun SensitiveActionConfirmationDialog(
                         ) {
                             Icon(Icons.Rounded.Fingerprint, contentDescription = null)
                             Spacer(Modifier.width(Spacing.sm))
-                            Text("Use biometrics")
+                            Text(stringResource(R.string.ui_117a6845cd))
                         }
                     }
 
@@ -274,7 +276,7 @@ fun SensitiveActionConfirmationDialog(
                     TextButton(
                         onClick = { if (!actionCompleted) currentOnDismiss.value() },
                         modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Cancel") }
+                    ) { Text(stringResource(R.string.ui_77dfd2135f)) }
                 }
             }
         }

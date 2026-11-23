@@ -31,7 +31,7 @@ fun GettingStartedScreen(
     onStartGuide: (FeatureGuide) -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "Guides for every feature", onBack = onBack)
+        MizaniTopBar(title = stringResource(R.string.ui_822622bb5c), onBack = onBack)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -40,7 +40,7 @@ fun GettingStartedScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             Text(
-                "Choose what you want to learn. Each guide points out the controls on that screen and can be replayed any time.",
+                stringResource(R.string.ui_106a4f6411),
                 modifier = Modifier.padding(bottom = Spacing.xs),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

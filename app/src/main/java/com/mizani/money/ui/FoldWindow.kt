@@ -315,7 +315,7 @@ fun FoldBackdrop(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                "Private by design",
+                stringResource(R.string.ui_3aaa9fd1f2),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

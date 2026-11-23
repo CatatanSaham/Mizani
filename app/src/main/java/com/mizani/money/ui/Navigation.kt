@@ -912,9 +912,9 @@ private fun AddActionChooserContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("What would you like to record?", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.ui_65653a9984), style = MaterialTheme.typography.titleLarge)
             Text(
-                "Choose how money moved.",
+                stringResource(R.string.ui_09924c0d05),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -923,29 +923,29 @@ private fun AddActionChooserContent(
         AddActionButton(
             icon = Icons.Rounded.ArrowUpward,
             iconTint = tokens.expense,
-            title = "Record expense",
-            supportingText = "Money spent from a wallet",
+            title = stringResource(R.string.ui_7db0e7e66e),
+            supportingText = stringResource(R.string.ui_e7b208f506),
             onClick = onExpense,
         )
         AddActionButton(
             icon = Icons.Rounded.ArrowDownward,
             iconTint = tokens.income,
-            title = "Record income",
-            supportingText = "Money received into a wallet",
+            title = stringResource(R.string.ui_385e61b490),
+            supportingText = stringResource(R.string.ui_53b4535c28),
             onClick = onIncome,
         )
         AddActionButton(
             icon = Icons.Rounded.SwapHoriz,
             iconTint = tokens.transfer,
-            title = "Move between wallets",
-            supportingText = "Does not affect income or spending",
+            title = stringResource(R.string.ui_989412d4c0),
+            supportingText = stringResource(R.string.ui_e30fcdc772),
             onClick = onTransfer,
         )
         AddActionButton(
             icon = Icons.Rounded.ContentPaste,
             iconTint = MaterialTheme.colorScheme.primary,
-            title = "Import a message",
-            supportingText = "Review an MTN or Airtel confirmation",
+            title = stringResource(R.string.ui_54ad2fcd34),
+            supportingText = stringResource(R.string.ui_940a38a081),
             onClick = onImport,
         )
     }

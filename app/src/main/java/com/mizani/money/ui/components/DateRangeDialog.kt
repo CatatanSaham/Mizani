@@ -76,7 +76,7 @@ fun DateRangePickerDialog(
                                 state = state,
                                 title = {
                                     Text(
-                                        "Choose a period",
+                                        stringResource(R.string.ui_bb4f0edde5),
                                         modifier = Modifier.padding(Spacing.lg),
                                     )
                                 },
@@ -142,7 +142,7 @@ fun DateRangePickerDialog(
     ) {
         DateRangePicker(
             state = state,
-            title = { Text("Choose a period", modifier = Modifier.padding(Spacing.lg)) },
+            title = { Text(stringResource(R.string.ui_bb4f0edde5), modifier = Modifier.padding(Spacing.lg)) },
             showModeToggle = false,
         )
     }

@@ -128,7 +128,7 @@ fun CategoriesScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Categories",
+            title = stringResource(R.string.ui_6ccb60071b),
             subtitle = "${categories.size} ${type.label.lowercase()} categories",
             onBack = onBack,
             actions = {
@@ -137,7 +137,7 @@ fun CategoriesScreen(
                     modifier = Modifier.guideTarget("categories.add"),
                     onClick = { editing = null; showDialog = true },
                 ) {
-                    Icon(Icons.Rounded.Add, contentDescription = "Add category")
+                    Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.ui_d169b7f3d5))
                 }
             },
         )
@@ -199,7 +199,7 @@ fun CategoriesScreen(
             }
             if (archived.isNotEmpty()) {
                 Spacer(Modifier.height(Spacing.sm))
-                Text("Archived", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.titleSmall)
                 archived.forEach { category ->
                     Surface(
                         modifier = Modifier
@@ -218,7 +218,7 @@ fun CategoriesScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
-                            Text("Archived", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -267,7 +267,7 @@ private fun CategoryDialog(
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text("Icon", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_716f63b96e), style = MaterialTheme.typography.labelMedium)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -305,7 +305,7 @@ private fun CategoryDialog(
                         }
                     }
                 }
-                Text("Colour", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_f28563a477), style = MaterialTheme.typography.labelMedium)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -343,13 +343,13 @@ private fun CategoryDialog(
                     Text(error!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                 }
                 if (initial != null && !initial.archived) {
-                    Text("Order", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.ui_1d75774c0f), style = MaterialTheme.typography.labelMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                         OutlinedButton(
                             onClick = { onMove(initial, -1) },
                             shape = MaterialTheme.shapes.medium,
                         ) {
-                            Icon(Icons.Rounded.KeyboardArrowUp, contentDescription = "Move up", modifier = Modifier.size(18.dp))
+                            Icon(Icons.Rounded.KeyboardArrowUp, contentDescription = stringResource(R.string.ui_b4f57cd0cd), modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
                             Text(stringResource(R.string.ui_b4f57cd0cd))
                         }
@@ -357,7 +357,7 @@ private fun CategoryDialog(
                             onClick = { onMove(initial, 1) },
                             shape = MaterialTheme.shapes.medium,
                         ) {
-                            Icon(Icons.Rounded.KeyboardArrowDown, contentDescription = "Move down", modifier = Modifier.size(18.dp))
+                            Icon(Icons.Rounded.KeyboardArrowDown, contentDescription = stringResource(R.string.ui_260ff8ae71), modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
                             Text(stringResource(R.string.ui_260ff8ae71))
                         }

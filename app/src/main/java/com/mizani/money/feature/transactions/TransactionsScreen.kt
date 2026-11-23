@@ -182,7 +182,7 @@ fun TransactionsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Activity",
+            title = stringResource(R.string.ui_81c0d915fa),
             subtitle = "${filtered.size} transactions",
             actions = {
                 GuideHelpAction(featureName = "Activity and transactions", onClick = onOpenGuide)
@@ -190,7 +190,7 @@ fun TransactionsScreen(
                     modifier = Modifier.guideTarget("activity.filters"),
                     onClick = { showFilters = !showFilters },
                 ) {
-                    Icon(Icons.Rounded.FilterList, contentDescription = "Filters")
+                    Icon(Icons.Rounded.FilterList, contentDescription = stringResource(R.string.ui_96e578211a))
                 }
             },
         )
@@ -214,7 +214,7 @@ fun TransactionsScreen(
                     trailingIcon = {
                         if (search.isNotEmpty()) {
                             IconButton(onClick = { search = "" }) {
-                                Icon(Icons.Rounded.Close, contentDescription = "Clear search")
+                                Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_67300d0fed))
                             }
                         }
                     },
@@ -279,7 +279,7 @@ fun TransactionsScreen(
             item {
                 if (!balancesAvailable) {
                     StatusBanner(
-                        text = "Wallet balances and totals are unavailable until you edit or delete the entries causing the overflow. Activity remains available for recovery.",
+                        text = stringResource(R.string.ui_373042fb20),
                         isError = true,
                     )
                 }
@@ -412,11 +412,11 @@ private fun SummaryRow(
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Income", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ui_1c89b1f2aa), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(MoneyFormat.format(incomeMinor, currency), style = MaterialTheme.typography.titleSmall, color = themeTokens.income)
                     }
                     Column(Modifier.weight(1f)) {
-                        Text("Net spending", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ui_1c1d0b217a), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(MoneyFormat.format(expenseMinor, currency), style = MaterialTheme.typography.titleSmall)
                     }
                 }
@@ -454,7 +454,7 @@ private fun FilterPanel(
     onClear: () -> Unit,
 ) {
     MizaniCard {
-        Text("Transaction type", style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.ui_575da7191f), style = MaterialTheme.typography.labelLarge)
         Spacer(Modifier.height(Spacing.sm))
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -496,14 +496,14 @@ private fun FilterPanel(
             MizaniAmountField(
                 value = minAmount,
                 onValueChange = onMinChange,
-                label = "Min amount",
+                label = stringResource(R.string.ui_d9d5e9e44d),
                 currency = currency,
                 modifier = Modifier.weight(1f),
             )
             MizaniAmountField(
                 value = maxAmount,
                 onValueChange = onMaxChange,
-                label = "Max amount",
+                label = stringResource(R.string.ui_59448c0e49),
                 currency = currency,
                 modifier = Modifier.weight(1f),
             )

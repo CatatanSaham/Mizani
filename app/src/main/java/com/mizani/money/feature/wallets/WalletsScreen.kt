@@ -199,7 +199,7 @@ fun WalletsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Wallets",
+            title = stringResource(R.string.ui_98d5a197e5),
             subtitle = "${active.size} active",
             onBack = onBack,
             actions = {
@@ -208,7 +208,7 @@ fun WalletsScreen(
                     WalletBalanceVisibilityControl(vm, state, onSetupPin)
                 }
                 IconButton(onClick = { editing = null; showDialog = true }) {
-                    Icon(Icons.Rounded.Add, contentDescription = "Add wallet")
+                    Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.ui_6fe27a1a61))
                 }
             },
         )
@@ -222,7 +222,7 @@ fun WalletsScreen(
             }
             if (balances == null) {
                 StatusBanner(
-                    text = "A saved wallet balance is outside the supported range. Review Activity to edit or delete an entry before relying on wallet totals.",
+                    text = stringResource(R.string.ui_d5e075810a),
                     isError = true,
                 )
             }
@@ -230,7 +230,7 @@ fun WalletsScreen(
             Box(Modifier.fillMaxWidth().guideTarget("wallets.total")) {
             MizaniStatRow {
                 MizaniStatCard(
-                    label = "Across wallets",
+                    label = stringResource(R.string.ui_d746faee9c),
                     value = when {
                         total == null -> "—"
                         state.walletBalancesVisible -> MoneyFormat.format(total, currency)
@@ -245,7 +245,7 @@ fun WalletsScreen(
                     },
                 )
                 MizaniStatCard(
-                    label = "Liquid",
+                    label = stringResource(R.string.ui_4ad3e2141b),
                     value = when {
                         liquid == null -> "—"
                         state.walletBalancesVisible -> MoneyFormat.format(liquid, currency)
@@ -266,7 +266,7 @@ fun WalletsScreen(
             }
 
             Text(
-                "Balances reflect the activity you record. Transfers move money between your wallets without changing the overall total.",
+                stringResource(R.string.ui_67be2e7398),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -274,10 +274,10 @@ fun WalletsScreen(
             if (active.isEmpty()) {
                 Box(Modifier.fillMaxWidth().guideTarget("wallets.rows")) {
                     EmptyState(
-                        title = "No active wallets",
+                        title = stringResource(R.string.ui_e5c8318756),
                         body = "Create a cash, mobile-money, bank, card or savings wallet to start.",
                         iconRes = R.drawable.ic_ph_wallet,
-                        actionLabel = "Add wallet",
+                        actionLabel = stringResource(R.string.ui_6fe27a1a61),
                         onAction = { editing = null; showDialog = true },
                     )
                 }
@@ -296,7 +296,7 @@ fun WalletsScreen(
 
             if (archived.isNotEmpty()) {
                 Spacer(Modifier.height(Spacing.sm))
-                Text("Archived", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.titleSmall)
                 archived.forEach { wallet ->
                     Surface(
                         modifier = Modifier
@@ -438,7 +438,7 @@ private fun WalletDialog(
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text("Type", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_3deb745651), style = MaterialTheme.typography.labelMedium)
                 MizaniPicker(
                     selectedText = type.label,
                     options = typeOptions.map { PickerOption(it.name, it.label) },
@@ -447,7 +447,7 @@ private fun WalletDialog(
                 )
                 if (initial != null && !balanceVisible) {
                     Text(
-                        "Opening balance hidden. Confirm with your PIN before viewing or changing it.",
+                        stringResource(R.string.ui_2b9b7725df),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -474,10 +474,10 @@ private fun WalletDialog(
                 )
                 if (initial != null) {
                     HorizontalDivider()
-                    Text("Current balance from recorded activity", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.ui_7afe01c00b), style = MaterialTheme.typography.labelLarge)
                     if (!balanceVisible) {
                         Text(
-                            "Confirm your identity with the balance control to view the total or reconcile it.",
+                            stringResource(R.string.ui_9a78ee5f7c),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -491,7 +491,7 @@ private fun WalletDialog(
                             BalanceBreakdownRows(breakdown = breakdown, currency = currency)
                         } else {
                             Text(
-                                "The balance is available, but its category breakdown exceeds the supported range.",
+                                stringResource(R.string.ui_d284186adf),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -508,13 +508,13 @@ private fun WalletDialog(
                         }
                     } else {
                         Text(
-                            "Wallet balance is unavailable. Review Activity before making a correction.",
+                            stringResource(R.string.ui_cea5f85741),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
                 }
-                Text("Colour", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_f28563a477), style = MaterialTheme.typography.labelMedium)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -635,7 +635,7 @@ private fun ReconcileBalanceDialog(
                 )
                 when {
                     targetText.isBlank() -> Text(
-                        "Enter the balance shown by your provider. This app does not sync with MoMo.",
+                        stringResource(R.string.ui_89f4035a51),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -645,12 +645,12 @@ private fun ReconcileBalanceDialog(
                         color = MaterialTheme.colorScheme.error,
                     )
                     adjustment == null -> Text(
-                        "The difference is outside the supported range.",
+                        stringResource(R.string.ui_965d15a2ef),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                     )
                     adjustment == 0L -> Text(
-                        "The recorded balance already matches.",
+                        stringResource(R.string.ui_8b7cb344fc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -661,7 +661,7 @@ private fun ReconcileBalanceDialog(
                     )
                 }
                 Text(
-                    "Saving adds a dated balance adjustment; it does not change past transactions. If an imported entry is wrong, review Activity before recording a correction.",
+                    stringResource(R.string.ui_fcc2fa5f80),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

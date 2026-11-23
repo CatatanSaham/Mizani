@@ -351,13 +351,13 @@ private fun StartupErrorScreen(onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            "Couldn't open your saved data",
+            stringResource(R.string.ui_514f1463bc),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(Spacing.sm))
         Text(
-            "Your records are still on this device. Try again to reopen Mizani.",
+            stringResource(R.string.ui_f03dc60e9f),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

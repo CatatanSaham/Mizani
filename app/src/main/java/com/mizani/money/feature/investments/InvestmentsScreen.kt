@@ -127,7 +127,7 @@ fun InvestmentsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Investments",
+            title = stringResource(R.string.ui_5de64aff09),
             subtitle = "${active.size} active holding${if (active.size == 1) "" else "s"}",
             onBack = onBack,
             actions = {
@@ -137,16 +137,16 @@ fun InvestmentsScreen(
                     modifier = Modifier.guideTarget("investments.add"),
                     onClick = { error = null; editing = null; showDialog = true },
                 ) {
-                    Icon(Icons.Rounded.Add, contentDescription = "Add investment")
+                    Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.ui_f2409dca38))
                 }
             },
         )
         MizaniPageContent {
             MizaniCard(modifier = Modifier.fillMaxWidth().guideTarget("investments.summary")) {
-                Text("Keep a private record of where your money is invested.", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_32d8801b3d), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
-                    "Add the provider, asset category and your latest value. This is a manual snapshot, not a brokerage connection or investment advice.",
+                    stringResource(R.string.ui_229b148fad),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -154,14 +154,14 @@ fun InvestmentsScreen(
 
             MizaniStatRow {
                 MizaniStatCard(
-                    label = "Current value",
+                    label = stringResource(R.string.ui_ed2757f1ed),
                     value = protectedMoney(summary.currentValueMinor, currency, state.walletBalancesVisible),
                     labelRowMinHeight = 48.dp,
                     valueContentDescription = protectedMoneyDescription("Current investment value", summary.currentValueMinor, currency, state.walletBalancesVisible),
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 MizaniStatCard(
-                    label = "Gain / loss",
+                    label = stringResource(R.string.ui_5c2db3060d),
                     value = protectedMoney(summary.gainLossMinor, currency, state.walletBalancesVisible),
                     labelRowMinHeight = 48.dp,
                     valueContentDescription = protectedMoneyDescription("Investment gain or loss", summary.gainLossMinor, currency, state.walletBalancesVisible),
@@ -179,10 +179,10 @@ fun InvestmentsScreen(
             if (active.isEmpty()) {
                 Box(Modifier.fillMaxWidth().guideTarget("investments.records")) {
                     EmptyState(
-                        title = "No investments yet",
+                        title = stringResource(R.string.ui_bd028bb854),
                         body = "Add a holding to record where it is placed and update its value over time.",
                         iconRes = R.drawable.ic_ph_wallet,
-                        actionLabel = "Add investment",
+                        actionLabel = stringResource(R.string.ui_f2409dca38),
                         onAction = { error = null; editing = null; showDialog = true },
                     )
                 }
@@ -204,7 +204,7 @@ fun InvestmentsScreen(
             }
 
             if (archived.isNotEmpty()) {
-                Text("Archived", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.titleSmall)
                 archived.forEach { investment ->
                     InvestmentCard(
                         investment = investment,
@@ -216,7 +216,7 @@ fun InvestmentsScreen(
             }
 
             Text(
-                "Investment records do not change wallet balances or create ledger entries. If money moves from a wallet to an investment account, record that movement separately as a transfer.",
+                stringResource(R.string.ui_e5d9a2f6fb),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -259,7 +259,7 @@ private fun InvestmentCard(
             ProtectedInvestmentValue("Gain / loss", gainLoss, currency, balanceVisible, Modifier.weight(1f))
         }
         if (investment.archived) {
-            Text("Archived", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.ui_eddc813f35), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -318,7 +318,7 @@ private fun InvestmentDialog(
                 verticalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 Text(
-                    "This saves a manual value snapshot. It does not place orders, connect to a provider, or affect your ledger.",
+                    stringResource(R.string.ui_3d109017ea),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -337,7 +337,7 @@ private fun InvestmentDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text("Asset category", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_3de86b3bfe), style = MaterialTheme.typography.labelMedium)
                 MizaniPicker(
                     selectedText = assetType.label,
                     options = InvestmentAssetType.entries.map { PickerOption(it.name, it.label) },
@@ -347,7 +347,7 @@ private fun InvestmentDialog(
                 )
                 if (initial != null && !balanceVisible) {
                     Text(
-                        "Values are hidden. Confirm with your PIN before changing cost basis or current value.",
+                        stringResource(R.string.ui_d141b3ea84),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -355,18 +355,18 @@ private fun InvestmentDialog(
                     MizaniAmountField(
                         value = costBasisText,
                         onValueChange = { costBasisText = it },
-                        label = "Cost basis",
+                        label = stringResource(R.string.ui_657b22599d),
                         currency = currency,
                     )
                     MizaniAmountField(
                         value = currentValueText,
                         onValueChange = { currentValueText = it },
-                        label = "Current value",
+                        label = stringResource(R.string.ui_ed2757f1ed),
                         currency = currency,
                     )
                 }
                 DateField(
-                    label = "Valuation date",
+                    label = stringResource(R.string.ui_15ada8d429),
                     date = valuationDate,
                     onDateSelected = { valuationDate = it },
                     modifier = Modifier.fillMaxWidth(),

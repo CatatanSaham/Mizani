@@ -90,7 +90,7 @@ fun MizaniPicker(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(Modifier.width(4.dp))
-            Icon(Icons.Rounded.ArrowDropDown, contentDescription = "Open options")
+            Icon(Icons.Rounded.ArrowDropDown, contentDescription = stringResource(R.string.ui_26daf43e7e))
         }
         DropdownMenu(
             expanded = expanded,

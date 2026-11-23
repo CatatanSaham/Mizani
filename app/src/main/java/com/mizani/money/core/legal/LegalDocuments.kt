@@ -1,5 +1,7 @@
 package com.mizani.money.core.legal
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 enum class LegalDocumentId { TERMS, PRIVACY }
 
 data class LegalSection(
@@ -33,7 +35,7 @@ object LegalDocuments {
 
     val terms = LegalDocument(
         id = LegalDocumentId.TERMS,
-        title = "Terms of Service",
+        title = stringResource(R.string.ui_0c8a9a95e2),
         version = TERMS_VERSION,
         effectiveDate = EFFECTIVE_DATE,
         introduction =
@@ -124,7 +126,7 @@ object LegalDocuments {
 
     val privacy = LegalDocument(
         id = LegalDocumentId.PRIVACY,
-        title = "Privacy Notice",
+        title = stringResource(R.string.ui_14862f7224),
         version = PRIVACY_VERSION,
         effectiveDate = PRIVACY_EFFECTIVE_DATE,
         introduction =

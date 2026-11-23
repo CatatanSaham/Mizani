@@ -152,7 +152,7 @@ fun FeedbackScreen(onBack: () -> Unit) {
     }
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "Send feedback", onBack = onBack)
+        MizaniTopBar(title = stringResource(R.string.ui_c431a26258), onBack = onBack)
         MizaniPageContent {
             MizaniCard(containerColor = MaterialTheme.colorScheme.primaryContainer) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -164,21 +164,21 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        "Help shape Mizani",
+                        stringResource(R.string.ui_c878d31aa3),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "Tell us what is working, what could be clearer, or where you got stuck. Your feedback goes to the Mizani team.",
+                    stringResource(R.string.ui_c9472a75ea),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                Text("What would you like to share?", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.ui_4899853418), style = MaterialTheme.typography.titleMedium)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -241,14 +241,14 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        "Mizani opens your email app with the address and message filled in. Review it before sending. Email delivery and spam filtering are managed by your email provider.",
+                        stringResource(R.string.ui_1a0bdf1720),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "For your privacy, do not include balances, transaction details, PINs, or backup passphrases.",
+                    stringResource(R.string.ui_4d1935d646),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

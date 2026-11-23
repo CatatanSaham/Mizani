@@ -89,7 +89,7 @@ fun MizaniFoldSidebar(
 
             Spacer(Modifier.height(Spacing.sm))
             Text(
-                "Your records stay on this device.",
+                stringResource(R.string.ui_9ff6859d22),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -127,7 +127,7 @@ fun MizaniTabletopDock(
                 )
             }
             Text(
-                "Your records stay on this device.",
+                stringResource(R.string.ui_9ff6859d22),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = Spacing.lg),

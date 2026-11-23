@@ -182,10 +182,10 @@ fun HomeScreen(
             contentAlignment = Alignment.Center,
         ) {
             EmptyState(
-                title = "Wallet balances need review",
+                title = stringResource(R.string.ui_0395ff47b5),
                 body = "A saved entry is outside the supported balance range. Open Activity to edit or delete entries until balances can be calculated again. Your saved records are unchanged.",
                 iconRes = R.drawable.ic_ph_wallet,
-                actionLabel = "Review Activity",
+                actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                 onAction = onOpenTransactions,
             )
         }
@@ -268,10 +268,10 @@ fun HomeScreen(
                     )
                 } else if (dashboardState is DashboardMetricsState.InvalidLedgerTotals) {
                     EmptyState(
-                        title = "Totals could not be calculated",
+                        title = stringResource(R.string.ui_2b4ba9f259),
                         body = "A saved entry may be outside the supported range. Review Activity to edit or delete an entry. Your records are unchanged.",
                         iconRes = R.drawable.ic_ph_wallet,
-                        actionLabel = "Review Activity",
+                        actionLabel = stringResource(R.string.ui_f7a46ed1e4),
                         onAction = onOpenTransactions,
                     )
                 } else if (current == null) {
@@ -534,10 +534,10 @@ private fun FirstTransactionCard(
                     modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(Spacing.sm))
-                Text("Your first wallet is ready", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_f4a4d084f9), style = MaterialTheme.typography.titleSmall)
             }
             Text(
-                "Next, record one income or expense so your balance and Insights reflect your activity.",
+                stringResource(R.string.ui_dbbb6a62e3),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -1004,7 +1004,7 @@ private fun SpendingSection(
     val positiveTotal = positiveSlices.sumOf { it.amountMinor }
     SectionHeader(
         title = stringResource(R.string.home_spending_title),
-        actionLabel = "Insights",
+        actionLabel = stringResource(R.string.ui_b4510362a5),
         onAction = onOpenInsights,
         accent = true,
     )
@@ -1173,7 +1173,7 @@ private fun RecentActivitySection(
     if (recent.isEmpty()) return
     SectionHeader(
         title = stringResource(R.string.home_recent_activity_title),
-        actionLabel = "See all",
+        actionLabel = stringResource(R.string.ui_2941c5ce61),
         onAction = onOpenTransactions,
         accent = true,
     )
@@ -1215,7 +1215,7 @@ private fun ComingUpSection(
         .sumOf { it.amountMinor }
     SectionHeader(
         title = stringResource(R.string.home_coming_up_title),
-        actionLabel = "Bills",
+        actionLabel = stringResource(R.string.ui_815465782c),
         onAction = onOpenCommitments,
         accent = true,
     )

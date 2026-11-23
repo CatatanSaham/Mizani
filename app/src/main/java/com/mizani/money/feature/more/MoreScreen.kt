@@ -1,5 +1,7 @@
 package com.mizani.money.feature.more
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -41,7 +43,7 @@ fun MoreScreen(
     onNavigate: (String) -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "More")
+        MizaniTopBar(title = stringResource(R.string.ui_4bab2d8fe1))
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -104,33 +106,33 @@ private fun ManageMoneySection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
     ) {
-        SectionHeader(title = "Manage money", accent = true)
+        SectionHeader(title = stringResource(R.string.ui_bd2c53e62e), accent = true)
         MizaniSectionCard {
             MizaniInfoRow(
                 icon = Icons.Rounded.AccountBalanceWallet,
-                title = "Wallets",
-                subtitle = "Cash, mobile money and bank balances",
+                title = stringResource(R.string.ui_98d5a197e5),
+                subtitle = stringResource(R.string.ui_29ec9bfe65),
                 onClick = { onNavigate("wallets") },
             )
             MizaniSectionDivider()
             MizaniInfoRow(
                 icon = Icons.Rounded.AccountBalance,
-                title = "Debts",
-                subtitle = "What you owe and payments made against it",
+                title = stringResource(R.string.ui_787aab25f6),
+                subtitle = stringResource(R.string.ui_f36e0e2ded),
                 onClick = { onNavigate("debts") },
             )
             MizaniSectionDivider()
             MizaniInfoRow(
                 icon = Icons.AutoMirrored.Rounded.ShowChart,
-                title = "Investments",
-                subtitle = "Track holdings, providers and manual values",
+                title = stringResource(R.string.ui_5de64aff09),
+                subtitle = stringResource(R.string.ui_59e4f1e47a),
                 onClick = { onNavigate("investments") },
             )
             MizaniSectionDivider()
             MizaniInfoRow(
                 icon = Icons.Rounded.Category,
-                title = "Categories",
-                subtitle = "Organize income and expenses",
+                title = stringResource(R.string.ui_6ccb60071b),
+                subtitle = stringResource(R.string.ui_12a240e8cc),
                 onClick = { onNavigate("categories") },
             )
         }
@@ -146,12 +148,12 @@ private fun YourDataSection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
     ) {
-        SectionHeader(title = "Your data", accent = true)
+        SectionHeader(title = stringResource(R.string.ui_48cd18dabc), accent = true)
         MizaniSectionCard {
             MizaniInfoRow(
                 icon = Icons.Rounded.Download,
-                title = "Export or back up data",
-                subtitle = "CSV, Excel, encrypted backup and restore",
+                title = stringResource(R.string.ui_871fa14e52),
+                subtitle = stringResource(R.string.ui_4fab22e59e),
                 onClick = { onNavigate("export") },
             )
         }
@@ -167,26 +169,26 @@ private fun AppSection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
     ) {
-        SectionHeader(title = "App", accent = true)
+        SectionHeader(title = stringResource(R.string.ui_fc4a695f02), accent = true)
         MizaniSectionCard {
             MizaniInfoRow(
                 icon = Icons.Rounded.Settings,
-                title = "Settings",
-                subtitle = "Theme, app lock, country and reminders",
+                title = stringResource(R.string.ui_c7f73bb54d),
+                subtitle = stringResource(R.string.ui_a902552e5e),
                 onClick = { onNavigate("settings") },
             )
             MizaniSectionDivider()
             MizaniInfoRow(
                 icon = Icons.Rounded.Info,
-                title = "About and privacy",
-                subtitle = "How Mizani stores and protects your records",
+                title = stringResource(R.string.ui_57fc3d5cbd),
+                subtitle = stringResource(R.string.ui_295096b14e),
                 onClick = { onNavigate("about") },
             )
             MizaniSectionDivider()
             MizaniInfoRow(
                 icon = Icons.Rounded.Feedback,
-                title = "Send feedback",
-                subtitle = "Help improve Mizani",
+                title = stringResource(R.string.ui_c431a26258),
+                subtitle = stringResource(R.string.ui_df329ec8d8),
                 onClick = { onNavigate("feedback") },
             )
         }
@@ -195,12 +197,12 @@ private fun AppSection(
 
 @Composable
 private fun GettingStartedSection(onNavigate: (String) -> Unit) {
-    SectionHeader(title = "Help", accent = true)
+    SectionHeader(title = stringResource(R.string.ui_c47ae15370), accent = true)
     MizaniSectionCard {
         MizaniInfoRow(
             icon = Icons.Rounded.Info,
-            title = "Guides for every feature",
-            subtitle = "A short guide to wallets, transactions and balances",
+            title = stringResource(R.string.ui_822622bb5c),
+            subtitle = stringResource(R.string.ui_8f69f08520),
             onClick = { onNavigate("getting-started") },
         )
     }

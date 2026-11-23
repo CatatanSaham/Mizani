@@ -83,7 +83,7 @@ object FeatureGuides {
     val all = listOf(
         FeatureGuide(
             id = "home",
-            title = "Home",
+            title = stringResource(R.string.ui_70f8bb9a8a),
             summary = "Read your overview and find the next useful action.",
             route = "home",
             steps = listOf(
@@ -94,7 +94,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "activity",
-            title = "Activity and transactions",
+            title = stringResource(R.string.ui_f6bbf9b0f8),
             summary = "Search, filter, review and correct recorded activity.",
             route = "transactions",
             steps = listOf(
@@ -105,7 +105,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "wallets",
-            title = "Wallets and balances",
+            title = stringResource(R.string.ui_a6965c4605),
             summary = "Understand cash, mobile-money and bank balances.",
             route = "wallets",
             steps = listOf(
@@ -116,7 +116,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "mobile-money-import",
-            title = "Import a mobile-money message",
+            title = stringResource(R.string.ui_76bacbb550),
             summary = "Review a confirmation before it becomes a transaction.",
             route = "import-message",
             steps = listOf(
@@ -131,7 +131,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "insights",
-            title = "Insights and Money Outlook",
+            title = stringResource(R.string.ui_53dadff4ef),
             summary = "Understand the estimates and trends behind your summaries.",
             route = "insights",
             steps = listOf(
@@ -142,7 +142,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "commitments",
-            title = "Bills and commitments",
+            title = stringResource(R.string.ui_2715438949),
             summary = "Plan upcoming costs and link payments you already recorded.",
             route = "commitments",
             steps = listOf(
@@ -170,7 +170,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "debts",
-            title = "Debts",
+            title = stringResource(R.string.ui_787aab25f6),
             summary = "Track what you owe and the payments made against it.",
             route = "debts",
             steps = listOf(
@@ -181,7 +181,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "investments",
-            title = "Investments",
+            title = stringResource(R.string.ui_5de64aff09),
             summary = "Keep manual snapshots of holdings without duplicating ledger activity.",
             route = "investments",
             steps = listOf(
@@ -192,7 +192,7 @@ object FeatureGuides {
         ),
         FeatureGuide(
             id = "categories",
-            title = "Categories",
+            title = stringResource(R.string.ui_6ccb60071b),
             summary = "Keep income and expense labels organized for reporting.",
             route = "categories",
             steps = listOf(

@@ -366,7 +366,7 @@ fun SettingsScreen(
                     val csv = withContext(Dispatchers.IO) { vm.exporter.buildCsv() }
                     writeBytes(context, uri, csv.toByteArray(Charsets.UTF_8))
                 }.onSuccess {
-                    message = "Transactions exported as CSV. This file is not encrypted."
+                    message = stringResource(R.string.ui_550302309f)
                     error = null
                 }.onFailure {
                     error = it.message ?: "Could not write the CSV"
@@ -387,7 +387,7 @@ fun SettingsScreen(
                         } ?: throw IOException("Could not open the selected file for writing")
                     }
                 }.onSuccess {
-                    message = "Excel workbook saved. It contains financial data and is not encrypted."
+                    message = stringResource(R.string.ui_56c4e5c4bd)
                     error = null
                 }.onFailure {
                     error = it.message ?: "Could not create the Excel workbook"
@@ -409,14 +409,14 @@ fun SettingsScreen(
             backupPassphraseConfirm = ""
             scope.launch {
                 creatingBackup = true
-                message = "Creating encrypted backup…"
+                message = stringResource(R.string.ui_19d4048ffb)
                 try {
                     runCatching {
                         if (passphrase.isBlank()) throw IOException("The passphrase was cleared. Please try again.")
                         val bytes = vm.exporter.buildBackup(passphrase)
                         writeBytes(context, uri, bytes)
                     }.onSuccess {
-                        message = "Encrypted backup created. Keep your passphrase safe; it cannot be recovered."
+                        message = stringResource(R.string.ui_b94f2c706c)
                         error = null
                     }.onFailure {
                         message = null
@@ -526,7 +526,7 @@ fun SettingsScreen(
 
     if (showDisablePin) {
         PinVerifyDialog(
-            title = "Enter your PIN to turn off app lock",
+            title = stringResource(R.string.ui_322eafd991),
             onDismiss = { showDisablePin = false },
             onSubmit = { pin ->
                 scope.launch {
@@ -538,7 +538,7 @@ fun SettingsScreen(
                     showDisablePin = false
                     if (ok) {
                         vm.disableLock()
-                        message = "App lock is off. Your local data is still encrypted."
+                        message = stringResource(R.string.ui_de90f01c15)
                         error = null
                     } else if (vm.settingsRepository.pinBackoffRemainingMs() > 0L) {
                         error = PIN_RETRY_MESSAGE
@@ -552,7 +552,7 @@ fun SettingsScreen(
 
     if (showVerifyForChange) {
         PinVerifyDialog(
-            title = "Confirm your current PIN",
+            title = stringResource(R.string.ui_fe0cd5b5c5),
             onDismiss = { showVerifyForChange = false },
             onSubmit = { pin ->
                 scope.launch {
@@ -578,7 +578,7 @@ fun SettingsScreen(
                     runCatching { vm.setCountry(countryCode, state.snapshot.currencyCode) }
                         .onSuccess {
                             showCountryDialog = false
-                            message = "Country changed. Your amounts were not converted."
+                            message = stringResource(R.string.ui_86ece351bb)
                             error = null
                         }
                         .onFailure { error = it.message ?: "Could not update your region. Try again." }
@@ -688,7 +688,7 @@ fun SettingsScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(
-                        "Enter the passphrase used to create this backup.",
+                        stringResource(R.string.ui_efab1a5ac8),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -788,7 +788,7 @@ fun SettingsScreen(
                             try {
                                 vm.restoreBackup(bytes, passphrase).getOrThrow()
                                 discardPendingRestore()
-                                message = "Backup restored. Your local ledger was replaced."
+                                message = stringResource(R.string.ui_0b7861d098)
                                 error = null
                                 try {
                                     vm.finance.currentWorkspace()?.let { workspace ->
@@ -819,7 +819,7 @@ fun SettingsScreen(
 
     if (showDeleteConfirm) {
         MizaniConfirmDialog(
-            title = "Delete all local data?",
+            title = stringResource(R.string.ui_87bf3ef2aa),
             body = "This deletes all wallets, transactions, and other saved records on this phone. Without a backup, you cannot restore them. App lock and settings also reset.",
             confirmLabel = "Delete everything",
             destructive = true,
@@ -828,7 +828,7 @@ fun SettingsScreen(
                     vm.deleteAllData()
                         .onSuccess {
                             showDeleteConfirm = false
-                            message = "All local data was deleted."
+                            message = stringResource(R.string.ui_eb80ff83a7)
                             error = null
                         }
                         .onFailure {
@@ -844,7 +844,7 @@ fun SettingsScreen(
 
     if (dataToolsOnly) {
         Column(Modifier.fillMaxSize()) {
-            MizaniTopBar(title = "Data export & backup", onBack = onBack)
+            MizaniTopBar(title = stringResource(R.string.ui_f6da5a2df0), onBack = onBack)
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter,
@@ -866,22 +866,22 @@ fun SettingsScreen(
                     StatusBanner(text = error!!, isError = true, onDismiss = { error = null })
                 }
                 Text(
-                    "Use the Excel workbook for full analysis across transactions, wallets, schedules and plans. Create an encrypted backup when you want to move the ledger to another phone.",
+                    stringResource(R.string.ui_dbb92ab15c),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 MizaniSectionCard {
                     MizaniInfoRow(
                         icon = Icons.Rounded.Download,
-                        title = "Download Excel workbook (recommended)",
-                        subtitle = "Full workbook with separate analysis-ready sheets",
+                        title = stringResource(R.string.ui_781c987361),
+                        subtitle = stringResource(R.string.ui_ac350ad5a7),
                         onClick = { requestSensitiveAction(SensitiveDataAction.EXCEL_EXPORT) },
                     )
                     MizaniSectionDivider()
                     MizaniInfoRow(
                         icon = Icons.Rounded.Download,
-                        title = "Download transactions (CSV)",
-                        subtitle = "A simple transaction-only file for older analysis tools",
+                        title = stringResource(R.string.ui_74ba6a524e),
+                        subtitle = stringResource(R.string.ui_ce4d1690e0),
                         onClick = { requestSensitiveAction(SensitiveDataAction.CSV_EXPORT) },
                     )
                     MizaniSectionDivider()
@@ -896,8 +896,8 @@ fun SettingsScreen(
                     MizaniSectionDivider()
                     MizaniInfoRow(
                         icon = Icons.Rounded.Restore,
-                        title = "Restore or move data",
-                        subtitle = "Review backup contents before replacing this ledger",
+                        title = stringResource(R.string.ui_b7a851cb91),
+                        subtitle = stringResource(R.string.ui_abf594ad14),
                         onClick = {
                             discardPendingRestore()
                             error = null
@@ -928,7 +928,7 @@ fun SettingsScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "Settings", onBack = onBack)
+        MizaniTopBar(title = stringResource(R.string.ui_c7f73bb54d), onBack = onBack)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopCenter,
@@ -951,14 +951,14 @@ fun SettingsScreen(
             }
 
             SectionHeader(
-                title = "Appearance",
+                title = stringResource(R.string.ui_41def7a0fe),
                 accent = true,
                 // Labels stay outside their card; +4dp keeps 16dp between groups, 12dp label-to-card.
                 modifier = Modifier.padding(top = Spacing.xs),
             )
             MizaniCard {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                    Text("Theme", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.ui_a797e30923), style = MaterialTheme.typography.titleSmall)
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -974,7 +974,7 @@ fun SettingsScreen(
                         }
                     }
                     Text(
-                        "Follow your device, or choose light or dark mode.",
+                        stringResource(R.string.ui_73a6986649),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -983,10 +983,10 @@ fun SettingsScreen(
                 Spacer(Modifier.height(Spacing.md))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(Spacing.md))
-                Text("Accent color", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_e49578edcf), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "Choose the color used for buttons, selections and highlights. Income, spending and transfer colors keep their meaning.",
+                    stringResource(R.string.ui_c8b3e73f2f),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1016,7 +1016,7 @@ fun SettingsScreen(
                                     .background(accentColor),
                             )
                             Column(Modifier.weight(1f)) {
-                                Text("Choose color", maxLines = 1)
+                                Text(stringResource(R.string.ui_09b969bbf9), maxLines = 1)
                                 Text(
                                     accentHex,
                                     style = MaterialTheme.typography.labelSmall,
@@ -1052,10 +1052,10 @@ fun SettingsScreen(
                 Spacer(Modifier.height(Spacing.md))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(Spacing.md))
-                Text("Dark appearance", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.ui_f229ed4543), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "Choose a softer neutral surface used whenever dark mode is active.",
+                    stringResource(R.string.ui_ee78ae0933),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1076,7 +1076,7 @@ fun SettingsScreen(
             }
 
             SectionHeader(
-                title = "Security",
+                title = stringResource(R.string.ui_f25ce1b8a3),
                 accent = true,
                 modifier = Modifier.padding(top = Spacing.xs),
             )
@@ -1101,7 +1101,7 @@ fun SettingsScreen(
                                 modifier = Modifier.size(20.dp),
                             )
                             Text(
-                                "Set up an app PIN below to view wallet balances.",
+                                stringResource(R.string.ui_f47a4d8250),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
@@ -1110,7 +1110,7 @@ fun SettingsScreen(
                 }
                 MizaniInfoRow(
                     icon = Icons.Rounded.Lock,
-                    title = "App lock",
+                    title = stringResource(R.string.ui_a34fa2ead1),
                     subtitle = if (settings.lockEnabled) "On · 6-digit PIN" else "Off",
                 )
                 if (settings.hasPin) {
@@ -1143,9 +1143,9 @@ fun SettingsScreen(
                         Icon(Icons.Rounded.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Spacer(Modifier.width(Spacing.md))
                         Column(Modifier.weight(1f)) {
-                            Text("Biometric unlock", style = MaterialTheme.typography.titleSmall)
+                            Text(stringResource(R.string.ui_1197e4d653), style = MaterialTheme.typography.titleSmall)
                             Text(
-                                "Use the device fingerprint or face prompt. Mizani never sees biometric data.",
+                                stringResource(R.string.ui_032efc484f),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -1158,26 +1158,26 @@ fun SettingsScreen(
                     }
                 }
                 Text(
-                    "PIN lock protects access. Your ledger is encrypted on this phone.",
+                    stringResource(R.string.ui_85e1bf89df),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             SectionHeader(
-                title = "Region",
+                title = stringResource(R.string.ui_0f21717994),
                 accent = true,
                 modifier = Modifier.padding(top = Spacing.xs),
             )
             MizaniCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.Language,
-                    title = "Country & primary currency",
+                    title = stringResource(R.string.ui_c8a5b225b1),
                     subtitle = "${CountryPacks.byCode(settings.countryCode).name} · ${state.snapshot.currencyCode}",
                     onClick = { showCountryDialog = true },
                 )
                 Text(
-                    "Country updates suggestions and labels. Your primary currency is fixed for this workspace and is not changed here.",
+                    stringResource(R.string.ui_ed0cbbe511),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1414,28 +1414,28 @@ fun SettingsScreen(
             }
 
             SectionHeader(
-                title = "Privacy",
+                title = stringResource(R.string.ui_cf01481f62),
                 accent = true,
                 modifier = Modifier.padding(top = Spacing.xs),
             )
             MizaniSectionCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.Security,
-                    title = "No tracking",
-                    subtitle = "No ads or usage tracking. Rate checks send currency codes only.",
+                    title = stringResource(R.string.ui_f6ebb9bde3),
+                    subtitle = stringResource(R.string.ui_f3e763a79b),
                 )
             }
 
             SectionHeader(
-                title = "Delete data",
+                title = stringResource(R.string.ui_cfbcfa19af),
                 accent = true,
                 modifier = Modifier.padding(top = Spacing.xs),
             )
             MizaniSectionCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.DeleteForever,
-                    title = "Delete all local data",
-                    subtitle = "Cannot be undone without a backup",
+                    title = stringResource(R.string.ui_600b409c87),
+                    subtitle = stringResource(R.string.ui_b76cc50249),
                     danger = true,
                     onClick = { showDeleteConfirm = true },
                 )
@@ -1495,7 +1495,7 @@ private fun AccentColorPickerDialog(
                     Text(selectedHex, style = MaterialTheme.typography.titleSmall)
                 }
 
-                Text("Hue", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_7e58a6e8d8), style = MaterialTheme.typography.labelMedium)
                 Slider(
                     value = hue,
                     onValueChange = { setHsv(newHue = it) },
@@ -1506,7 +1506,7 @@ private fun AccentColorPickerDialog(
                     ),
                 )
 
-                Text("Saturation", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_20a32bc870), style = MaterialTheme.typography.labelMedium)
                 Slider(
                     value = saturation,
                     onValueChange = { setHsv(newSaturation = it) },
@@ -1517,7 +1517,7 @@ private fun AccentColorPickerDialog(
                     ),
                 )
 
-                Text("Brightness", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_e1a2b65df8), style = MaterialTheme.typography.labelMedium)
                 Slider(
                     value = brightness,
                     onValueChange = { setHsv(newBrightness = it) },
@@ -1615,7 +1615,7 @@ private fun CountryCurrencyDialog(
         title = { Text(stringResource(R.string.ui_c8a5b225b1)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                Text("Country", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_d523ebbd10), style = MaterialTheme.typography.labelMedium)
                 MizaniPicker(
                     selectedText = CountryPacks.byCode(countryCode).name,
                     options = CountryPacks.all.map { PickerOption(it.code, it.name) },
@@ -1625,7 +1625,7 @@ private fun CountryCurrencyDialog(
                     emptyResultsLabel = stringResource(R.string.no_countries_match),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Text("Primary currency", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.ui_73076f0d94), style = MaterialTheme.typography.labelMedium)
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
                     shape = MaterialTheme.shapes.small,
@@ -1639,7 +1639,7 @@ private fun CountryCurrencyDialog(
                     )
                 }
                 Text(
-                        "Primary currency is fixed for this workspace. Changing the country updates suggestions and labels only. Mizani cannot currently convert an existing ledger to another primary currency. Export files are for analysis and are not importable; resetting the app deletes local data unless you have a backup.",
+                        stringResource(R.string.ui_8eed134b30),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

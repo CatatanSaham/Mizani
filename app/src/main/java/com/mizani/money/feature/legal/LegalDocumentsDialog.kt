@@ -75,10 +75,10 @@ fun LegalDocumentsDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
-                            Text("Legal information", style = MaterialTheme.typography.titleLarge)
+                            Text(stringResource(R.string.ui_a950f05fee), style = MaterialTheme.typography.titleLarge)
                         }
                         IconButton(onClick = onClose) {
-                            Icon(Icons.Rounded.Close, contentDescription = "Close legal information")
+                            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_89207ce04c))
                         }
                     }
 
