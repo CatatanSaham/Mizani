@@ -1,7 +1,5 @@
 package com.mizani.money.domain.analytics
 
-import com.mizani.money.R
-import com.mizani.money.UiStr
 import com.mizani.money.core.model.Insight
 import com.mizani.money.core.model.InsightKind
 import com.mizani.money.core.model.InsightTone
@@ -36,10 +34,10 @@ class InsightEngine(
                 id = "start",
                 kind = InsightKind.DATA_COMPLETENESS,
                 tone = InsightTone.NEUTRAL,
-                title = UiStr.s(R.string.ui_36effc218d),
+                title = "Start with one real transaction",
                 body = "Record money you actually received or spent. Insights appear once there is a little history to compare.",
                 explanation = "Mizani never estimates your income or spending without records. Add a transaction to begin.",
-                actionLabel = UiStr.s(R.string.ui_1997f187b0),
+                actionLabel = "Add transaction",
             )
             return insights
         }
@@ -54,10 +52,10 @@ class InsightEngine(
                 id = "fees",
                 kind = InsightKind.FEE_TREND,
                 tone = InsightTone.ATTENTION,
-                title = UiStr.s(R.string.ui_3f1ff7eaf4),
+                title = "Fees are higher than last month",
                 body = "You paid ${money(feeNow)} in transaction and withdrawal fees this month, ${money(increase)} more than last month.",
                 explanation = "Compares the fees you recorded this month with last month. Fees are tracked separately from transaction amounts.",
-                actionLabel = UiStr.s(R.string.ui_0dfac4b846),
+                actionLabel = "See fee trend",
             )
         }
 
@@ -82,7 +80,7 @@ class InsightEngine(
                     id = "income-concentration",
                     kind = InsightKind.INCOME_CONCENTRATION,
                     tone = InsightTone.NEUTRAL,
-                    title = UiStr.s(R.string.ui_02b106a6fd),
+                    title = "Most of this month's income came from one source",
                     body = "${"%.0f".format(share * 100)}% of your recorded income came from $label.",
                     explanation = "Compares this month's recorded income by source. This describes past activity and does not predict future income.",
                 )
@@ -107,7 +105,7 @@ class InsightEngine(
                     title = "No records for $days days",
                     body = "Your analytics only reflect what you record. Add recent cash or mobile-money activity to keep the picture current.",
                     explanation = "Based on the date of your most recent recorded transaction. Mizani does not estimate missing activity.",
-                    actionLabel = UiStr.s(R.string.ui_1997f187b0),
+                    actionLabel = "Add transaction",
                 )
             }
         }
