@@ -1,5 +1,7 @@
 package com.mizani.money.feature.commitments
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -155,7 +157,7 @@ internal fun RecurringSchedulesPanel(
                 ) {
                     Icon(Icons.Rounded.Autorenew, contentDescription = null)
                     Spacer(Modifier.size(Spacing.xs))
-                    Text("Add repeating item")
+                    Text(stringResource(R.string.ui_15984816a8))
                 }
             }
         } else {
@@ -179,7 +181,7 @@ internal fun RecurringSchedulesPanel(
             ) {
                 Icon(Icons.Rounded.Autorenew, contentDescription = null)
                 Spacer(Modifier.size(Spacing.xs))
-                Text("Add repeating item")
+                Text(stringResource(R.string.ui_15984816a8))
             }
         }
 
@@ -341,19 +343,19 @@ internal fun RecurringEditorDialog(
                     FilterChip(
                         selected = type == RecurringType.BILL,
                         onClick = { type = RecurringType.BILL; categoryId = null; validationError = null },
-                        label = { Text("Bill / expense") },
+                        label = { Text(stringResource(R.string.ui_ddf80832fe)) },
                     )
                     FilterChip(
                         selected = type == RecurringType.INCOME,
                         onClick = { type = RecurringType.INCOME; categoryId = null; validationError = null },
-                        label = { Text("Expected income") },
+                        label = { Text(stringResource(R.string.ui_adfcba4fd1)) },
                     )
                 }
                 androidx.compose.material3.OutlinedTextField(
                     value = name,
                     onValueChange = { name = it.take(80); validationError = null },
-                    label = { Text("Name") },
-                    supportingText = { Text("For example: Rent, internet, salary") },
+                    label = { Text(stringResource(R.string.ui_709a23220f)) },
+                    supportingText = { Text(stringResource(R.string.ui_52a12abe2e)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -449,6 +451,6 @@ internal fun RecurringEditorDialog(
                 Text(if (initial == null) "Save repeating item" else "Save changes")
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !busy) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }

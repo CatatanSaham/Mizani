@@ -399,8 +399,8 @@ private fun WelcomeStep(
             horizontalArrangement = Arrangement.spacedBy(Spacing.sm, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TextButton(onClick = { onOpenLegal(LegalDocumentId.TERMS) }) { Text("Terms of Service") }
-            TextButton(onClick = { onOpenLegal(LegalDocumentId.PRIVACY) }) { Text("Privacy Notice") }
+            TextButton(onClick = { onOpenLegal(LegalDocumentId.TERMS) }) { Text(stringResource(R.string.ui_0c8a9a95e2)) }
+            TextButton(onClick = { onOpenLegal(LegalDocumentId.PRIVACY) }) { Text(stringResource(R.string.ui_14862f7224)) }
         }
         Button(
             onClick = if (page == 0) onNext else onAccept,

@@ -1,5 +1,6 @@
 package com.mizani.money
 
+import com.mizani.money.R
 import android.os.Bundle
 import android.content.Intent
 import android.view.WindowManager
@@ -362,7 +363,7 @@ private fun StartupErrorScreen(onRetry: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(Spacing.lg))
-        Button(onClick = onRetry, shape = MaterialTheme.shapes.medium) { Text("Try again") }
+        Button(onClick = onRetry, shape = MaterialTheme.shapes.medium) { Text(stringResource(R.string.ui_042c862e44)) }
     }
 }
 

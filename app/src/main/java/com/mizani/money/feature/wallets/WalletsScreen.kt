@@ -433,7 +433,7 @@ private fun WalletDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Wallet name") },
+                    label = { Text(stringResource(R.string.ui_33ba81c027)) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.fillMaxWidth(),
@@ -503,7 +503,7 @@ private fun WalletDialog(
                             ) {
                                 Icon(Icons.Rounded.Tune, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(4.dp))
-                                Text("Reconcile to current balance")
+                                Text(stringResource(R.string.ui_a5c4f97cc8))
                             }
                         }
                     } else {
@@ -538,7 +538,7 @@ private fun WalletDialog(
                     ) {
                         Icon(Icons.Rounded.Unarchive, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("Restore wallet")
+                        Text(stringResource(R.string.ui_4950237261))
                     }
                 } else if (initial != null && canArchive) {
                     TextButton(
@@ -547,7 +547,7 @@ private fun WalletDialog(
                     ) {
                         Icon(Icons.Rounded.Archive, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("Archive wallet")
+                        Text(stringResource(R.string.ui_0e0f7ea460))
                     }
                 }
             }
@@ -562,7 +562,7 @@ private fun WalletDialog(
                 }
             }) { Text(if (initial == null) "Add" else "Save") }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 
@@ -679,7 +679,7 @@ private fun ReconcileBalanceDialog(
             }
         },
         dismissButton = {
-            TextButton(enabled = !saving, onClick = onDismiss) { Text("Cancel") }
+            TextButton(enabled = !saving, onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) }
         },
     )
 }

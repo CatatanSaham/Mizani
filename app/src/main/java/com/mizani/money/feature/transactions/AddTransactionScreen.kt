@@ -702,7 +702,7 @@ fun AddTransactionScreen(
                             FilterChip(
                                 selected = !adjustmentNegative,
                                 onClick = { adjustmentNegative = false },
-                                label = { Text("Add to wallet") },
+                                label = { Text(stringResource(R.string.ui_2272167502)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     containerColor = Color.White.copy(alpha = 0.12f),
                                     labelColor = Color.White,
@@ -713,7 +713,7 @@ fun AddTransactionScreen(
                             FilterChip(
                                 selected = adjustmentNegative,
                                 onClick = { adjustmentNegative = true },
-                                label = { Text("Remove from wallet") },
+                                label = { Text(stringResource(R.string.ui_633bce5aa9)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     containerColor = Color.White.copy(alpha = 0.12f),
                                     labelColor = Color.White,
@@ -811,7 +811,7 @@ fun AddTransactionScreen(
                                     color = MaterialTheme.colorScheme.error,
                                 )
                                 TextButton(onClick = { rateRefreshToken++ }) {
-                                    Text("Retry")
+                                    Text(stringResource(R.string.ui_9f5cd8a2e8))
                                 }
                             }
                         }
@@ -820,7 +820,7 @@ fun AddTransactionScreen(
                                 onClick = { rateRefreshToken++ },
                                 enabled = !isRateLoading && !isRateRefreshing,
                             ) {
-                                Text("Refresh rate")
+                                Text(stringResource(R.string.ui_ff5449bf5f))
                             }
                         }
                         if (isForeignCurrency && conversionRate != null && feeText.isNotBlank() && validFee && convertedFeeMinor == null) {
@@ -981,7 +981,7 @@ fun AddTransactionScreen(
                 OutlinedTextField(
                     value = payee,
                     onValueChange = { payee = it },
-                    label = { Text("Payee or source (optional)") },
+                    label = { Text(stringResource(R.string.ui_640df0d6b1)) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.fillMaxWidth(),
@@ -989,7 +989,7 @@ fun AddTransactionScreen(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Note (optional)") },
+                    label = { Text(stringResource(R.string.ui_4e39567064)) },
                     minLines = 2,
                     maxLines = 4,
                     shape = MaterialTheme.shapes.small,

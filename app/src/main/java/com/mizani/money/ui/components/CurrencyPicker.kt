@@ -1,5 +1,7 @@
 package com.mizani.money.ui.components
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -177,7 +179,7 @@ fun MizaniCurrencyPicker(
                         OutlinedTextField(
                             value = query,
                             onValueChange = { query = it },
-                            label = { Text("Search by code, name or symbol") },
+                            label = { Text(stringResource(R.string.ui_c8737fc358)) },
                             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                             trailingIcon = {
                                 if (query.isNotEmpty()) {

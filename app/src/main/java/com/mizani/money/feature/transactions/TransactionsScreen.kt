@@ -1,5 +1,6 @@
 package com.mizani.money.feature.transactions
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -208,7 +209,7 @@ fun TransactionsScreen(
                 OutlinedTextField(
                     value = search,
                     onValueChange = { search = it },
-                    placeholder = { Text("Search payee, note, wallet, category") },
+                    placeholder = { Text(stringResource(R.string.ui_558c2e03bd)) },
                     leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                     trailingIcon = {
                         if (search.isNotEmpty()) {
@@ -508,7 +509,7 @@ private fun FilterPanel(
             )
         }
         TextButton(onClick = onClear, modifier = Modifier.align(Alignment.End)) {
-            Text("Clear filters")
+            Text(stringResource(R.string.ui_412226715c))
         }
     }
 }

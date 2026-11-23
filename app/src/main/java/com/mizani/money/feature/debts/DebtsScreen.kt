@@ -1,5 +1,7 @@
 package com.mizani.money.feature.debts
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -333,7 +335,7 @@ private fun DebtCard(
             ) {
                 Icon(Icons.Rounded.Payments, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Spacing.sm))
-                Text("Record payment")
+                Text(stringResource(R.string.ui_86e5632264))
             }
         }
     }
@@ -390,14 +392,14 @@ private fun DebtDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it.take(80); validationError = null },
-                    label = { Text("Debt name") },
+                    label = { Text(stringResource(R.string.ui_2a14c4d214)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
                     value = lender,
                     onValueChange = { lender = it.take(80); validationError = null },
-                    label = { Text("Lender (optional)") },
+                    label = { Text(stringResource(R.string.ui_408779284b)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -448,7 +450,7 @@ private fun DebtDialog(
                 OutlinedTextField(
                     value = interestText,
                     onValueChange = { interestText = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.take(8) },
-                    label = { Text("Interest rate (optional)") },
+                    label = { Text(stringResource(R.string.ui_b36cb5c117)) },
                     suffix = { Text("%") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
@@ -457,7 +459,7 @@ private fun DebtDialog(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it.take(240) },
-                    label = { Text("Note (optional)") },
+                    label = { Text(stringResource(R.string.ui_4e39567064)) },
                     minLines = 2,
                     maxLines = 4,
                     modifier = Modifier.fillMaxWidth(),
@@ -503,7 +505,7 @@ private fun DebtDialog(
                 }
             }) { Text(if (initial == null) "Add debt" else "Save changes") }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 
@@ -527,7 +529,7 @@ private fun DebtPaymentDialog(
 
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Record debt payment") },
+        title = { Text(stringResource(R.string.ui_2917ddd802)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                 Text(
@@ -577,10 +579,10 @@ private fun DebtPaymentDialog(
                     else -> onSave(walletId!!, amount, date)
                 }
             }) {
-                Text("Record payment")
+                Text(stringResource(R.string.ui_86e5632264))
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 

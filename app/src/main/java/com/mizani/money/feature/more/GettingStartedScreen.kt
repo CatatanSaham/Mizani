@@ -1,5 +1,7 @@
 package com.mizani.money.feature.more
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -61,7 +63,7 @@ fun GettingStartedScreen(
                                 .fillMaxWidth()
                                 .semantics { contentDescription = "Start guide: ${guide.title}" },
                         ) {
-                            Text("Start guide")
+                            Text(stringResource(R.string.ui_edcb56a2bb))
                         }
                     }
                 }

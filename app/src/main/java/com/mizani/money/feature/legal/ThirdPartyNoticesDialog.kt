@@ -1,5 +1,7 @@
 package com.mizani.money.feature.legal
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -160,7 +162,7 @@ fun ThirdPartyNoticesDialog(onClose: () -> Unit) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        Button(onClick = onClose, shape = MaterialTheme.shapes.medium) { Text("Done") }
+                        Button(onClick = onClose, shape = MaterialTheme.shapes.medium) { Text(stringResource(R.string.ui_e9b450d14b)) }
                     }
                 }
             }

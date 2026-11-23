@@ -470,7 +470,7 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = { showPinRequiredForSensitiveAction = false },
             shape = MaterialTheme.shapes.large,
-            title = { Text("Set up a PIN first") },
+            title = { Text(stringResource(R.string.ui_e83ca02ac6)) },
             text = {
                 Text(
                     "A 6-digit app PIN is required to confirm exports and encrypted backup creation. " +
@@ -483,10 +483,10 @@ fun SettingsScreen(
                     showPinRequiredForSensitiveAction = false
                     settingUpPinForSensitiveAction = true
                     showPinSetup = true
-                }) { Text("Set up PIN") }
+                }) { Text(stringResource(R.string.ui_fdcdb9c6b8)) }
             },
             dismissButton = {
-                TextButton(onClick = { showPinRequiredForSensitiveAction = false }) { Text("Cancel") }
+                TextButton(onClick = { showPinRequiredForSensitiveAction = false }) { Text(stringResource(R.string.ui_77dfd2135f)) }
             },
         )
     }
@@ -591,17 +591,17 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = { showCsvWarning = false },
             shape = MaterialTheme.shapes.large,
-            title = { Text("CSV export is not encrypted") },
+            title = { Text(stringResource(R.string.ui_4570ffb20f)) },
             text = {
-                Text("This CSV contains financial details and is not encrypted. Save it somewhere private.")
+                Text(stringResource(R.string.ui_ed9b4f36a8))
             },
             confirmButton = {
                 TextButton(onClick = {
                     showCsvWarning = false
                     createCsv.launch(vm.exporter.suggestedCsvName())
-                }) { Text("Choose file") }
+                }) { Text(stringResource(R.string.ui_eb7eb7a819)) }
             },
-            dismissButton = { TextButton(onClick = { showCsvWarning = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showCsvWarning = false }) { Text(stringResource(R.string.ui_77dfd2135f)) } },
         )
     }
 
@@ -609,17 +609,17 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = { showExcelWarning = false },
             shape = MaterialTheme.shapes.large,
-            title = { Text("Excel workbook is not encrypted") },
+            title = { Text(stringResource(R.string.ui_3d7a236365)) },
             text = {
-                Text("This workbook contains your financial records and is not encrypted. Save it somewhere private.")
+                Text(stringResource(R.string.ui_56120d2372))
             },
             confirmButton = {
                 TextButton(onClick = {
                     showExcelWarning = false
                     createExcel.launch(vm.exporter.suggestedExcelName())
-                }) { Text("Choose file") }
+                }) { Text(stringResource(R.string.ui_eb7eb7a819)) }
             },
-            dismissButton = { TextButton(onClick = { showExcelWarning = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showExcelWarning = false }) { Text(stringResource(R.string.ui_77dfd2135f)) } },
         )
     }
 
@@ -627,7 +627,7 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = ::discardBackupPassphrase,
             shape = MaterialTheme.shapes.large,
-            title = { Text("Protect your backup") },
+            title = { Text(stringResource(R.string.ui_3656e612dd)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(
@@ -640,7 +640,7 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = backupPassphrase,
                         onValueChange = { backupPassphrase = it },
-                        label = { Text("Passphrase (12+ characters)") },
+                        label = { Text(stringResource(R.string.ui_fc5ecb58fb)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         shape = MaterialTheme.shapes.small,
@@ -649,7 +649,7 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = backupPassphraseConfirm,
                         onValueChange = { backupPassphraseConfirm = it },
-                        label = { Text("Confirm passphrase") },
+                        label = { Text(stringResource(R.string.ui_ebaac0cff7)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         shape = MaterialTheme.shapes.small,
@@ -674,9 +674,9 @@ fun SettingsScreen(
                             createBackup.launch(vm.exporter.suggestedBackupName())
                         }
                     }
-                }) { Text("Choose file") }
+                }) { Text(stringResource(R.string.ui_eb7eb7a819)) }
             },
-            dismissButton = { TextButton(onClick = ::discardBackupPassphrase) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = ::discardBackupPassphrase) { Text(stringResource(R.string.ui_77dfd2135f)) } },
         )
     }
 
@@ -684,7 +684,7 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = { if (!checkingBackup) discardPendingRestore() },
             shape = MaterialTheme.shapes.large,
-            title = { Text("Open encrypted backup") },
+            title = { Text(stringResource(R.string.ui_73e7e06187)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(
@@ -695,7 +695,7 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = restorePassphrase,
                         onValueChange = { restorePassphrase = it },
-                        label = { Text("Backup passphrase") },
+                        label = { Text(stringResource(R.string.ui_a68524bf69)) },
                         singleLine = true,
                         enabled = !checkingBackup,
                         visualTransformation = PasswordVisualTransformation(),
@@ -742,7 +742,7 @@ fun SettingsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = ::discardPendingRestore, enabled = !checkingBackup) { Text("Cancel") }
+                TextButton(onClick = ::discardPendingRestore, enabled = !checkingBackup) { Text(stringResource(R.string.ui_77dfd2135f)) }
             },
         )
     }
@@ -752,7 +752,7 @@ fun SettingsScreen(
         MizaniAlertDialog(
             onDismissRequest = { if (!restoringBackup) discardPendingRestore() },
             shape = MaterialTheme.shapes.large,
-            title = { Text("Replace local data with this backup?") },
+            title = { Text(stringResource(R.string.ui_2dc2ae29ce)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     Text(
@@ -812,7 +812,7 @@ fun SettingsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = ::discardPendingRestore, enabled = !restoringBackup) { Text("Cancel") }
+                TextButton(onClick = ::discardPendingRestore, enabled = !restoringBackup) { Text(stringResource(R.string.ui_77dfd2135f)) }
             },
         )
     }
@@ -1032,7 +1032,7 @@ fun SettingsScreen(
                         TextButton(
                             onClick = { scope.launch { vm.resetAccentColor() } },
                             modifier = Modifier.heightIn(min = 48.dp),
-                        ) { Text("Reset") }
+                        ) { Text(stringResource(R.string.ui_44c57abd88)) }
                     }
                 }
 
@@ -1118,24 +1118,24 @@ fun SettingsScreen(
                         OutlinedButton(
                             onClick = { showVerifyForChange = true },
                             shape = MaterialTheme.shapes.medium,
-                        ) { Text("Change PIN") }
+                        ) { Text(stringResource(R.string.ui_ef2c76f483)) }
                         OutlinedButton(
                             onClick = { showDisablePin = true },
                             shape = MaterialTheme.shapes.medium,
                         ) {
                             Icon(Icons.Rounded.LockOpen, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Turn off")
+                            Text(stringResource(R.string.ui_8807c2b3fd))
                         }
                         if (settings.lockEnabled) {
-                            TextButton(onClick = { vm.lockNow() }) { Text("Lock now") }
+                            TextButton(onClick = { vm.lockNow() }) { Text(stringResource(R.string.ui_9217b30d55)) }
                         }
                     }
                 } else {
                     OutlinedButton(
                         onClick = { showPinSetup = true },
                         shape = MaterialTheme.shapes.medium,
-                    ) { Text("Set up app lock") }
+                    ) { Text(stringResource(R.string.ui_da9927b1cd)) }
                 }
                 if (settings.lockEnabled && canBiometric) {
                     Spacer(Modifier.height(Spacing.sm))
@@ -1475,7 +1475,7 @@ private fun AccentColorPickerDialog(
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.large,
-        title = { Text("Choose an accent color") },
+        title = { Text(stringResource(R.string.ui_83bbbe3efd)) },
         text = {
             Column(
                 modifier = Modifier.heightIn(max = 440.dp).verticalScroll(rememberScrollState()),
@@ -1542,8 +1542,8 @@ private fun AccentColorPickerDialog(
                             }
                         }
                     },
-                    label = { Text("Hex color") },
-                    supportingText = { Text("Enter any six-digit color value.") },
+                    label = { Text(stringResource(R.string.ui_1ba7b1495f)) },
+                    supportingText = { Text(stringResource(R.string.ui_fbb0f01026)) },
                     singleLine = true,
                     isError = normalizedPickerHex(hexText) == null,
                     modifier = Modifier.fillMaxWidth(),
@@ -1554,9 +1554,9 @@ private fun AccentColorPickerDialog(
             TextButton(
                 onClick = { normalizedPickerHex(hexText)?.let(onApply) },
                 enabled = normalizedPickerHex(hexText) != null,
-            ) { Text("Apply color") }
+            ) { Text(stringResource(R.string.ui_3895109dfa)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 
@@ -1612,7 +1612,7 @@ private fun CountryCurrencyDialog(
     MizaniAlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.large,
-        title = { Text("Country & primary currency") },
+        title = { Text(stringResource(R.string.ui_c8a5b225b1)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                 Text("Country", style = MaterialTheme.typography.labelMedium)
@@ -1645,8 +1645,8 @@ private fun CountryCurrencyDialog(
                 )
             }
         },
-        confirmButton = { TextButton(onClick = { onSave(countryCode) }) { Text("Save") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = { onSave(countryCode) }) { Text(stringResource(R.string.ui_efc007a393)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 

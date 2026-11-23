@@ -871,7 +871,7 @@ private fun OutlookSetupPanel(observedDays: Int, onEditTarget: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
             ) {
-                Text("Set daily target")
+                Text(stringResource(R.string.ui_b51f341007))
             }
         }
     }
@@ -957,13 +957,13 @@ private fun DailyTargetDialog(
     val scope = rememberCoroutineScope()
     MizaniAlertDialog(
         onDismissRequest = { if (!saving) onDismiss() },
-        title = { Text("Daily spending target") },
+        title = { Text(stringResource(R.string.ui_db3d07234d)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
-                Text("Used when there is not enough recent history for a spending estimate. Leave blank to remove it.")
+                Text(stringResource(R.string.ui_2f5cfb2fde))
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it; error = null },
@@ -994,7 +994,7 @@ private fun DailyTargetDialog(
                 },
             ) { Text(if (saving) "Saving…" else "Save") }
         },
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !saving) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss, enabled = !saving) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 

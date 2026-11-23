@@ -1,5 +1,7 @@
 package com.mizani.money.feature.legal
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,12 +86,12 @@ fun LegalDocumentsDialog(
                         Tab(
                             selected = selectedDocument == LegalDocumentId.TERMS,
                             onClick = { selectedDocument = LegalDocumentId.TERMS },
-                            text = { Text("Terms of Service") },
+                            text = { Text(stringResource(R.string.ui_0c8a9a95e2)) },
                         )
                         Tab(
                             selected = selectedDocument == LegalDocumentId.PRIVACY,
                             onClick = { selectedDocument = LegalDocumentId.PRIVACY },
-                            text = { Text("Privacy Notice") },
+                            text = { Text(stringResource(R.string.ui_14862f7224)) },
                         )
                     }
 
@@ -100,7 +102,7 @@ fun LegalDocumentsDialog(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Button(onClick = onClose, shape = MaterialTheme.shapes.medium) { Text("Done") }
+                        Button(onClick = onClose, shape = MaterialTheme.shapes.medium) { Text(stringResource(R.string.ui_e9b450d14b)) }
                     }
                 }
             }

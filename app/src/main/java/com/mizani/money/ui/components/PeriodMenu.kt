@@ -1,5 +1,7 @@
 package com.mizani.money.ui.components
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -107,7 +109,7 @@ fun PeriodMenu(
                 },
             )
             DropdownMenuItem(
-                text = { Text("Custom period…") },
+                text = { Text(stringResource(R.string.ui_4c9c05b454)) },
                 onClick = {
                     expanded = false
                     onCustom()

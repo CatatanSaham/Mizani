@@ -1,5 +1,7 @@
 package com.mizani.money.ui.components
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,7 +92,7 @@ fun DateRangePickerDialog(
                                 horizontalArrangement = Arrangement.End,
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
                             ) {
-                                TextButton(onClick = onDismiss) { Text("Cancel") }
+                                TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) }
                                 TextButton(
                                     enabled = state.selectedStartDateMillis != null &&
                                         state.selectedEndDateMillis != null,
@@ -103,7 +105,7 @@ fun DateRangePickerDialog(
                                             onConfirm(DateRange(minOf(a, b), maxOf(a, b)))
                                         }
                                     },
-                                ) { Text("Use period") }
+                                ) { Text(stringResource(R.string.ui_3b8369a850)) }
                             }
                         }
                     }
@@ -132,10 +134,10 @@ fun DateRangePickerDialog(
                         onConfirm(DateRange(minOf(a, b), maxOf(a, b)))
                     }
                 },
-            ) { Text("Use period") }
+            ) { Text(stringResource(R.string.ui_3b8369a850)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) }
         },
     ) {
         DateRangePicker(

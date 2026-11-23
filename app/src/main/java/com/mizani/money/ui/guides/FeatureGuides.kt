@@ -1,5 +1,7 @@
 package com.mizani.money.ui.guides
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.runtime.LaunchedEffect
@@ -352,7 +354,7 @@ fun GuidedTourOverlay(
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                     )
-                    TextButton(onClick = onExit) { Text("Exit guide") }
+                    TextButton(onClick = onExit) { Text(stringResource(R.string.ui_fc14936197)) }
                 }
                 Text(step.title, style = MaterialTheme.typography.titleLarge)
                 Text(
@@ -382,7 +384,7 @@ fun GuidedTourOverlay(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onPrevious, enabled = stepIndex > 0) { Text("Back") }
+                    TextButton(onClick = onPrevious, enabled = stepIndex > 0) { Text(stringResource(R.string.ui_b52b36b726)) }
                     Spacer(Modifier.width(Spacing.xs))
                     // Navigation must never depend on measurement; a missing target used to
                     // trap the user on a step whose Next button stayed disabled forever.

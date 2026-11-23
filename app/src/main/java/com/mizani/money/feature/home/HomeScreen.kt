@@ -542,9 +542,9 @@ private fun FirstTransactionCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Button(onClick = onAdd, modifier = Modifier.fillMaxWidth()) {
-                Text("Add your first transaction")
+                Text(stringResource(R.string.ui_40ac39eac3))
             }
-            TextButton(onClick = onImportMessage) { Text("Import MoMo message") }
+            TextButton(onClick = onImportMessage) { Text(stringResource(R.string.ui_ff6e88edfa)) }
         }
     }
 }

@@ -232,7 +232,7 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                                     BiometricPrompt.PromptInfo.Builder()
                                         .setTitle("Unlock Mizani")
                                         .setSubtitle("Use your fingerprint or face")
-                                        .setNegativeButtonText("Use PIN")
+                                        .setNegativeButtonText(stringResource(R.string.ui_0708da885b))
                                         .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                         .build(),
                                 )
@@ -245,7 +245,7 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                     ) {
                         Icon(Icons.Rounded.Fingerprint, contentDescription = null)
                         Spacer(Modifier.width(Spacing.sm))
-                        Text("Unlock with biometrics")
+                        Text(stringResource(R.string.ui_dbd1a345c2))
                     }
                 }
                 if (!pinRecoveryNoteAtBottom) {
@@ -455,7 +455,7 @@ fun PinSetupDialog(
                     )
                     Spacer(Modifier.height(Spacing.md))
                     TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.ui_77dfd2135f))
                     }
                 }
             }
@@ -513,7 +513,7 @@ fun PinVerifyDialog(
                         onBackspace = { pin = pin.dropLast(1) },
                     )
                     Spacer(Modifier.height(Spacing.md))
-                    TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text("Cancel") }
+                    TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.ui_77dfd2135f)) }
                 }
             }
         }

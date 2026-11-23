@@ -309,12 +309,12 @@ fun CommitmentsScreen(
             Tab(
                 selected = selectedSection == 0,
                 onClick = { selectedSection = 0 },
-                text = { Text("One-off bills") },
+                text = { Text(stringResource(R.string.ui_7e6f949566)) },
             )
             Tab(
                 selected = selectedSection == 1,
                 onClick = { selectedSection = 1 },
-                text = { Text("Recurring") },
+                text = { Text(stringResource(R.string.ui_349f0e5ffd)) },
             )
         }
         if (selectedSection == 0) {
@@ -359,7 +359,7 @@ fun CommitmentsScreen(
                     ) {
                         Icon(Icons.Rounded.Add, contentDescription = null)
                         Spacer(Modifier.padding(horizontal = 2.dp))
-                        Text("Add a one-off bill")
+                        Text(stringResource(R.string.ui_1dad429dae))
                     }
                 }
             } else {
@@ -621,7 +621,7 @@ private fun CommitmentCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    TextButton(onClick = { onUnlink(link.id) }, enabled = !busy) { Text("Unlink") }
+                    TextButton(onClick = { onUnlink(link.id) }, enabled = !busy) { Text(stringResource(R.string.ui_0dc2913c6e)) }
                 }
             }
         }
@@ -659,7 +659,7 @@ private fun CommitmentCard(
                 )
                 TextButton(onClick = onRecordExpense, enabled = !busy) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
-                    Text("Record expense")
+                    Text(stringResource(R.string.ui_7db0e7e66e))
                 }
             }
         }
@@ -812,7 +812,7 @@ private fun CommitmentEditorDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it.take(80); validationError = null },
-                    label = { Text("Name") },
+                    label = { Text(stringResource(R.string.ui_709a23220f)) },
                     isError = nameError != null,
                     supportingText = { nameError?.let { message ->
                         Text(message, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
@@ -884,7 +884,7 @@ private fun CommitmentEditorDialog(
                 OutlinedTextField(
                     value = reminderDays,
                     onValueChange = { value -> reminderDays = value.filter(Char::isDigit).take(2); validationError = null },
-                    label = { Text("Reminder days before") },
+                    label = { Text(stringResource(R.string.ui_6d438fda8f)) },
                     isError = reminderError != null,
                     supportingText = {
                         Text(
@@ -978,12 +978,12 @@ private fun CommitmentEditorDialog(
                         strokeWidth = 2.dp,
                     )
                     Spacer(Modifier.padding(horizontal = 2.dp))
-                    Text("Saving...")
+                    Text(stringResource(R.string.ui_ae7e887517))
                 } else Text(if (initial == null) "Save commitment" else "Save changes")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !busy) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.ui_77dfd2135f)) }
         },
     )
 }

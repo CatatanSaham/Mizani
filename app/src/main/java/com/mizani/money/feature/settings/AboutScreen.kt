@@ -1,5 +1,7 @@
 package com.mizani.money.feature.settings
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -174,7 +176,7 @@ fun AboutScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         if (releasePageUrl != null) {
-                            TextButton(onClick = ::openReleasePage) { Text("View release") }
+                            TextButton(onClick = ::openReleasePage) { Text(stringResource(R.string.ui_543e94b822)) }
                         }
                     }
                 }
@@ -275,7 +277,7 @@ fun AboutScreen(
     if (showUpdatePrompt && availableVersionName != null) {
         MizaniAlertDialog(
             onDismissRequest = { showUpdatePrompt = false },
-            title = { Text("Update available") },
+            title = { Text(stringResource(R.string.ui_21f1865b4f)) },
             text = {
                 Text(
                     "Mizani version $availableVersionName is available. Open the official release page to review the update and installation instructions.",
@@ -285,10 +287,10 @@ fun AboutScreen(
                 TextButton(onClick = {
                     showUpdatePrompt = false
                     openReleasePage()
-                }) { Text("View update") }
+                }) { Text(stringResource(R.string.ui_6fcad34c9e)) }
             },
             dismissButton = {
-                TextButton(onClick = { showUpdatePrompt = false }) { Text("Later") }
+                TextButton(onClick = { showUpdatePrompt = false }) { Text(stringResource(R.string.ui_56e2f5d363)) }
             },
         )
     }

@@ -1,5 +1,7 @@
 package com.mizani.money.feature.categories
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -260,7 +262,7 @@ private fun CategoryDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Category name") },
+                    label = { Text(stringResource(R.string.ui_ed3dc45ada)) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.fillMaxWidth(),
@@ -349,7 +351,7 @@ private fun CategoryDialog(
                         ) {
                             Icon(Icons.Rounded.KeyboardArrowUp, contentDescription = "Move up", modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Move up")
+                            Text(stringResource(R.string.ui_b4f57cd0cd))
                         }
                         OutlinedButton(
                             onClick = { onMove(initial, 1) },
@@ -357,7 +359,7 @@ private fun CategoryDialog(
                         ) {
                             Icon(Icons.Rounded.KeyboardArrowDown, contentDescription = "Move down", modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Move down")
+                            Text(stringResource(R.string.ui_260ff8ae71))
                         }
                     }
                 }
@@ -382,6 +384,6 @@ private fun CategoryDialog(
                 if (name.isBlank()) error = "Give this category a name" else onSave(name, icon, colorHex)
             }) { Text(if (initial == null) "Add" else "Save") }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }

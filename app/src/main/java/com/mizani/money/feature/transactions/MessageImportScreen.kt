@@ -117,7 +117,7 @@ fun MessageImportScreen(
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 5,
                     maxLines = 10,
-                    placeholder = { Text("Paste the confirmation text") },
+                    placeholder = { Text(stringResource(R.string.ui_89a4c732ed)) },
                     supportingText = { Text("${message.length}/${TransactionMessageParser.MAX_MESSAGE_LENGTH}") },
                     leadingIcon = { Icon(Icons.Rounded.ContentPaste, contentDescription = null) },
                     isError = error != null,
@@ -162,7 +162,7 @@ fun MessageImportScreen(
                         strokeWidth = 2.dp,
                     )
                 }
-                Text("Review transaction")
+                Text(stringResource(R.string.ui_a248f55cd0))
             }
         }
     }

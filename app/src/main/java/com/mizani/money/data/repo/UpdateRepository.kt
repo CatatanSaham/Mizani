@@ -24,7 +24,11 @@ class UpdateRepository(
         it.openConnection() as HttpURLConnection
     },
 ) {
-    fun checkForUpdate(currentVersionCode: Int): UpdateCheckResult {
+    // Update check to upstream Mizani releases disabled in Catatan Keuangan fork.
+    @Suppress("UNUSED_PARAMETER")
+    fun checkForUpdate(currentVersionCode: Int): UpdateCheckResult = UpdateCheckResult.NoReleases
+
+    private fun checkForUpdateRemote(currentVersionCode: Int): UpdateCheckResult {
         val connection = connectionFactory(URL(LATEST_RELEASE_API))
         try {
             connection.connectTimeout = CONNECT_TIMEOUT_MILLIS

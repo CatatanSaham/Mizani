@@ -1,5 +1,7 @@
 package com.mizani.money.ui
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.BorderStroke
@@ -407,7 +409,7 @@ fun MizaniNavHost(
                         ExtendedFloatingActionButton(
                             onClick = { showAddSheet = true },
                             icon = { Icon(Icons.Rounded.Add, contentDescription = null) },
-                            text = { Text("Add") },
+                            text = { Text(stringResource(R.string.ui_61cc55aa04)) },
                         )
                     }
                 },

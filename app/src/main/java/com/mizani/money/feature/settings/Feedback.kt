@@ -1,5 +1,7 @@
 package com.mizani.money.feature.settings
 
+import com.mizani.money.R
+import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
@@ -216,8 +218,8 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Your feedback") },
-                placeholder = { Text("What happened or what would you like to see?") },
+                label = { Text(stringResource(R.string.ui_4284d1d7a5)) },
+                placeholder = { Text(stringResource(R.string.ui_69ffbb8e90)) },
                 supportingText = {
                     Text(
                         "${message.length}/${FeedbackComposer.MAX_MESSAGE_LENGTH}",
@@ -263,7 +265,7 @@ fun FeedbackScreen(onBack: () -> Unit) {
             ) {
                 Icon(Icons.AutoMirrored.Rounded.Send, contentDescription = null)
                 Spacer(Modifier.width(Spacing.sm))
-                Text("Open email app")
+                Text(stringResource(R.string.ui_bc54c27885))
             }
         }
     }

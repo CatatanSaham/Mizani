@@ -325,15 +325,15 @@ private fun InvestmentDialog(
                 androidx.compose.material3.OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Investment name") },
+                    label = { Text(stringResource(R.string.ui_ee5546b21b)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 androidx.compose.material3.OutlinedTextField(
                     value = provider,
                     onValueChange = { provider = it },
-                    label = { Text("Provider or where held") },
-                    supportingText = { Text("For example, a bank, fund manager, platform or property") },
+                    label = { Text(stringResource(R.string.ui_8f9c842bc3)) },
+                    supportingText = { Text(stringResource(R.string.ui_f7249e677e)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -374,7 +374,7 @@ private fun InvestmentDialog(
                 androidx.compose.material3.OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Note (optional)") },
+                    label = { Text(stringResource(R.string.ui_4e39567064)) },
                     minLines = 2,
                     maxLines = 4,
                     modifier = Modifier.fillMaxWidth(),
@@ -413,7 +413,7 @@ private fun InvestmentDialog(
                 }
             }) { Text(if (initial == null) "Add" else "Save") }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.ui_77dfd2135f)) } },
     )
 }
 

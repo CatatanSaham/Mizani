@@ -592,7 +592,7 @@ fun DateField(
                                     horizontalArrangement = Arrangement.End,
                                     verticalArrangement = Arrangement.spacedBy(12.dp),
                                 ) {
-                                    TextButton(onClick = { showPicker = false }) { Text("Cancel") }
+                                    TextButton(onClick = { showPicker = false }) { Text(stringResource(R.string.ui_77dfd2135f)) }
                                     TextButton(
                                         onClick = {
                                             pickerState.selectedDateMillis?.let { millis ->
@@ -600,7 +600,7 @@ fun DateField(
                                             }
                                             showPicker = false
                                         },
-                                    ) { Text("Choose") }
+                                    ) { Text(stringResource(R.string.ui_78b7c9f6d6)) }
                                 }
                             }
                         }
@@ -624,10 +624,10 @@ fun DateField(
                         }
                         showPicker = false
                     },
-                ) { Text("Choose") }
+                ) { Text(stringResource(R.string.ui_78b7c9f6d6)) }
             },
             dismissButton = {
-                TextButton(onClick = { showPicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showPicker = false }) { Text(stringResource(R.string.ui_77dfd2135f)) }
             },
         ) {
             DatePicker(state = pickerState)
