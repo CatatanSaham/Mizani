@@ -68,8 +68,8 @@ android {
     }
 
     androidResources {
-        // English-only UI; drop unused library translations (AGP 9.4 replacement for resourceConfigurations).
-        localeFilters += listOf("en")
+        // English and Indonesian UI; drop unused library translations (AGP 9.4 replacement for resourceConfigurations).
+        localeFilters += listOf("en", "in")
     }
 
     buildTypes {
