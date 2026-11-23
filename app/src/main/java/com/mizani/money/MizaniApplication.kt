@@ -20,6 +20,7 @@ class MizaniApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        UiStr.app = this
         container = AppContainer(this, sqlCipherReady)
         // Native library loading can be slow on entry-level devices; database initialization waits
         // for this signal on IO, while the Activity can draw its splash immediately.

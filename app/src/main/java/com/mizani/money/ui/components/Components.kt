@@ -1,5 +1,6 @@
 package com.mizani.money.ui.components
 
+import com.mizani.money.UiStr
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -462,7 +463,7 @@ fun MizaniCelebration(
             )
             // Polite live region announces the save without interrupting reading.
             .semantics(mergeDescendants = true) {
-                contentDescription = "Saved"
+                contentDescription = UiStr.s(R.string.ui_c0ae8f6ea8)
                 liveRegion = LiveRegionMode.Polite
             },
         contentAlignment = Alignment.Center,

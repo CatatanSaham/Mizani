@@ -1,5 +1,6 @@
 package com.mizani.money.feature.commitments
 
+import com.mizani.money.UiStr
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -273,7 +274,7 @@ fun CommitmentsScreen(
 
     Column(Modifier.fillMaxSize()) {
         MizaniTopBar(
-            title = "Bills & recurring",
+            title = UiStr.s(R.string.ui_39ff9c58e8),
             subtitle = if (selectedSection == 0) {
                 "Track one-off bills and payment progress"
             } else {
@@ -328,7 +329,7 @@ fun CommitmentsScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.lg),
         ) {
             Text(
-                "Keep a planned amount and due date in one place. Record the expense when you pay, then link it here to update the bill without adding a second transaction.",
+                UiStr.s(R.string.ui_33f41ec50e),
                 style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 23.sp, letterSpacing = 0.1.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -554,14 +555,14 @@ private fun CommitmentCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                Text("Paid", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(UiStr.s(R.string.ui_dc9d4584a5), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(MoneyFormat.format(item.paidMinor, currency), style = MaterialTheme.typography.titleSmall)
             }
             Column(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(Spacing.xs),
             ) {
-                Text("Remaining", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(UiStr.s(R.string.ui_cc632b5e2f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(MoneyFormat.format(item.remainingMinor, currency), style = MaterialTheme.typography.titleSmall)
             }
         }
@@ -599,7 +600,7 @@ private fun CommitmentCard(
         }
         if (links.isNotEmpty()) {
             Spacer(Modifier.height(Spacing.sm))
-            Text("Linked expenses", style = MaterialTheme.typography.labelLarge)
+            Text(UiStr.s(R.string.ui_082fd49d49), style = MaterialTheme.typography.labelLarge)
             links.forEach { link ->
                 val transaction = linkedTransactions[link.transactionId] ?: return@forEach
                 Row(
@@ -628,7 +629,7 @@ private fun CommitmentCard(
         if (!commitment.archived && item.remainingMinor > 0L && linkableExpenses.isNotEmpty()) {
             Spacer(Modifier.height(Spacing.xs))
             Text(
-                "Choose a recorded expense to add this payment to the bill.",
+                UiStr.s(R.string.ui_8c4af8d98d),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -679,7 +680,7 @@ private fun CommitmentCard(
             }
             TextButton(onClick = onDelete, enabled = !busy) {
                 Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
-                Text("Delete", color = MaterialTheme.colorScheme.error)
+                Text(UiStr.s(R.string.ui_f6fdbe48dc), color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -805,7 +806,7 @@ private fun CommitmentEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(Spacing.md),
             ) {
                 Text(
-                    "Payments must already be recorded as expenses. Linking them here will not create another transaction.",
+                    UiStr.s(R.string.ui_09870b9fcc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -865,7 +866,7 @@ private fun CommitmentEditorDialog(
                         },
                     )
                 }
-                DateField(label = "Due date", date = dueDate, onDateSelected = { dueDate = it }, modifier = Modifier.fillMaxWidth())
+                DateField(label = UiStr.s(R.string.ui_4c1aeebc43), date = dueDate, onDateSelected = { dueDate = it }, modifier = Modifier.fillMaxWidth())
                 val categories = state.snapshot.categories.filter {
                     it.type == CategoryType.EXPENSE && !it.archived || it.id == initial?.categoryId
                 }
@@ -973,7 +974,7 @@ private fun CommitmentEditorDialog(
                 if (busy) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp).semantics {
-                            contentDescription = "Saving commitment"
+                            contentDescription = UiStr.s(R.string.ui_4554b57e5b)
                         },
                         strokeWidth = 2.dp,
                     )

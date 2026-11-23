@@ -556,4 +556,6 @@
     <string name="ui_f2409dca38">Add investment</string>
     <string name="ui_f63dbf9a10">Gap to cover</string>
     <string name="ui_fbdbb309d0">Mizani detects the provider when it can. Otherwise, search for and select it here.</string>
+    <!-- UI text -->
+
 </resources>

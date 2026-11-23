@@ -1,5 +1,6 @@
 package com.mizani.money.feature.legal
 
+import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,7 @@ private data class NoticeSection(val title: String, val introduction: String, va
 
 private val thirdPartyNotices = listOf(
     NoticeSection(
-        title = "SQLCipher Community Edition",
+        title = UiStr.s(R.string.ui_a8416f15f9),
         introduction = "SQLCipher for Android is used to encrypt Mizani's local database. " +
             "SQLCipher is Copyright (c) 2008-2026, ZETETIC, LLC. Zetetic lists additional " +
             "notices for integrated components such as SQLite and OpenSSL at " +
@@ -64,7 +65,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""",
     ),
     NoticeSection(
-        title = "Phosphor Icons",
+        title = UiStr.s(R.string.ui_db78df19d1),
         introduction = "The onboarding icons include artwork derived from Phosphor Icons.",
         license = """MIT License
 
@@ -114,9 +115,9 @@ fun ThirdPartyNoticesDialog(onClose: () -> Unit) {
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Third-party notices", modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                        Text(UiStr.s(R.string.ui_a436c20f88), modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                         IconButton(onClick = onClose) {
-                            Icon(Icons.Rounded.Close, contentDescription = "Close third-party notices")
+                            Icon(Icons.Rounded.Close, contentDescription = UiStr.s(R.string.ui_b42f7c6889))
                         }
                     }
                     LazyColumn(
