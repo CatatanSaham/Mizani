@@ -33,206 +33,202 @@ object LegalDocuments {
 
     val terms = LegalDocument(
         id = LegalDocumentId.TERMS,
-        title = "Terms of Service",
+        title = "Syarat Layanan",
         version = TERMS_VERSION,
         effectiveDate = EFFECTIVE_DATE,
         introduction =
-            "These Terms apply when you install or use Mizani. By tapping “Agree and continue” " +
-                "during setup, or after accepting a new version in the app, you agree to these Terms. " +
-                "Read them before proceeding.",
+            "Syarat ini berlaku saat kamu memasang atau memakai Catatan Keuangan. Dengan mengetuk “Setuju dan lanjutkan” " +
+                "saat pengaturan awal, atau setelah menerima versi baru di aplikasi, kamu setuju dengan Syarat ini. " +
+                "Baca dulu sebelum melanjutkan.",
         sections = listOf(
-            LegalSection("1. Provider and contact", listOf(
-                "Provider: $PROVIDER_NAME. Address: $PROVIDER_ADDRESS. Contact: $PRIVACY_CONTACT.",
+            LegalSection("1. Penyedia dan kontak", listOf(
+                "Penyedia: $PROVIDER_NAME. Alamat: $PROVIDER_ADDRESS. Kontak: $PRIVACY_CONTACT.",
             )),
-            LegalSection("2. Who may use Mizani", listOf(
-                "You must be able to enter a binding agreement under the law where you live. If you are " +
-                    "below the age of legal capacity, use Mizani only with permission from a parent or legal guardian.",
+            LegalSection("2. Siapa yang boleh memakai Catatan Keuangan", listOf(
+                "Kamu harus bisa membuat perjanjian yang mengikat menurut hukum di tempat tinggalmu. Jika kamu " +
+                    "belum cukup umur untuk bertindak secara hukum, pakai Catatan Keuangan hanya dengan izin orang tua atau wali hukum.",
             )),
-            LegalSection("3. What the app provides", listOf(
-                "Mizani is a personal budgeting and record-keeping tool. It helps you organize financial " +
-                    "information that you choose to enter, including manual investment snapshots, and view " +
-                    "summaries on your device. It is not a bank, " +
-                    "payment service, lender, investment adviser, credit-scoring service, accounting service, " +
-                    "or tax service. It does not move, hold, or safeguard money for you. Investment snapshots " +
-                    "do not connect to providers, place orders, or change wallet balances.",
-                "The app does not provide financial, investment, legal, accounting, or tax advice. Its displays " +
-                    "are not a recommendation or a promise that funds will be available. Check important " +
-                    "decisions against your own records and appropriate professional advice.",
+            LegalSection("3. Apa yang disediakan aplikasi", listOf(
+                "Catatan Keuangan adalah alat pribadi untuk mengatur anggaran dan mencatat keuangan. Alat ini membantu " +
+                    "kamu mengelola informasi keuangan yang kamu pilih untuk dimasukkan, termasuk catatan manual investasi, dan " +
+                    "melihat ringkasan di HP kamu. Aplikasi ini bukan bank, " +
+                    "layanan pembayaran, pemberi pinjaman, penasihat investasi, layanan penilaian kredit, layanan akuntansi, " +
+                    "atau layanan pajak. Aplikasi tidak memindahkan, menyimpan, atau menjaga uang untukmu. Catatan investasi " +
+                    "tidak terhubung ke penyedia, tidak memasang order, dan tidak mengubah saldo dompet.",
+                "Aplikasi tidak memberikan nasihat keuangan, investasi, hukum, akuntansi, atau pajak. Tampilannya " +
+                    "bukan rekomendasi atau janji bahwa dana akan tersedia. Periksa keputusan penting dengan catatanmu sendiri " +
+                    "dan nasihat profesional yang sesuai.",
             )),
-            LegalSection("4. Your information and device", listOf(
-                "Mizani does not keep an online copy of your financial records. They are encrypted and stored " +
-                    "on your device. You are responsible for securing the device and keeping exports and backups " +
-                    "safe. The Privacy Notice explains optional exchange-rate and update checks.",
-                "Mizani uses Android's secure-window setting to block ordinary screenshots, screen recordings, " +
-                    "and capture on non-secure displays. This platform control cannot stop a camera or a " +
-                    "compromised device, and its behavior depends on Android and the device maker.",
-                "Mizani enables a daily reminder by default at setup. You can change or turn it off in Settings. " +
-                    "When enabled, Mizani checks the ledger on this device and can show a generic notification when " +
-                    "no income, expense, or refund has been recorded that day. It does not send your ledger to a " +
-                    "reminder service.",
-                "Enter information you are entitled to use. Avoid putting another person’s sensitive details " +
-                    "in a payee or note unless you have a valid reason and permission to do so.",
+            LegalSection("4. Informasimu dan perangkat", listOf(
+                "Catatan Keuangan tidak menyimpan salinan online catatan keuanganmu. Catatan itu terenkripsi dan disimpan " +
+                    "di HP kamu. Kamu bertanggung jawab mengamankan perangkat dan menjaga ekspor serta cadangan " +
+                    "tetap aman. Pemberitahuan Privasi menjelaskan pengecekan kurs dan pembaruan yang bersifat opsional.",
+                "Catatan Keuangan memakai pengaturan jendela aman Android untuk memblokir tangkapan layar biasa, rekaman layar, " +
+                    "dan tangkapan di layar yang tidak aman. Kontrol platform ini tidak bisa menghentikan kamera atau " +
+                    "perangkat yang sudah disusupi, dan perilakunya bergantung pada Android dan pabrikan perangkat.",
+                "Catatan Keuangan mengaktifkan pengingat harian secara default saat pengaturan awal. Kamu bisa mengubah atau mematikannya di Pengaturan. " +
+                    "Jika aktif, Catatan Keuangan memeriksa catatan di HP ini dan bisa menampilkan notifikasi umum jika " +
+                    "tidak ada pemasukan, pengeluaran, atau pengembalian yang tercatat hari itu. Aplikasi tidak mengirim catatanmu ke " +
+                    "layanan pengingat mana pun.",
+                "Masukkan informasi yang berhak kamu pakai. Hindari memasukkan detail sensitif orang lain " +
+                    "di kolom penerima atau catatan, kecuali kamu punya alasan yang sah dan izin untuk itu.",
             )),
-            LegalSection("5. Currency conversion", listOf(
-                "If you record a transaction in a currency different from your workspace currency, Mizani may " +
-                    "request the latest available daily reference rate for that currency pair from Frankfurter. " +
-                    "The request contains the currency codes, not the amount, payee, note, or transaction date. " +
-                    "The app saves the rate and its published date with the converted transaction.",
-                "Reference rates can be delayed, revised, unavailable, or different from the rate applied by a " +
-                    "bank, card network, cash exchange, or payment provider. They do not include fees or " +
-                    "margins. Review the displayed conversion and correct it if needed. Do not rely on it for " +
-                    "settlement, trading, tax, or regulatory reporting.",
+            LegalSection("5. Konversi mata uang", listOf(
+                "Jika kamu mencatat transaksi dalam mata uang yang berbeda dari mata uang ruang kerja, Catatan Keuangan mungkin " +
+                    "meminta kurs acuan harian terbaru untuk pasangan mata uang tersebut dari Frankfurter. " +
+                    "Permintaan hanya berisi kode mata uang, bukan nominal, penerima, catatan, atau tanggal transaksi. " +
+                    "Aplikasi menyimpan kurs dan tanggal publikasinya bersama transaksi yang dikonversi.",
+                "Kurs acuan bisa tertunda, direvisi, tidak tersedia, atau berbeda dari kurs yang dipakai oleh " +
+                    "bank, jaringan kartu, penukaran uang tunai, atau penyedia pembayaran. Kurs ini tidak termasuk biaya " +
+                    "atau selisih. Periksa konversi yang ditampilkan dan perbaiki jika perlu. Jangan mengandalkannya untuk " +
+                    "penyelesaian, perdagangan, pajak, atau pelaporan regulasi.",
             )),
-            LegalSection("6. Your responsibilities", listOf(
-                "You are responsible for the accuracy and lawful use of information you enter, for checking " +
-                    "the app’s results, and for making any financial decisions. Do not misuse the app, interfere " +
-                    "with its security, or use it in a way that breaks applicable law or another person’s rights.",
+            LegalSection("6. Tanggung jawabmu", listOf(
+                "Kamu bertanggung jawab atas keakuratan dan penggunaan yang sah dari informasi yang kamu masukkan, untuk " +
+                    "memeriksa hasil aplikasi, dan untuk setiap keputusan keuangan. Jangan menyalahgunakan aplikasi, mengganggu " +
+                    "keamanannya, atau memakainya dengan cara yang melanggar hukum yang berlaku atau hak orang lain.",
             )),
-            LegalSection("7. Exports and backups", listOf(
-                "A CSV export and an Excel workbook are human-readable and are not encrypted. The workbook " +
-                    "contains multiple sheets of your financial records for analysis. A Mizani backup is encrypted " +
-                    "with the passphrase you choose; if you lose that passphrase, the backup cannot be restored. " +
-                    "Files you save outside Mizani may be copied, backed up, or processed by the destination " +
-                    "service under its own terms. The app cannot remove copies outside its private storage.",
-                "Automatic device backup is disabled. Deleting all local data cannot be undone without a " +
-                    "backup. Uninstalling Mizani can permanently remove your records. Export a backup first " +
-                    "if you want to keep a copy.",
+            LegalSection("7. Ekspor dan cadangan", listOf(
+                "Ekspor CSV dan buku Excel bisa dibaca manusia dan tidak terenkripsi. Buku Excel " +
+                    "berisi beberapa lembar catatan keuanganmu untuk analisis. Cadangan Catatan Keuangan dienkripsi " +
+                    "dengan frasa sandi yang kamu pilih; jika frasa sandi itu hilang, cadangan tidak bisa dipulihkan. " +
+                    "Berkas yang kamu simpan di luar Catatan Keuangan bisa disalin, dicadangkan, atau diproses oleh layanan tujuan " +
+                    "sesuai ketentuannya sendiri. Aplikasi tidak bisa menghapus salinan di luar penyimpanan pribadinya.",
+                "Cadangan perangkat otomatis dinonaktifkan. Menghapus semua data lokal tidak bisa dibatalkan tanpa " +
+                    "cadangan. Menghapus Catatan Keuangan bisa menghilangkan catatanmu secara permanen. Ekspor cadangan dulu " +
+                    "jika ingin menyimpan salinannya.",
             )),
-            LegalSection("8. App rights and changes", listOf(
-                "These Terms govern use of official Mizani app releases. Rights to use, modify, and distribute " +
-                    "Mizani's covered source code and executable forms are granted under the Apache License, " +
-                    "Version 2.0, as described in the repository's LICENSE and NOTICE files; these Terms do not " +
-                    "narrow those rights. That license does not grant rights to the Mizani name, logo, or third-party " +
-                    "materials, which remain subject to their own notices and terms.",
-                "We may update, change, or discontinue app features. If a change materially revises these Terms, " +
-                    "the app will show the revised Terms and ask you to accept them before continuing to use " +
-                    "the app. You can stop using Mizani and delete your local data at any time.",
+            LegalSection("8. Hak aplikasi dan perubahan", listOf(
+                "Syarat ini mengatur pemakaian rilis resmi aplikasi Catatan Keuangan. Hak untuk memakai, mengubah, dan mendistribusikan " +
+                    "kode sumber dan bentuk eksekusi Catatan Keuangan yang tercakup diberikan di bawah Lisensi Apache, " +
+                    "Versi 2.0, sebagaimana dijelaskan di berkas LICENSE dan NOTICE repositori; Syarat ini tidak " +
+                    "mempersempit hak tersebut. Lisensi itu tidak memberi hak atas nama, logo, atau materi pihak ketiga " +
+                    "Mizani, yang tetap tunduk pada pemberitahuan dan ketentuannya sendiri.",
+                "Kami dapat memperbarui, mengubah, atau menghentikan fitur aplikasi. Jika perubahan merevisi Syarat ini secara material, " +
+                    "aplikasi akan menampilkan Syarat yang direvisi dan meminta kamu menyetujuinya sebelum lanjut memakai " +
+                    "aplikasi. Kamu bisa berhenti memakai Catatan Keuangan dan menghapus data lokal kapan saja.",
             )),
-            LegalSection("9. Service limits and legal rights", listOf(
-                "Mizani is provided without a promise that it will always be available, error-free, or suitable " +
-                    "for every device or purpose. To the extent allowed by law, the provider is not responsible " +
-                    "for indirect loss caused by relying on an entry, summary, conversion rate, lost device, or " +
-                    "export. Nothing in these Terms limits a right or remedy that applicable law does not allow " +
-                    "us to limit, including mandatory consumer protections.",
+            LegalSection("9. Batasan layanan dan hak hukum", listOf(
+                "Catatan Keuangan disediakan tanpa janji bahwa aplikasi akan selalu tersedia, bebas kesalahan, atau cocok " +
+                    "untuk setiap perangkat atau tujuan. Sejauh diizinkan hukum, penyedia tidak bertanggung jawab " +
+                    "atas kerugian tidak langsung akibat mengandalkan entri, ringkasan, kurs konversi, kehilangan perangkat, atau " +
+                    "ekspor. Tidak ada bagian Syarat ini yang membatasi hak atau upaya hukum yang tidak boleh kami batasi " +
+                    "menurut hukum yang berlaku, termasuk perlindungan konsumen yang wajib.",
             )),
-            LegalSection("10. Applicable law and questions", listOf(
-                "Mandatory laws that apply where you live continue to apply. No governing-law choice in this " +
-                    "draft removes those protections. For questions about these Terms, contact $PRIVACY_CONTACT.",
+            LegalSection("10. Hukum yang berlaku dan pertanyaan", listOf(
+                "Ketentuan hukum wajib yang berlaku di tempat tinggalmu tetap berlaku. Pilihan hukum dalam draf ini " +
+                    "tidak menghapus perlindungan tersebut. Untuk pertanyaan tentang Syarat ini, hubungi $PRIVACY_CONTACT.",
             )),
         ),
     )
 
     val privacy = LegalDocument(
         id = LegalDocumentId.PRIVACY,
-        title = "Privacy Notice",
+        title = "Pemberitahuan Privasi",
         version = PRIVACY_VERSION,
         effectiveDate = PRIVACY_EFFECTIVE_DATE,
         introduction =
-            "This Notice explains how Mizani stores your information and the choices you have.",
+            "Pemberitahuan ini menjelaskan bagaimana Catatan Keuangan menyimpan informasimu dan pilihan yang kamu miliki.",
         sections = listOf(
-            LegalSection("1. Who is responsible", listOf(
-                "Provider: $PROVIDER_NAME. Address: $PROVIDER_ADDRESS. Contact: $PRIVACY_CONTACT.",
+            LegalSection("1. Siapa yang bertanggung jawab", listOf(
+                "Penyedia: $PROVIDER_NAME. Alamat: $PROVIDER_ADDRESS. Kontak: $PRIVACY_CONTACT.",
             )),
-            LegalSection("2. Information stored on your device", listOf(
-                "The information you enter can include wallet names and balances; transaction types, dates, " +
-                    "amounts, fees, currencies, payees and notes; budgets and categories; income sources; goals " +
-                    "and contributions; recurring items; debt records; and manual investment records such as a " +
-                    "holding name, provider or location, broad asset category, cost basis, current value, " +
-                    "valuation date and note. Free-text names and notes may contain personal information if " +
-                    "you choose to put it there.",
-                "If you choose to paste or share a supported mobile-money confirmation, Mizani reads its text " +
-                    "on this device. The original message is discarded after review; only the transaction you " +
-                    "confirm and its provider reference are stored in your ledger.",
-                "Mizani also stores settings such as your selected country, primary currency, theme and app-lock " +
-                    "preferences, the daily reminder (enabled by default at setup) and its time, optional money " +
-                    "check-in settings, and cached currency rates. App-lock details stay on this device. The app " +
-                    "records which versions of these documents you accepted and when.",
+            LegalSection("2. Informasi yang disimpan di perangkatmu", listOf(
+                "Informasi yang kamu masukkan bisa mencakup nama dompet dan saldo; jenis transaksi, tanggal, " +
+                    "nominal, biaya, mata uang, penerima, dan catatan; anggaran dan kategori; sumber pemasukan; target " +
+                    "dan kontribusi; item berulang; catatan utang; serta catatan investasi manual seperti " +
+                    "nama aset, penyedia atau lokasi, kategori aset secara umum, modal, nilai saat ini, " +
+                    "tanggal penilaian, dan catatan. Kolom nama dan catatan bebas bisa memuat informasi pribadi jika " +
+                    "kamu memasukkannya di sana.",
+                "Jika kamu memilih untuk menempel atau membagikan konfirmasi dompet digital yang didukung, Catatan Keuangan membaca teksnya " +
+                    "di HP ini. Pesan asli dibuang setelah ditinjau; hanya transaksi yang kamu konfirmasi dan " +
+                    "nomor referensi penyedianya yang disimpan di catatanmu.",
+                "Catatan Keuangan juga menyimpan pengaturan seperti negara yang dipilih, mata uang utama, tema, dan kunci aplikasi, " +
+                    "pengingat harian (aktif secara default saat pengaturan awal) beserta waktunya, pengaturan pengecekan " +
+                    "keuangan yang opsional, dan kurs mata uang yang disimpan sementara. Detail kunci aplikasi tetap di HP " +
+                    "ini. Aplikasi mencatat versi dokumen-dokumen ini yang kamu setujui dan kapan kamu menyetujuinya.",
             )),
-            LegalSection("3. Why the app uses this information", listOf(
-                "Mizani uses your information to provide the budgeting features you choose, protect your records, " +
-                    "and create exports or backups when you request them. The daily reminder is enabled by default " +
-                    "at setup but can be turned off; it checks your local ledger and uses generic notifications " +
-                    "without names or amounts. Optional commitment and money check-in reminders work the same way. " +
-                    "None of these reminders sends ledger information off the device. Money check-ins are " +
-                    "descriptive prompts, not investment, debt or other financial advice.",
-                "Mizani does not require a name, email address, phone number, bank login, or account. Your " +
-                    "ledger is not used for advertising or usage tracking.",
-                "If you choose Send feedback, Mizani opens your device's email app with your message addressed " +
-                    "to the Mizani team. The app does not attach ledger records or send the message itself. " +
-                    "Your email provider receives anything you choose to send and controls delivery and spam filtering.",
+            LegalSection("3. Mengapa aplikasi memakai informasi ini", listOf(
+                "Catatan Keuangan memakai informasimu untuk menyediakan fitur anggaran yang kamu pilih, melindungi catatanmu, " +
+                    "dan membuat ekspor atau cadangan saat kamu memintanya. Pengingat harian aktif secara default " +
+                    "saat pengaturan awal, tetapi bisa dimatikan; aplikasi memeriksa catatan lokalmu dan memakai notifikasi umum " +
+                    "tanpa nama atau nominal. Pengingat komitmen dan pengecekan uang yang opsional bekerja dengan cara yang sama. " +
+                    "Tidak ada pengingat ini yang mengirim informasi catatan keluar dari HP. Pengecekan uang adalah " +
+                    "pertanyaan deskriptif, bukan nasihat investasi, utang, atau keuangan lainnya.",
+                "Catatan Keuangan tidak meminta nama, alamat email, nomor telepon, login bank, atau akun. Catatanmu " +
+                    "tidak dipakai untuk iklan atau pelacakan pemakaian.",
+                "Jika kamu memilih Kirim masukan, Catatan Keuangan membuka aplikasi email di perangkatmu dengan pesanmu " +
+                    "dialamatkan ke tim Catatan Keuangan. Aplikasi tidak melampirkan catatan atau mengirim pesan itu sendiri. " +
+                    "Penyedia emailmu menerima apa pun yang kamu kirim dan mengatur pengiriman serta filter spam.",
             )),
-            LegalSection("4. Optional requests", listOf(
-                "When you convert a foreign-currency transaction or a commitment target, Mizani sends the two " +
-                    "currency codes to " +
-                    "Frankfurter to get the latest available reference rate. It does not send the amount, date, " +
-                    "payee, note, wallet name, or other ledger details. The rate and date are saved with the " +
-                    "transaction or commitment on your phone.",
-                "Frankfurter says it neither collects nor logs personal data, IP addresses, or request details. Your network " +
-                    "provider still handles the connection. Read more at https://frankfurter.dev/.",
-                "If you installed Mizani outside Google Play, you can choose to check for updates. Mizani requests " +
-                    "public release information from GitHub and compares the release version on your device. It " +
-                    "does not send your installed version or ledger. GitHub may receive your IP address and request " +
-                    "details under its Privacy Statement. You can skip the check.",
-                "When Mizani is installed from Google Play, the Play in-app update service may check the app version, " +
-                    "installed modules and device metadata to determine whether a Play release is available and how " +
-                    "large it is. Google Play controls the download and installation; Mizani does not send ledger " +
-                    "entries or financial details for this check. The update prompt is shown while the app is active.",
-                "When you use Send feedback, the email app you choose may process and retain the message under its " +
-                    "own terms. The feedback message includes the text you write and basic Mizani and Android " +
-                    "version information; it does not include transaction amounts, balances, wallet names, or " +
-                    "backup data unless you put them in the message yourself.",
+            LegalSection("4. Permintaan opsional", listOf(
+                "Saat kamu mengonversi transaksi mata uang asing atau target komitmen, Catatan Keuangan mengirim dua " +
+                    "kode mata uang ke Frankfurter untuk mendapatkan kurs acuan terbaru yang tersedia. Permintaan ini tidak mengirim nominal, tanggal, " +
+                    "penerima, catatan, nama dompet, atau detail catatan lainnya. Kurs dan tanggalnya disimpan bersama " +
+                    "transaksi atau komitmen di HP kamu.",
+                "Frankfurter menyatakan tidak mengumpulkan atau mencatat data pribadi, alamat IP, atau detail permintaan. Penyedia jaringanmu " +
+                    "tetap menangani koneksinya. Baca selengkapnya di https://frankfurter.dev/.",
+                "Jika kamu memasang Catatan Keuangan di luar Google Play, kamu bisa memilih memeriksa pembaruan. Catatan Keuangan meminta " +
+                    "informasi rilis publik dari GitHub dan membandingkan versi rilis dengan perangkatmu. Aplikasi " +
+                    "tidak mengirim versi yang terpasang atau catatanmu. GitHub bisa menerima alamat IP dan detail " +
+                    "permintaanmu sesuai Pernyataan Privasi mereka. Kamu bisa melewati pengecekan ini.",
+                "Saat Catatan Keuangan dipasang dari Google Play, layanan pembaruan dalam aplikasi Play bisa memeriksa versi aplikasi, " +
+                    "modul yang terpasang, dan metadata perangkat untuk menentukan apakah ada rilis Play dan seberapa besar ukurannya. " +
+                    "Google Play mengatur unduhan dan pemasangan; Catatan Keuangan tidak mengirim catatan atau detail keuangan " +
+                    "untuk pengecekan ini. Permintaan pembaruan ditampilkan saat aplikasi sedang aktif.",
+                "Saat kamu memakai Kirim masukan, aplikasi email yang kamu pilih bisa memproses dan menyimpan pesan itu " +
+                    "sesuai ketentuannya sendiri. Pesan masukan berisi teks yang kamu tulis dan informasi dasar versi Catatan Keuangan " +
+                    "dan Android; pesan tidak berisi nominal transaksi, saldo, nama dompet, atau data cadangan kecuali kamu menuliskannya sendiri.",
             )),
-            LegalSection("5. Storage, security and retention", listOf(
-                "Your financial records are encrypted and stored on this phone. Device security helps protect " +
-                    "access to them. No security measure can guarantee that a device or data is safe in every " +
-                    "circumstance.",
-                "Mizani sets Android's secure-window protection on app screens, dialogs and menus to block " +
-                    "ordinary screenshots, screen recordings, and non-secure display capture. Android and device " +
-                    "behavior varies; this cannot prevent capture with an external camera or on a compromised device.",
-                "Mizani keeps no online copy of your ledger. Local records remain in the app until you delete all " +
-                    "local data, clear the app’s storage, or uninstall it. Delete all data also clears saved currency " +
-                    "rates, settings and reminder schedules. Automatic device backups are disabled. " +
-                    "Uninstalling the app or losing access to this phone may make local data unrecoverable.",
+            LegalSection("5. Penyimpanan, keamanan, dan retensi", listOf(
+                "Catatan keuanganmu terenkripsi dan disimpan di HP ini. Keamanan perangkat membantu melindungi " +
+                    "akses ke catatan tersebut. Tidak ada langkah keamanan yang bisa menjamin perangkat atau data aman dalam setiap keadaan.",
+                "Catatan Keuangan memasang proteksi jendela aman Android di layar, dialog, dan menu aplikasi untuk memblokir " +
+                    "tangkapan layar biasa, rekaman layar, dan tangkapan tampilan yang tidak aman. Perilaku Android dan perangkat " +
+                    "berbeda-beda; ini tidak bisa mencegah tangkapan dengan kamera eksternal atau di perangkat yang sudah disusupi.",
+                "Catatan Keuangan tidak menyimpan salinan online buku besarmu. Catatan lokal tetap di aplikasi sampai kamu menghapus semua " +
+                    "data lokal, menghapus penyimpanan aplikasi, atau menghapus aplikasinya. Menghapus semua data juga menghapus kurs mata uang " +
+                    "yang tersimpan, pengaturan, dan jadwal pengingat. Cadangan perangkat otomatis dinonaktifkan. " +
+                    "Menghapus aplikasi atau kehilangan akses ke HP ini bisa membuat data lokal tidak bisa dipulihkan.",
             )),
-            LegalSection("6. Exports and other services", listOf(
-                "CSV exports and Excel workbooks are unencrypted and may expose your financial details to anyone " +
-                    "who can access the file. The CSV is a transaction-ledger export; the Excel workbook and " +
-                    "encrypted backup also include manual investment records. The workbook includes multiple sheets " +
-                    "such as transactions, wallets, investments, budgets, recurring schedules, goals, debts and " +
-                    "commitments. A Mizani backup is encrypted with the " +
-                    "passphrase you choose. When you save or restore a file, Android’s file picker and any " +
-                    "destination service you select may process or store it under their own terms and privacy " +
-                    "notice. Mizani cannot delete those external copies for you.",
+            LegalSection("6. Ekspor dan layanan lain", listOf(
+                "Ekspor CSV dan buku Excel tidak terenkripsi dan bisa membuka detail keuanganmu kepada siapa pun " +
+                    "yang bisa mengakses berkas itu. CSV adalah ekspor buku transaksi; buku Excel dan " +
+                    "cadangan terenkripsi juga mencakup catatan investasi manual. Buku Excel memuat beberapa lembar " +
+                    "seperti transaksi, dompet, investasi, anggaran, jadwal berulang, target, utang, dan " +
+                    "komitmen. Cadangan Catatan Keuangan dienkripsi dengan " +
+                    "frasa sandi yang kamu pilih. Saat kamu menyimpan atau memulihkan berkas, pemilih berkas Android dan layanan tujuan " +
+                    "yang kamu pilih bisa memproses atau menyimpannya sesuai ketentuan dan pemberitahuan privasi mereka. " +
+                    "Catatan Keuangan tidak bisa menghapus salinan eksternal itu untukmu.",
             )),
-            LegalSection("7. Other services", listOf(
-                "The provider does not receive or sell an online copy of your ledger, or use it for advertising. " +
-                    "External services receive only the information described above or a file you choose to " +
-                    "save. The operating system, app marketplace, and network providers may process " +
-                    "technical information under their own terms. Feedback sent through your email provider is " +
-                    "not a copy of the Mizani ledger; avoid including financial details in it.",
+            LegalSection("7. Layanan lainnya", listOf(
+                "Penyedia tidak menerima atau menjual salinan online buku besarmu, dan tidak memakainya untuk iklan. " +
+                    "Layanan eksternal hanya menerima informasi yang dijelaskan di atas atau berkas yang kamu pilih untuk " +
+                    "disimpan. Sistem operasi, toko aplikasi, dan penyedia jaringan bisa memproses " +
+                    "informasi teknis sesuai ketentuan mereka. Masukan yang dikirim lewat penyedia email bukan salinan buku besar " +
+                    "Catatan Keuangan; hindari menyertakan detail keuangan di dalamnya.",
             )),
-            LegalSection("8. Your choices and privacy rights", listOf(
-                "You can view and correct entries in the app, export your ledger from Settings, and delete local " +
-                    "data from Settings. Deletion does not remove exports or backups already saved elsewhere. " +
-                    "Currency-rate requests happen only when you convert a foreign-currency transaction or a " +
-                    "commitment target. Update " +
-                    "checks use GitHub for sideloaded builds and Google Play for Play-installed builds. Neither " +
-                    "sends ledger entries. Optional reminders use local settings and check local records only. Shared or pasted " +
-                    "transaction text is processed on this device and is not retained as a message.",
-                "Privacy rights depend on the law that applies where you live. That law may give you rights to " +
-                    "request access, correction or deletion, object to certain processing, or complain to a data " +
-                    "protection authority. You can manage records stored only on this device in the app. For a " +
-                    "request about information the provider handles, email $PRIVACY_CONTACT. Do not email ledger " +
-                    "details unless needed to handle your request.",
+            LegalSection("8. Pilihan dan hak privasimu", listOf(
+                "Kamu bisa melihat dan memperbaiki catatan di aplikasi, mengekspor buku besarmu dari Pengaturan, dan menghapus data lokal " +
+                    "dari Pengaturan. Penghapusan tidak menghapus ekspor atau cadangan yang sudah disimpan di tempat lain. " +
+                    "Permintaan kurs hanya terjadi saat kamu mengonversi transaksi mata uang asing atau target komitmen. Pengecekan " +
+                    "pembaruan memakai GitHub untuk build sideload dan Google Play untuk build yang dipasang dari Play. Keduanya " +
+                    "tidak mengirim catatan. Pengingat opsional memakai pengaturan lokal dan hanya memeriksa catatan lokal. Teks transaksi yang dibagikan " +
+                    "atau ditempel diproses di HP ini dan tidak disimpan sebagai pesan.",
+                "Hak privasimu bergantung pada hukum yang berlaku di tempat tinggalmu. Hukum itu mungkin memberimu hak untuk " +
+                    "meminta akses, koreksi, atau penghapusan, menolak pemrosesan tertentu, atau mengajukan keluhan ke " +
+                    "otoritas perlindungan data. Kamu bisa mengelola catatan yang hanya tersimpan di HP ini lewat aplikasi. Untuk " +
+                    "permintaan tentang informasi yang ditangani penyedia, email $PRIVACY_CONTACT. Jangan kirim detail catatan " +
+                    "kecuali diperlukan untuk menangani permintaanmu.",
             )),
-            LegalSection("9. Children", listOf(
-                "Mizani is not designed to collect information from children. Anyone below the age of legal " +
-                    "capacity should use it only with permission from a parent or legal guardian.",
+            LegalSection("9. Anak-anak", listOf(
+                "Catatan Keuangan tidak dirancang untuk mengumpulkan informasi dari anak-anak. Siapa pun yang belum cukup umur " +
+                    "untuk bertindak secara hukum hanya boleh memakainya dengan izin orang tua atau wali hukum.",
             )),
-            LegalSection("10. Changes", listOf(
-                "If this Notice changes materially, the app will show it and ask you to accept " +
-                    "the new documents before you continue. You can read the Terms and Notice from " +
-                    "Settings at any time. Contact $PRIVACY_CONTACT with a privacy question.",
+            LegalSection("10. Perubahan", listOf(
+                "Jika Pemberitahuan ini berubah secara material, aplikasi akan menampilkannya dan meminta kamu menyetujui " +
+                    "dokumen baru sebelum lanjut. Kamu bisa membaca Syarat dan Pemberitahuan ini dari " +
+                    "Pengaturan kapan saja. Hubungi $PRIVACY_CONTACT untuk pertanyaan privasi.",
             )),
         ),
     )
