@@ -93,7 +93,7 @@ fun AboutScreen(
                     UpdateCheckResult.NoReleases -> updateMessage = UiStr.s(R.string.ui_02af9721ff)
                     UpdateCheckResult.UpToDate -> updateMessage = UiStr.s(R.string.ui_af04d57ab2)
                     is UpdateCheckResult.Available -> {
-                        updateMessage = "Version ${result.release.versionName} is available."
+                        updateMessage = "Versi ${result.release.versionName} tersedia."
                         releasePageUrl = result.release.pageUrl
                         availableVersionName = result.release.versionName
                         showUpdatePrompt = true
@@ -136,7 +136,7 @@ fun AboutScreen(
                 Column {
                     Text(AppInfo.NAME, style = MaterialTheme.typography.headlineSmall)
                     Text(AppInfo.TAGLINE, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
-                    Text("Version ${AppInfo.VERSION} (build ${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Versi ${AppInfo.VERSION} (build ${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -152,9 +152,9 @@ fun AboutScreen(
                         Modifier
                     },
                     subtitle = when {
-                        installedFromPlay -> "Installed from Google Play · build ${BuildConfig.VERSION_CODE}. Play checks when online and prompts you when an update is ready."
+                        installedFromPlay -> "Dipasang dari Google Play · build ${BuildConfig.VERSION_CODE}. Play memeriksa saat online dan memberi tahu saat pembaruan siap."
                         isCheckingForUpdate -> UiStr.s(R.string.ui_1ae91be264)
-                        else -> "Sideloaded build ${BuildConfig.VERSION_CODE}. Play updates require a Play-installed copy; use the official release check below."
+                        else -> "Build sideload ${BuildConfig.VERSION_CODE}. Pembaruan Play butuh salinan yang dipasang dari Play; gunakan pengecekan rilis resmi di bawah."
                     },
                     onClick = when {
                         installedFromPlay -> ::openPlayListing
@@ -214,8 +214,8 @@ fun AboutScreen(
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "CSV and Excel files are unencrypted. Backups use your passphrase. Uninstalling may erase local data, " +
-                        "so create a backup first.",
+                    "Berkas CSV dan Excel tidak terenkripsi. Cadangan memakai frasa sandimu. Menghapus aplikasi bisa menghilangkan data lokal, " +
+                        "jadi buat cadangan dulu.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -281,7 +281,7 @@ fun AboutScreen(
             title = { Text(stringResource(R.string.ui_21f1865b4f)) },
             text = {
                 Text(
-                    "Mizani version $availableVersionName is available. Open the official release page to review the update and installation instructions.",
+                    "Versi Catatan Keuangan $availableVersionName tersedia. Buka halaman rilis resmi untuk meninjau pembaruan dan petunjuk pemasangan.",
                 )
             },
             confirmButton = {

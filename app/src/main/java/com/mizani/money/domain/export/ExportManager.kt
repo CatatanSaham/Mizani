@@ -127,8 +127,8 @@ class ExportManager(
 
         val sheets = listOf(
             ExcelSheet(
-                name = "Overview",
-                headers = listOf("Field", "Value"),
+                name = "Ringkasan",
+                headers = listOf("Kolom", "Nilai"),
                 rows = listOf(
                     listOf(ExcelCell.Text(UiStr.s(R.string.ui_4ca0a75c2b)), ExcelCell.Text(snapshot.workspace?.name ?: "My money")),
                     listOf(ExcelCell.Text(UiStr.s(R.string.ui_73076f0d94)), ExcelCell.Text(workspaceCurrency)),
@@ -157,14 +157,14 @@ class ExportManager(
                 ),
             ),
             ExcelSheet(
-                name = "Transactions",
+                name = "Transaksi",
                 headers = listOf(
-                    "ID", "Date", "Type", "Amount", "Currency", "Fee", "Wallet ID", "Wallet",
-                    "Transfer wallet ID", "Transfer wallet", "Category ID", "Category", "Fee category ID",
-                    "Fee category", "Income source ID", "Income source", "Payee", "Note", "Linked transaction ID",
-                    "Original amount", "Original currency", "Original fee", "Exchange rate", "Exchange rate date",
-                    "Import source", "Import reference",
-                    "Created at", "Updated at", "Deleted at",
+                    "ID", "Tanggal", "Jenis", "Nominal", "Mata uang", "Biaya", "ID dompet", "Dompet",
+                    "ID dompet tujuan", "Dompet tujuan transfer", "ID kategori", "Kategori", "ID kategori biaya",
+                    "Kategori biaya", "ID sumber pemasukan", "Sumber pemasukan", "Penerima", "Catatan", "ID transaksi tertaut",
+                    "Nominal asli", "Mata uang asli", "Biaya asli", "Kurs", "Tanggal kurs",
+                    "Sumber impor", "Referensi impor",
+                    "Dibuat", "Diubah", "Dihapus",
                 ),
                 rows = snapshot.transactions
                     .sortedWith(compareBy<TransactionEntity> { it.localDateEpochDay }.thenBy { it.occurredAt })
@@ -192,40 +192,40 @@ class ExportManager(
                     },
             ),
             ExcelSheet(
-                name = "Recurring",
+                name = "Berulang",
                 headers = listOf(
-                    "ID", "Name", "Type", "Amount", "Currency", "Category ID", "Category", "Wallet ID",
-                    "Wallet", "Frequency", "Next date", "Essential", "Note", "Archived", "Deleted at",
+                    "ID", "Nama", "Jenis", "Nominal", "Mata uang", "ID kategori", "Kategori", "ID dompet",
+                    "Dompet", "Frekuensi", "Tanggal berikutnya", "Esensial", "Catatan", "Diarsipkan", "Dihapus",
                 ),
                 rows = snapshot.recurring.sortedBy { it.nextDueEpochDay }.map { rule ->
                     listOf(
                         text(rule.id), text(rule.name), text(rule.type.name), money(rule.amountMinor, workspaceCurrency),
                         text(workspaceCurrency), text(rule.categoryId), text(rule.categoryId?.let { categories[it]?.name }),
                         text(rule.walletId), text(rule.walletId?.let { wallets[it]?.name }), text(rule.frequency.label),
-                        date(rule.nextDueEpochDay), text(if (rule.essential) "Yes" else "No"), text(rule.note),
-                        text(if (rule.archived) "Yes" else "No"), timestamp(rule.deletedAt),
+                        date(rule.nextDueEpochDay), text(if (rule.essential) "Ya" else "Tidak"), text(rule.note),
+                        text(if (rule.archived) "Ya" else "Tidak"), timestamp(rule.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Wallets",
+                name = "Dompet",
                 headers = listOf(
-                    "ID", "Name", "Type", "Opening balance", "Currency", "Color", "Icon", "Sort order", "Archived", "Deleted at",
+                    "ID", "Nama", "Jenis", "Saldo awal", "Mata uang", "Warna", "Ikon", "Urutan", "Diarsipkan", "Dihapus",
                 ),
                 rows = snapshot.wallets.sortedBy { it.sortOrder }.map { wallet ->
                     listOf(
                         text(wallet.id), text(wallet.name), text(wallet.type.label),
                         money(wallet.openingBalanceMinor, wallet.currencyCode), text(wallet.currencyCode),
                         text(wallet.colorHex), text(wallet.icon), number(wallet.sortOrder),
-                        text(if (wallet.archived) "Yes" else "No"), timestamp(wallet.deletedAt),
+                        text(if (wallet.archived) "Ya" else "Tidak"), timestamp(wallet.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Investments",
+                name = "Investasi",
                 headers = listOf(
-                    "ID", "Name", "Provider / where held", "Asset type", "Cost basis", "Current value",
-                    "Currency", "Valuation date", "Note", "Archived", "Deleted at",
+                    "ID", "Nama", "Penyedia / tempat disimpan", "Jenis aset", "Modal", "Nilai saat ini",
+                    "Mata uang", "Tanggal penilaian", "Catatan", "Diarsipkan", "Dihapus",
                 ),
                 rows = snapshot.investments.sortedWith(compareBy<InvestmentHoldingEntity> { it.archived }.thenBy { it.provider }.thenBy { it.name }).map { investment ->
                     listOf(
@@ -233,31 +233,31 @@ class ExportManager(
                         text(investment.assetType.label), money(investment.costBasisMinor, investment.currencyCode),
                         money(investment.currentValueMinor, investment.currencyCode), text(investment.currencyCode),
                         date(investment.valuationDateEpochDay), text(investment.note),
-                        text(if (investment.archived) "Yes" else "No"), timestamp(investment.deletedAt),
+                        text(if (investment.archived) "Ya" else "Tidak"), timestamp(investment.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Categories",
-                headers = listOf("ID", "Name", "Type", "Icon", "Color", "Default", "Archived", "Deleted at"),
+                name = "Kategori",
+                headers = listOf("ID", "Nama", "Jenis", "Ikon", "Warna", "Default", "Diarsipkan", "Dihapus"),
                 rows = snapshot.categories.sortedBy { it.sortOrder }.map { category ->
                     listOf(
                         text(category.id), text(category.name), text(category.type.label), text(category.icon),
-                        text(category.colorHex), text(if (category.isDefault) "Yes" else "No"),
-                        text(if (category.archived) "Yes" else "No"), timestamp(category.deletedAt),
+                        text(category.colorHex), text(if (category.isDefault) "Ya" else "Tidak"),
+                        text(if (category.archived) "Ya" else "Tidak"), timestamp(category.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Income Sources",
-                headers = listOf("ID", "Name", "Kind", "Archived", "Deleted at"),
+                name = "Sumber pemasukan",
+                headers = listOf("ID", "Nama", "Jenis", "Diarsipkan", "Dihapus"),
                 rows = snapshot.incomeSources.sortedBy { it.name }.map { source ->
-                    listOf(text(source.id), text(source.name), text(source.kind.label), text(if (source.archived) "Yes" else "No"), timestamp(source.deletedAt))
+                    listOf(text(source.id), text(source.name), text(source.kind.label), text(if (source.archived) "Ya" else "Tidak"), timestamp(source.deletedAt))
                 },
             ),
             ExcelSheet(
-                name = "Budgets",
-                headers = listOf("ID", "Name", "Period", "Start date", "End date", "Deleted at"),
+                name = "Anggaran",
+                headers = listOf("ID", "Nama", "Periode", "Tanggal mulai", "Tanggal selesai", "Dihapus"),
                 rows = snapshot.budgets.sortedBy { it.startEpochDay }.map { budget ->
                     listOf(
                         text(budget.id), text(budget.name), text(budget.periodType.label),
@@ -266,32 +266,32 @@ class ExportManager(
                 },
             ),
             ExcelSheet(
-                name = "Budget Lines",
-                headers = listOf("ID", "Budget ID", "Budget", "Category ID", "Category", "Planned", "Funded", "Rollover", "Essential", "Priority", "Note"),
+                name = "Baris anggaran",
+                headers = listOf("ID", "ID anggaran", "Anggaran", "ID kategori", "Kategori", "Rencana", "Terisi", "Pindahan", "Esensial", "Prioritas", "Catatan"),
                 rows = snapshot.budgetLines.map { line ->
                     listOf(
                         text(line.id), text(line.budgetId), text(budgets[line.budgetId]?.name), text(line.categoryId),
                         text(categories[line.categoryId]?.name), money(line.plannedMinor, workspaceCurrency),
                         money(line.fundedMinor, workspaceCurrency), text(line.rolloverRule.label),
-                        text(if (line.essential) "Yes" else "No"), number(line.priority), text(line.note),
+                        text(if (line.essential) "Ya" else "Tidak"), number(line.priority), text(line.note),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Goals",
-                headers = listOf("ID", "Name", "Target", "Allocated", "Target date", "Linked wallet ID", "Linked wallet", "Priority", "Note", "Archived", "Deleted at"),
+                name = "Target",
+                headers = listOf("ID", "Nama", "Target", "Dialokasikan", "Tanggal target", "ID dompet tertaut", "Dompet tertaut", "Prioritas", "Catatan", "Diarsipkan", "Dihapus"),
                 rows = snapshot.goals.sortedBy { it.priority }.map { goal ->
                     listOf(
                         text(goal.id), text(goal.name), money(goal.targetMinor, workspaceCurrency),
                         money(goal.allocatedMinor, workspaceCurrency), date(goal.targetEpochDay), text(goal.linkedWalletId),
                         text(goal.linkedWalletId?.let { wallets[it]?.name }), number(goal.priority), text(goal.note),
-                        text(if (goal.archived) "Yes" else "No"), timestamp(goal.deletedAt),
+                        text(if (goal.archived) "Ya" else "Tidak"), timestamp(goal.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Contributions",
-                headers = listOf("ID", "Goal ID", "Goal", "Amount", "Date", "Wallet ID", "Wallet", "Transfer transaction ID", "Note"),
+                name = "Kontribusi",
+                headers = listOf("ID", "ID target", "Target", "Nominal", "Tanggal", "ID dompet", "Dompet", "ID transaksi transfer", "Catatan"),
                 rows = snapshot.contributions.sortedBy { it.localDateEpochDay }.map { contribution ->
                     listOf(
                         text(contribution.id), text(contribution.goalId), text(goals[contribution.goalId]?.name),
@@ -302,24 +302,24 @@ class ExportManager(
                 },
             ),
             ExcelSheet(
-                name = "Debts",
-                headers = listOf("ID", "Name", "Lender", "Current balance", "Original amount", "Periodic payment", "Next date", "Interest rate percent", "Note", "Archived", "Deleted at"),
+                name = "Utang",
+                headers = listOf("ID", "Nama", "Pemberi pinjaman", "Saldo saat ini", "Nominal asli", "Pembayaran berkala", "Tanggal berikutnya", "Persen bunga", "Catatan", "Diarsipkan", "Dihapus"),
                 rows = snapshot.debts.map { debt ->
                     listOf(
                         text(debt.id), text(debt.name), text(debt.lender), money(debt.currentBalanceMinor, workspaceCurrency),
                         debt.originalMinor?.let { money(it, workspaceCurrency) } ?: text(""),
                         money(debt.periodicPaymentMinor, workspaceCurrency), date(debt.nextDueEpochDay),
                         debt.interestRatePercent?.let { ExcelCell.Number(BigDecimal.valueOf(it).toPlainString()) } ?: text(""),
-                        text(debt.note), text(if (debt.archived) "Yes" else "No"), timestamp(debt.deletedAt),
+                        text(debt.note), text(if (debt.archived) "Ya" else "Tidak"), timestamp(debt.deletedAt),
                     )
                 },
             ),
             ExcelSheet(
-                name = "Commitments",
+                name = "Komitmen",
                 headers = listOf(
-                    "ID", "Name", "Target", "Paid", "Remaining", "Due date", "Category ID", "Category",
-                    "Reminder days before", "Archived", "Commitment currency", "Target in commitment currency",
-                    "Paid in commitment currency", "Remaining in commitment currency", "Reference rate", "Rate date",
+                    "ID", "Nama", "Target", "Dibayar", "Sisa", "Tanggal jatuh tempo", "ID kategori", "Kategori",
+                    "Pengingat hari sebelumnya", "Diarsipkan", "Mata uang komitmen", "Target dalam mata uang komitmen",
+                    "Dibayar dalam mata uang komitmen", "Sisa dalam mata uang komitmen", "Kurs acuan", "Tanggal kurs",
                 ),
                 rows = snapshot.commitmentProgress().map { progress ->
                     val commitment = progress.commitment
@@ -328,7 +328,7 @@ class ExportManager(
                         money(progress.paidWorkspaceMinor, workspaceCurrency), money(progress.remainingWorkspaceMinor, workspaceCurrency),
                         date(commitment.dueEpochDay), text(commitment.categoryId),
                         text(commitment.categoryId?.let { categories[it]?.name }), number(commitment.reminderDaysBefore),
-                        text(if (commitment.archived) "Yes" else "No"),
+                        text(if (commitment.archived) "Ya" else "Tidak"),
                         text(commitment.currencyCode), money(commitment.targetMinor, commitment.currencyCode),
                         money(progress.paidMinor, commitment.currencyCode),
                         money(progress.remainingMinor, commitment.currencyCode),
@@ -690,7 +690,7 @@ class ExportManager(
 
     private fun decodeBudget(json: JSONObject) = BudgetEntity(
         id = json.getString("id"),
-        name = json.optString("name", "Budget"),
+        name = json.optString("name", "Anggaran"),
         periodType = json.enumOrDefault("periodType", BudgetPeriodType.MONTHLY),
         startEpochDay = json.optLong("startEpochDay"),
         endEpochDay = json.optLong("endEpochDay"),

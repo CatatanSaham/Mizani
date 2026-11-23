@@ -360,11 +360,11 @@ fun AddTransactionScreen(
             return
         }
         if (isForeignCurrency && conversionRate == null) {
-            error = rateError ?: if (isRateLoading) "Getting rate…" else UiStr.s(R.string.ui_154aa2c5d8)
+            error = rateError ?: if (isRateLoading) "Mengambil kurs…" else UiStr.s(R.string.ui_154aa2c5d8)
             return
         }
         if (amountMinor <= 0) {
-            error = "This amount is too small to record in ${currency.code}"
+            error = "Nominal ini terlalu kecil untuk dicatat dalam ${currency.code}"
             return
         }
         if (walletId == null) {
@@ -433,8 +433,8 @@ fun AddTransactionScreen(
         MizaniConfirmDialog(
             title = UiStr.s(R.string.ui_7bbc0c1f35),
             body = UiStr.s(R.string.ui_70a093ad2b),
-            confirmLabel = "Delete",
-            dismissLabel = "Keep",
+            confirmLabel = "Hapus",
+            dismissLabel = "Simpan",
             destructive = true,
             onConfirm = {
                 showDelete = false
@@ -564,7 +564,7 @@ fun AddTransactionScreen(
 
             if (importCandidate != null && importProviderLabel != null) {
                 Text(
-                    "Suggested from $importProviderLabel · Ref ${importCandidate.reference}. Check the details before saving.",
+                    "Disarankan dari $importProviderLabel · Ref ${importCandidate.reference}. Periksa detailnya sebelum disimpan.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -586,7 +586,7 @@ fun AddTransactionScreen(
                             entryCurrencyCode = it
                             error = null
                         },
-                        fieldLabel = "Transaction currency",
+                        fieldLabel = "Mata uang transaksi",
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -613,7 +613,7 @@ fun AddTransactionScreen(
                                 TransactionType.TRANSFER -> UiStr.s(R.string.ui_f46cf24c23)
                                 TransactionType.REFUND -> UiStr.s(R.string.ui_b7a4c981da)
                                 TransactionType.ADJUSTMENT -> UiStr.s(R.string.ui_cd0528cc9f)
-                                else -> "Amount"
+                                else -> "Nominal"
                             },
                             style = MaterialTheme.typography.labelMedium,
                             color = Color.White,
@@ -670,7 +670,7 @@ fun AddTransactionScreen(
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .semantics { contentDescription = "Amount in ${entryCurrency.name}" },
+                                    .semantics { contentDescription = "Nominal dalam ${entryCurrency.name}" },
                             )
                         }
                     }
@@ -759,7 +759,7 @@ fun AddTransactionScreen(
                         modifier = Modifier.fillMaxWidth().padding(Spacing.md),
                         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
                     ) {
-                        Text("Automatically converted to ${currency.code}", style = MaterialTheme.typography.labelLarge)
+                        Text("Otomatis dikonversi ke ${currency.code}", style = MaterialTheme.typography.labelLarge)
                         when {
                             conversionRate != null -> {
                                 if (enteredAmountMinor > 0L && amountMinor > 0L) {
@@ -770,7 +770,7 @@ fun AddTransactionScreen(
                                     )
                                 } else if (enteredAmountMinor > 0L) {
                                     Text(
-                                        "This amount cannot be recorded in ${currency.code}; try a smaller amount.",
+                                        "Nominal ini tidak bisa dicatat dalam ${currency.code}; coba nominal yang lebih kecil.",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.error,
                                     )
@@ -826,7 +826,7 @@ fun AddTransactionScreen(
                         }
                         if (isForeignCurrency && conversionRate != null && feeText.isNotBlank() && validFee && convertedFeeMinor == null) {
                             Text(
-                                "This fee exceeds the supported ${currency.code} amount range.",
+                                "Biaya ini melebihi rentang nominal ${currency.code} yang didukung.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error,
                             )
@@ -878,7 +878,7 @@ fun AddTransactionScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            if (type == TransactionType.INCOME) UiStr.s(R.string.ui_284b0cbfe2) else "Category",
+                            if (type == TransactionType.INCOME) UiStr.s(R.string.ui_284b0cbfe2) else "Kategori",
                             style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier.weight(1f),
                         )
@@ -924,7 +924,7 @@ fun AddTransactionScreen(
                     if (extra.isNotEmpty()) {
                         var expanded by remember { mutableStateOf(false) }
                         TextButton(onClick = { expanded = !expanded }) {
-                            Text(if (expanded) UiStr.s(R.string.ui_488616be7c) else "More categories (${extra.size})")
+                            Text(if (expanded) UiStr.s(R.string.ui_488616be7c) else "Kategori lainnya (${extra.size})")
                         }
                         if (expanded) {
                             FlowRow(
@@ -1091,7 +1091,7 @@ fun AddTransactionScreen(
                     ) {
                         Text(
                             when {
-                                saving -> "Saving…"
+                                saving -> "Menyimpan…"
                                 existing != null -> UiStr.s(R.string.ui_179359b39e)
                                 type == TransactionType.TRANSFER -> UiStr.s(R.string.ui_9324b64839)
                                 type == TransactionType.INCOME -> UiStr.s(R.string.ui_9c4d5fdea4)

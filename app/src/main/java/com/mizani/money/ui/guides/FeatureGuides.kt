@@ -88,7 +88,7 @@ object FeatureGuides {
             summary = UiStr.s(R.string.ui_9eb8b365ec),
             route = "home",
             steps = listOf(
-                FeatureGuideStep("home.period", "Choose a period", UiStr.s(R.string.ui_b45a36d01d)),
+                FeatureGuideStep("home.period", "Pilih periode", UiStr.s(R.string.ui_b45a36d01d)),
                 FeatureGuideStep("home.actions", UiStr.s(R.string.ui_17f40256d3), UiStr.s(R.string.ui_8c9acb6fbd)),
                 FeatureGuideStep("home.wallets", UiStr.s(R.string.ui_15d30b98d5), UiStr.s(R.string.ui_ae82d0d823)),
             ),
@@ -213,7 +213,7 @@ fun GuideHelpAction(featureName: String, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.HelpOutline,
-            contentDescription = "Help with $featureName",
+            contentDescription = "Bantuan untuk $featureName",
         )
     }
 }
@@ -345,11 +345,11 @@ fun GuidedTourOverlay(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Step ${stepIndex + 1} of ${guide.steps.size}",
+                        "Langkah ${stepIndex + 1} dari ${guide.steps.size}",
                         modifier = Modifier
                             .weight(1f)
                             .semantics {
-                                contentDescription = "Step ${stepIndex + 1} of ${guide.steps.size}"
+                                contentDescription = "Langkah ${stepIndex + 1} dari ${guide.steps.size}"
                                 liveRegion = LiveRegionMode.Polite
                             },
                         style = MaterialTheme.typography.labelLarge,
@@ -390,7 +390,7 @@ fun GuidedTourOverlay(
                     // Navigation must never depend on measurement; a missing target used to
                     // trap the user on a step whose Next button stayed disabled forever.
                     Button(onClick = onNext) {
-                        Text(if (stepIndex == guide.steps.lastIndex) "Finish" else "Next")
+                        Text(if (stepIndex == guide.steps.lastIndex) "Selesai" else "Lanjut")
                     }
                 }
             }

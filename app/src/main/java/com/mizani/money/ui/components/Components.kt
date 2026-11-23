@@ -685,7 +685,7 @@ fun TransactionRow(
 ) {
     val category = snapshot.category(transaction.categoryId)
     val title = when {
-        transaction.type == TransactionType.TRANSFER -> "Transfer to ${snapshot.walletName(transaction.toWalletId)}"
+        transaction.type == TransactionType.TRANSFER -> "Transfer ke ${snapshot.walletName(transaction.toWalletId)}"
         transaction.payee.isNotBlank() -> transaction.payee
         transaction.note.isNotBlank() -> transaction.note
         category != null -> category.name
@@ -799,7 +799,7 @@ fun TransactionRow(
             }
             if (transaction.feeMinor > 0) {
                 Text(
-                    "fee ${MoneyFormat.format(transaction.feeMinor, currency)}",
+                    "biaya ${MoneyFormat.format(transaction.feeMinor, currency)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

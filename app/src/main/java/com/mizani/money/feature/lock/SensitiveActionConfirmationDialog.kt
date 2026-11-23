@@ -193,9 +193,9 @@ fun SensitiveActionConfirmationDialog(
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
                         if (allowBiometrics && prompt != null) {
-                            "Confirm to $actionDescription with your app PIN or enabled biometrics."
+                            "Konfirmasi untuk $actionDescription dengan PIN aplikasi atau biometrik yang aktif."
                         } else {
-                            "Enter your 6-digit app PIN to $actionDescription."
+                            "Masukkan PIN aplikasi 6 digit untuk $actionDescription."
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -208,8 +208,8 @@ fun SensitiveActionConfirmationDialog(
                             onClick = {
                                 biometricMessage = null
                                 val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                                    .setTitle("Confirm your identity")
-                                    .setSubtitle("Confirm to $actionDescription or choose PIN.")
+                                    .setTitle("Konfirmasi identitasmu")
+                                    .setSubtitle("Konfirmasi untuk $actionDescription atau pilih PIN.")
                                     .setNegativeButtonText(UiStr.s(R.string.ui_0708da885b))
                                     .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                     .build()

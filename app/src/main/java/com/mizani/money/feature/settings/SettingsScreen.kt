@@ -123,9 +123,9 @@ import java.time.ZoneId
 import java.util.Locale
 
 private enum class SensitiveDataAction(val description: String) {
-    CSV_EXPORT("export transactions as a CSV file"),
-    EXCEL_EXPORT("export an Excel workbook"),
-    ENCRYPTED_BACKUP("create an encrypted backup"),
+    CSV_EXPORT("ekspor transaksi sebagai berkas CSV"),
+    EXCEL_EXPORT("ekspor buku kerja Excel"),
+    ENCRYPTED_BACKUP("buat cadangan terenkripsi"),
 }
 
 @Composable
@@ -474,7 +474,7 @@ fun SettingsScreen(
             title = { Text(stringResource(R.string.ui_e83ca02ac6)) },
             text = {
                 Text(
-                    "A 6-digit app PIN is required to confirm exports and encrypted backup creation. " +
+                    "PIN aplikasi 6 digit diperlukan untuk mengonfirmasi ekspor dan pembuatan cadangan terenkripsi. " +
                         UiStr.s(R.string.ui_05987f5b3a) +
                         UiStr.s(R.string.ui_d1796e8e12),
                 )
@@ -508,7 +508,7 @@ fun SettingsScreen(
                             message = if (settingUpPinForSensitiveAction) {
                                 UiStr.s(R.string.ui_297cf93243)
                             } else {
-                                "App lock is on."
+                                "Kunci aplikasi aktif."
                             }
                             settingUpPinForSensitiveAction = false
                             error = null
@@ -632,7 +632,7 @@ fun SettingsScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(
-                        "Encrypted with a key derived from this passphrase. " +
+                        "Dienkripsi dengan kunci yang diturunkan dari frasa sandi ini. " +
                             UiStr.s(R.string.ui_92782d303e) +
                             UiStr.s(R.string.ui_d1b2b64870),
                         style = MaterialTheme.typography.bodySmall,
@@ -739,7 +739,7 @@ fun SettingsScreen(
                         }
                     }
                 }, enabled = !checkingBackup) {
-                    Text(if (checkingBackup) "Checking…" else UiStr.s(R.string.ui_264295dbe6))
+                    Text(if (checkingBackup) "Memeriksa…" else UiStr.s(R.string.ui_264295dbe6))
                 }
             },
             dismissButton = {
@@ -757,21 +757,21 @@ fun SettingsScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     Text(
-                        "Created ${Instant.ofEpochMilli(summary.createdAt).atZone(ZoneId.systemDefault()).let { DateText.medium(it.toLocalDate()) }}",
+                        "Dibuat ${Instant.ofEpochMilli(summary.createdAt).atZone(ZoneId.systemDefault()).let { DateText.medium(it.toLocalDate()) }}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Text("Currency: ${summary.currencyCode}")
-                    Text("Wallets: ${summary.walletCount}")
-                    Text("Investments: ${summary.investmentCount}")
-                    Text("Categories: ${summary.categoryCount}")
-                    Text("Transactions: ${summary.transactionCount}")
+                    Text("Mata uang: ${summary.currencyCode}")
+                    Text("Dompet: ${summary.walletCount}")
+                    Text("Investasi: ${summary.investmentCount}")
+                    Text("Kategori: ${summary.categoryCount}")
+                    Text("Transaksi: ${summary.transactionCount}")
                     Text(
-                        "Date range: ${summary.firstDate?.let { DateText.medium(it) } ?: "—"} to ${summary.lastDate?.let { DateText.medium(it) } ?: "—"}",
+                        "Rentang tanggal: ${summary.firstDate?.let { DateText.medium(it) } ?: "—"} s.d. ${summary.lastDate?.let { DateText.medium(it) } ?: "—"}",
                     )
                     Spacer(Modifier.height(Spacing.sm))
                     Text(
-                        "This replaces every wallet, transaction, and other saved record on this phone. " +
+                        "Ini menggantikan setiap dompet, transaksi, dan catatan tersimpan lain di HP ini. " +
                             UiStr.s(R.string.ui_211351b86c),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
@@ -809,7 +809,7 @@ fun SettingsScreen(
                         }
                     }
                 }, enabled = !restoringBackup) {
-                    Text(if (restoringBackup) "Restoring…" else UiStr.s(R.string.ui_a65eaa8807))
+                    Text(if (restoringBackup) "Memulihkan…" else UiStr.s(R.string.ui_a65eaa8807))
                 }
             },
             dismissButton = {
@@ -888,7 +888,7 @@ fun SettingsScreen(
                     MizaniSectionDivider()
                     MizaniInfoRow(
                         icon = Icons.Rounded.Backup,
-                        title = if (creatingBackup) "Creating encrypted backup…" else UiStr.s(R.string.ui_56c337132e),
+                        title = if (creatingBackup) "Membuat cadangan terenkripsi…" else UiStr.s(R.string.ui_56c337132e),
                         subtitle = if (creatingBackup) UiStr.s(R.string.ui_b3cbd71d50) else UiStr.s(R.string.ui_bfe0641082),
                         onClick = {
                             if (!creatingBackup) requestSensitiveAction(SensitiveDataAction.ENCRYPTED_BACKUP)
@@ -914,13 +914,13 @@ fun SettingsScreen(
     }
 
     // Focused entry from the balance-visibility control: scroll the Security card into
-    // view so the "Set up app lock" button is reachable without hunting through Settings.
+    // view so the "Atur kunci aplikasi" button is reachable without hunting through Settings.
     val appLockRequester = remember { BringIntoViewRequester() }
     LaunchedEffect(highlightAppLock) {
         if (highlightAppLock) {
             Toast.makeText(
                 context,
-                "Set up an app PIN below to view wallet balances.",
+                "Atur PIN aplikasi di bawah untuk melihat saldo dompet.",
                 Toast.LENGTH_LONG,
             ).show()
             delay(180)
@@ -1112,7 +1112,7 @@ fun SettingsScreen(
                 MizaniInfoRow(
                     icon = Icons.Rounded.Lock,
                     title = UiStr.s(R.string.ui_a34fa2ead1),
-                    subtitle = if (settings.lockEnabled) UiStr.s(R.string.ui_f5e1958913) else "Off",
+                    subtitle = if (settings.lockEnabled) UiStr.s(R.string.ui_f5e1958913) else "Mati",
                 )
                 if (settings.hasPin) {
                     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
@@ -1154,7 +1154,7 @@ fun SettingsScreen(
                         Switch(
                             checked = settings.biometricEnabled,
                             onCheckedChange = { enabled -> vm.setBiometric(enabled) {} },
-                            modifier = Modifier.semantics { contentDescription = "Biometric unlock" },
+                            modifier = Modifier.semantics { contentDescription = "Buka kunci biometrik" },
                         )
                     }
                 }
@@ -1491,7 +1491,7 @@ private fun AccentColorPickerDialog(
                             .size(32.dp)
                             .clip(CircleShape)
                             .background(selectedColor)
-                            .semantics { contentDescription = "Selected accent color $selectedHex" },
+                            .semantics { contentDescription = "Warna aksen terpilih $selectedHex" },
                     )
                     Text(selectedHex, style = MaterialTheme.typography.titleSmall)
                 }

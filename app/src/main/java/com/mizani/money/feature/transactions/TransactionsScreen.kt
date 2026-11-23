@@ -407,7 +407,7 @@ private fun SummaryRow(
                 LocalDensity.current.fontScale > AdaptiveLayout.LARGE_FONT_SCALE
             if (stackSummary) {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    SummaryLine("Income", MoneyFormat.format(incomeMinor, currency), themeTokens.income)
+                    SummaryLine("Pemasukan", MoneyFormat.format(incomeMinor, currency), themeTokens.income)
                     SummaryLine("Net spending", MoneyFormat.format(expenseMinor, currency), MaterialTheme.colorScheme.onSurface)
                 }
             } else {

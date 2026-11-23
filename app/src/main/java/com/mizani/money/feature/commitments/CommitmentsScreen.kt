@@ -232,7 +232,7 @@ fun CommitmentsScreen(
 
     if (deleteTarget != null) {
         MizaniConfirmDialog(
-            title = "Delete ${deleteTarget?.name}?",
+            title = "Hapus ${deleteTarget?.name}?",
             body = UiStr.s(R.string.ui_1a7b6c2ca9),
             confirmLabel = UiStr.s(R.string.ui_5b4c991c33),
             destructive = true,
@@ -253,7 +253,7 @@ fun CommitmentsScreen(
 
     if (recurringDeleteTarget != null) {
         MizaniConfirmDialog(
-            title = "Delete ${recurringDeleteTarget?.name}?",
+            title = "Hapus ${recurringDeleteTarget?.name}?",
             body = UiStr.s(R.string.ui_d346c03911),
             confirmLabel = UiStr.s(R.string.ui_e41c880e70),
             destructive = true,
@@ -281,7 +281,7 @@ fun CommitmentsScreen(
                 UiStr.s(R.string.ui_735db0f097)
             },
             actions = {
-                GuideHelpAction("Bills and commitments", onOpenGuide)
+                GuideHelpAction("Tagihan dan komitmen", onOpenGuide)
                 IconButton(
                     modifier = Modifier.guideTarget("commitments.add"),
                     onClick = {
@@ -298,7 +298,7 @@ fun CommitmentsScreen(
                 ) {
                     Icon(
                         Icons.Rounded.Add,
-                        contentDescription = if (selectedSection == 0) UiStr.s(R.string.ui_bdde4b16f8) else "Add repeating item",
+                        contentDescription = if (selectedSection == 0) UiStr.s(R.string.ui_bdde4b16f8) else "Tambah item berulang",
                     )
                 }
             },
@@ -425,7 +425,7 @@ fun CommitmentsScreen(
                 }
             }
             if (archived.isNotEmpty()) {
-                SectionHeader("Archived")
+                SectionHeader("Diarsipkan")
                 archived.forEach { item ->
                     CommitmentCard(
                         item = item,
@@ -539,13 +539,13 @@ private fun CommitmentCard(
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                 Text(commitment.name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "Due ${DateText.medium(date)} · $categoryName · ${currency.code}${if (commitment.reminderDaysBefore > 0) " · ${commitment.reminderDaysBefore}-day reminder" else ""}",
+                    "Jatuh tempo ${DateText.medium(date)} · $categoryName · ${currency.code}${if (commitment.reminderDaysBefore > 0) " · ${commitment.reminderDaysBefore}-hari pengingat" else ""}",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
             IconButton(onClick = onEdit, enabled = !busy) {
-                Icon(Icons.Rounded.Edit, contentDescription = "Edit ${commitment.name}")
+                Icon(Icons.Rounded.Edit, contentDescription = "Ubah ${commitment.name}")
             }
         }
         Spacer(Modifier.height(Spacing.md))
@@ -585,7 +585,7 @@ private fun CommitmentCard(
             if (commitment.currencyCode != workspaceCurrency.code) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Converted planning target: ${MoneyFormat.format(commitment.targetWorkspaceMinor, workspaceCurrency)} · rate ${commitment.exchangeRate ?: "not saved"} · ${commitment.exchangeRateDate ?: "reference date unavailable"}",
+                        "Target perencanaan terkonversi: ${MoneyFormat.format(commitment.targetWorkspaceMinor, workspaceCurrency)} · rate ${commitment.exchangeRate ?: "not saved"} · ${commitment.exchangeRateDate ?: "reference date unavailable"}",
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -634,7 +634,7 @@ private fun CommitmentCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             MizaniPicker(
-                selectedText = if (busy) "Updating..." else UiStr.s(R.string.ui_97ab8e44bc),
+                selectedText = if (busy) "Memperbarui…" else UiStr.s(R.string.ui_97ab8e44bc),
                 options = linkableExpenses.map { expense ->
                     val label = expense.payee.ifBlank { state.snapshot.categoryName(expense.categoryId) }
                     PickerOption(
@@ -651,7 +651,7 @@ private fun CommitmentCard(
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                 Text(
                     if (hasRecordedExpenses) {
-                        "No recorded expense matches the remaining ${MoneyFormat.format(item.remainingMinor, currency)}. Record the payment in ${currency.code}, or choose an expense within the converted target."
+                        "Tidak ada pengeluaran tercatat yang cocok dengan sisa ${MoneyFormat.format(item.remainingMinor, currency)}. Catat pembayaran dalam ${currency.code}, atau pilih pengeluaran dalam target yang sudah dikonversi."
                     } else {
                         UiStr.s(R.string.ui_a4fb02d63d)
                     },
@@ -676,7 +676,7 @@ private fun CommitmentCard(
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
             TextButton(onClick = { onArchive(!commitment.archived) }, enabled = !busy) {
                 Icon(Icons.Rounded.Archive, contentDescription = null)
-                Text(if (commitment.archived) "Restore" else "Archive")
+                Text(if (commitment.archived) "Pulihkan" else "Arsipkan")
             }
             TextButton(onClick = onDelete, enabled = !busy) {
                 Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
@@ -824,7 +824,7 @@ private fun CommitmentEditorDialog(
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it; validationError = null },
-                    label = { Text("Target amount (${targetCurrency.code})") },
+                    label = { Text("Nominal target (${targetCurrency.code})") },
                     isError = amountError != null,
                     supportingText = { amountError?.let { message ->
                         Text(message, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
@@ -880,7 +880,7 @@ private fun CommitmentEditorDialog(
                     onSelectNone = { categoryId = null; validationError = null },
                     searchable = categories.size > 6,
                     searchHint = UiStr.s(R.string.ui_bdfb85040a),
-                    fieldLabel = "Category",
+                    fieldLabel = "Kategori",
                 )
                 OutlinedTextField(
                     value = reminderDays,
@@ -945,7 +945,7 @@ private fun CommitmentEditorDialog(
                             validationError = rateError ?: UiStr.s(R.string.ui_fed145a04c)
                         }
                         convertedTargetWorkspace == null || convertedTargetWorkspace <= 0L -> {
-                            validationError = "This amount is too small to convert into ${workspaceCurrency.code}."
+                            validationError = "Nominal ini terlalu kecil untuk dikonversi ke ${workspaceCurrency.code}."
                             amountFocusRequester.requestFocus()
                         }
                         days == null || days !in 0..30 -> {
