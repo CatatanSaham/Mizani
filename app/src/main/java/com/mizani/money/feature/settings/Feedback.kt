@@ -1,6 +1,5 @@
 package com.mizani.money.feature.settings
 
-import com.mizani.money.UiStr
 import com.mizani.money.R
 import androidx.compose.ui.res.stringResource
 import android.content.Intent
@@ -54,9 +53,9 @@ enum class FeedbackTopic(
     val subjectLabel: String,
 ) {
     SUGGESTION("Suggestion", "suggestion"),
-    PROBLEM(UiStr.s(R.string.ui_24f3f52de5), "problem report"),
+    PROBLEM("Report a problem", "problem report"),
     QUESTION("Question", "question"),
-    OTHER(UiStr.s(R.string.ui_48f88ac322), "feedback"),
+    OTHER("Something else", "feedback"),
 }
 
 data class FeedbackValidationResult(
@@ -69,8 +68,8 @@ object FeedbackComposer {
     const val OFFICIAL_EMAIL = LegalDocuments.PRIVACY_CONTACT
 
     fun validate(topic: FeedbackTopic?, message: String): FeedbackValidationResult {
-        if (topic == null) return FeedbackValidationResult(UiStr.s(R.string.ui_6e4c6d3317))
-        if (message.isBlank()) return FeedbackValidationResult(UiStr.s(R.string.ui_37dab00479))
+        if (topic == null) return FeedbackValidationResult("Choose what you would like to share.")
+        if (message.isBlank()) return FeedbackValidationResult("Write a few words so we know how to help.")
         if (message.length > MAX_MESSAGE_LENGTH) {
             return FeedbackValidationResult("Keep your feedback under $MAX_MESSAGE_LENGTH characters.")
         }
@@ -92,7 +91,7 @@ object FeedbackComposer {
         appendLine("Mizani version: $appVersion")
         appendLine("Android version: $androidVersion")
         appendLine()
-        append(UiStr.s(R.string.ui_8f0fa660cb))
+        append("Please do not reply with balances, transaction details, PINs, or backup passphrases.")
     }
 
     fun createIntent(
@@ -137,23 +136,23 @@ fun FeedbackScreen(onBack: () -> Unit) {
             androidVersion = android.os.Build.VERSION.RELEASE ?: "unknown",
         )
         if (intent.resolveActivity(context.packageManager) == null) {
-            status = UiStr.s(R.string.ui_dd8a512e43)
+            status = "No email app is available on this device. Install one to continue."
             statusIsError = true
             return
         }
         runCatching { context.startActivity(intent) }
             .onSuccess {
-                status = UiStr.s(R.string.ui_e33afabfa2)
+                status = "Your email app is ready. Review the message and tap Send to deliver it."
                 statusIsError = false
             }
             .onFailure {
-                status = UiStr.s(R.string.ui_2b98fe8656)
+                status = "We couldn't open an email app. Try again to continue."
                 statusIsError = true
             }
     }
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = stringResource(R.string.ui_c431a26258), onBack = onBack)
+        MizaniTopBar(title = "Send feedback", onBack = onBack)
         MizaniPageContent {
             MizaniCard(containerColor = MaterialTheme.colorScheme.primaryContainer) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -165,21 +164,21 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        stringResource(R.string.ui_c878d31aa3),
+                        "Help shape Mizani",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    stringResource(R.string.ui_c9472a75ea),
+                    "Tell us what is working, what could be clearer, or where you got stuck. Your feedback goes to the Mizani team.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                Text(stringResource(R.string.ui_4899853418), style = MaterialTheme.typography.titleMedium)
+                Text("What would you like to share?", style = MaterialTheme.typography.titleMedium)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -242,14 +241,14 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        stringResource(R.string.ui_1a0bdf1720),
+                        "Mizani opens your email app with the address and message filled in. Review it before sending. Email delivery and spam filtering are managed by your email provider.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    stringResource(R.string.ui_4d1935d646),
+                    "For your privacy, do not include balances, transaction details, PINs, or backup passphrases.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
