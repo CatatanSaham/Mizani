@@ -127,7 +127,7 @@ fun AboutScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = stringResource(R.string.ui_3bdc8163b2), onBack = onBack)
+        MizaniTopBar(title = "About & privacy", onBack = onBack)
         MizaniPageContent {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 MizaniMark(size = 56)
@@ -145,7 +145,7 @@ fun AboutScreen(
                     title = if (installedFromPlay) "App updates" else "Check for updates",
                     modifier = if (installedFromPlay) {
                         Modifier.semantics {
-                            contentDescription = stringResource(R.string.ui_2651cd315e)
+                            contentDescription = "Open the Google Play Store listing for Mizani"
                         }
                     } else {
                         Modifier
@@ -185,8 +185,8 @@ fun AboutScreen(
             MizaniSectionCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.Feedback,
-                    title = stringResource(R.string.ui_c431a26258),
-                    subtitle = stringResource(R.string.ui_3b15df92b0),
+                    title = "Send feedback",
+                    subtitle = "Share a suggestion, report a problem or ask a question",
                     onClick = onFeedback,
                 )
             }
@@ -195,11 +195,11 @@ fun AboutScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.Shield, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(Modifier.width(Spacing.sm))
-                    Text(stringResource(R.string.ui_b6713cd239), style = MaterialTheme.typography.titleMedium)
+                    Text("Your privacy", style = MaterialTheme.typography.titleMedium)
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    stringResource(R.string.ui_a0dfb542d7),
+                    "Your records stay on this phone. Rate and update checks never include transaction details.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -209,7 +209,7 @@ fun AboutScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(Modifier.width(Spacing.sm))
-                    Text(stringResource(R.string.ui_2672be37e3), style = MaterialTheme.typography.titleMedium)
+                    Text("Backups & exports", style = MaterialTheme.typography.titleMedium)
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
@@ -220,15 +220,15 @@ fun AboutScreen(
                 )
                 if (state.settings.lockEnabled) {
                     Spacer(Modifier.height(Spacing.sm))
-                    Text(stringResource(R.string.ui_712607a31f), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                    Text("App lock is on.", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                 }
             }
 
             MizaniCard {
-                Text(stringResource(R.string.ui_395310b3d4), style = MaterialTheme.typography.titleMedium)
+                Text("A money-tracking tool", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    stringResource(R.string.ui_c2d016de30),
+                    "Mizani is not a bank, lender, investment adviser or tax service.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -237,22 +237,22 @@ fun AboutScreen(
             MizaniSectionCard {
                 MizaniInfoRow(
                     icon = Icons.Rounded.Description,
-                    title = stringResource(R.string.ui_0c8a9a95e2),
-                    subtitle = stringResource(R.string.ui_e21a48af56),
+                    title = "Terms of Service",
+                    subtitle = "How to use Mizani",
                     onClick = { legalDocument = LegalDocumentId.TERMS },
                 )
                 MizaniSectionDivider()
                 MizaniInfoRow(
                     icon = Icons.Rounded.Shield,
-                    title = stringResource(R.string.ui_14862f7224),
-                    subtitle = stringResource(R.string.ui_7914ef8c3e),
+                    title = "Privacy Notice",
+                    subtitle = "How your information is handled",
                     onClick = { legalDocument = LegalDocumentId.PRIVACY },
                 )
                 MizaniSectionDivider()
                 MizaniInfoRow(
                     icon = Icons.Rounded.Description,
-                    title = stringResource(R.string.ui_30dced67aa),
-                    subtitle = stringResource(R.string.ui_c35091dd68),
+                    title = "Open-source licenses",
+                    subtitle = "Licenses for software used by Mizani",
                     onClick = {
                         context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
                     },
@@ -260,8 +260,8 @@ fun AboutScreen(
                 MizaniSectionDivider()
                 MizaniInfoRow(
                     icon = Icons.Rounded.Description,
-                    title = stringResource(R.string.ui_a436c20f88),
-                    subtitle = stringResource(R.string.ui_38f7f02a3e),
+                    title = "Third-party notices",
+                    subtitle = "Required notices for included software and artwork",
                     onClick = { showThirdPartyNotices = true },
                 )
             }

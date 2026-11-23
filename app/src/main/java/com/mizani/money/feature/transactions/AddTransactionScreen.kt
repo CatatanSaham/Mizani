@@ -430,7 +430,7 @@ fun AddTransactionScreen(
 
     if (showDelete && existing != null) {
         MizaniConfirmDialog(
-            title = stringResource(R.string.ui_7bbc0c1f35),
+            title = "Delete this transaction?",
             body = "This transaction will be removed from balances and insights.",
             confirmLabel = "Delete",
             dismissLabel = "Keep",
@@ -462,7 +462,7 @@ fun AddTransactionScreen(
             actions = {
                 if (existing != null) {
                     IconButton(onClick = { showDelete = true }) {
-                        Icon(Icons.Rounded.Delete, contentDescription = stringResource(R.string.ui_8baf937deb))
+                        Icon(Icons.Rounded.Delete, contentDescription = "Delete transaction")
                     }
                 }
             },
@@ -477,10 +477,10 @@ fun AddTransactionScreen(
         ) {
             if (wallets.isEmpty()) {
                 EmptyState(
-                    title = stringResource(R.string.ui_06cc94f2fe),
+                    title = "No wallet yet",
                     body = "Add a wallet from More → Wallets before recording a transaction.",
                     iconRes = R.drawable.ic_ph_wallet,
-                    actionLabel = stringResource(R.string.ui_e84712fbf4),
+                    actionLabel = "Go back",
                     onAction = onBack,
                 )
                 return@Column
@@ -570,7 +570,7 @@ fun AddTransactionScreen(
             }
             if (importCandidate?.type == TransactionType.INCOME) {
                 Text(
-                    stringResource(R.string.ui_3f6901b2ea),
+                    "Confirm what this receipt represents before saving. Received money can be income, a transfer, a reimbursement, a loan or returned money.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -578,7 +578,7 @@ fun AddTransactionScreen(
 
             if (canEnterForeignCurrency) {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    Text(stringResource(R.string.ui_06b41b740f), style = MaterialTheme.typography.labelLarge)
+                    Text("Transaction currency", style = MaterialTheme.typography.labelLarge)
                     MizaniCurrencyPicker(
                         selectedCode = entryCurrencyCode,
                         onSelect = {
@@ -651,7 +651,7 @@ fun AddTransactionScreen(
                                     )
                                     Spacer(Modifier.weight(1f))
                                     Text(
-                                        stringResource(R.string.ui_8c9de32d19),
+                                        "Tap to enter",
                                         style = MaterialTheme.typography.labelMedium,
                                         color = Color.White,
                                     )
@@ -682,11 +682,11 @@ fun AddTransactionScreen(
                     }
                     if (amountText.isNotBlank() && amountMinor <= 0L) {
                         Text(
-                            stringResource(R.string.ui_7b38f2ddbd),
+                            "Enter a valid amount greater than zero",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFFFFB4AB),
                             modifier = Modifier.semantics {
-                                contentDescription = stringResource(R.string.ui_08166ef087)
+                                contentDescription = "Amount error: enter a valid amount greater than zero"
                             },
                         )
                     }
@@ -780,7 +780,7 @@ fun AddTransactionScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                                 Text(
-                                    stringResource(R.string.ui_288e1312d7),
+                                    "Reference rate. Your bank or card may use a different rate.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -793,14 +793,14 @@ fun AddTransactionScreen(
                                 }
                                 if (isRateRefreshing) {
                                     Text(
-                                        stringResource(R.string.ui_2817459eb0),
+                                        "Checking for updates…",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                             }
                             isRateLoading -> Text(
-                                stringResource(R.string.ui_4e34edd378),
+                                "Getting rate…",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -836,7 +836,7 @@ fun AddTransactionScreen(
 
             if (type == TransactionType.TRANSFER) {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    Text(stringResource(R.string.ui_758d69ffdf), style = MaterialTheme.typography.labelLarge)
+                    Text("From wallet", style = MaterialTheme.typography.labelLarge)
                     WalletPickerRow(
                         wallets = wallets,
                         selectedId = walletId,
@@ -846,7 +846,7 @@ fun AddTransactionScreen(
                     )
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    Text(stringResource(R.string.ui_4a22284d6d), style = MaterialTheme.typography.labelLarge)
+                    Text("To wallet", style = MaterialTheme.typography.labelLarge)
                     WalletPickerRow(
                         wallets = wallets.filter { it.id != walletId },
                         selectedId = toWalletId,
@@ -856,13 +856,13 @@ fun AddTransactionScreen(
                     )
                 }
                 Text(
-                    stringResource(R.string.ui_e16fd8819d),
+                    "Transfers move money between your own wallets. They never count as income or spending; any fee does.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                    Text(stringResource(R.string.ui_b60862f485), style = MaterialTheme.typography.labelLarge)
+                    Text("Wallet", style = MaterialTheme.typography.labelLarge)
                     WalletPickerRow(
                         wallets = wallets,
                         selectedId = walletId,
@@ -883,7 +883,7 @@ fun AddTransactionScreen(
                         )
                         if (recentCategoryIds.isNotEmpty()) {
                             Text(
-                                stringResource(R.string.ui_f5efd233f4),
+                                "Recent first",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -891,7 +891,7 @@ fun AddTransactionScreen(
                     }
                     if (importCandidate?.type == TransactionType.INCOME && categoryId == null) {
                         Text(
-                            stringResource(R.string.ui_93233d88d0),
+                            "Choose what this received money represents. Mizani will not assume it is salary or a transfer.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -950,7 +950,7 @@ fun AddTransactionScreen(
             }
 
             DateField(
-                label = stringResource(R.string.ui_eb9a4bc1c0),
+                label = "Date",
                 date = date,
                 onDateSelected = { date = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -998,7 +998,7 @@ fun AddTransactionScreen(
                 MizaniAmountField(
                     value = feeText,
                     onValueChange = { input -> feeText = input },
-                    label = stringResource(R.string.ui_d2bb1510ad),
+                    label = "Fee charged (optional)",
                     currency = entryCurrency,
                     supportingText = if (isForeignCurrency) {
                         "Fee is converted using the same daily rate and included in spending."
@@ -1008,7 +1008,7 @@ fun AddTransactionScreen(
                 )
                 if (type == TransactionType.INCOME) {
                     Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                        Text(stringResource(R.string.ui_db79ac2b85), style = MaterialTheme.typography.labelLarge)
+                        Text("Income source (optional)", style = MaterialTheme.typography.labelLarge)
                         MizaniPicker(
                             selectedText = incomeSourceId?.let { snapshot.incomeSourceName(it) } ?: "Not specified",
                             options = snapshot.incomeSources.map { PickerOption(it.id, it.name) },
@@ -1021,7 +1021,7 @@ fun AddTransactionScreen(
                 }
                 if (type == TransactionType.REFUND) {
                     Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
-                        Text(stringResource(R.string.ui_807ceb398f), style = MaterialTheme.typography.labelLarge)
+                        Text("Refunded expense (optional)", style = MaterialTheme.typography.labelLarge)
                         val linked = snapshot.transactions.firstOrNull { it.id == linkedTransactionId }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             MizaniPicker(
@@ -1044,12 +1044,12 @@ fun AddTransactionScreen(
                             )
                             if (linkedTransactionId != null) {
                                 IconButton(onClick = { linkedTransactionId = null; categoryId = null }) {
-                                    Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_74db12659f))
+                                    Icon(Icons.Rounded.Close, contentDescription = "Clear linked expense")
                                 }
                             }
                         }
                         Text(
-                            stringResource(R.string.ui_35feba6e74),
+                            "Linking reduces net spending in the original category. It is not counted as new income.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -1071,7 +1071,7 @@ fun AddTransactionScreen(
                 HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
                 Column(Modifier.padding(16.dp)) {
                     Text(
-                        stringResource(R.string.ui_71dd77aa9f),
+                        "Saved locally · encrypted on this phone",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,

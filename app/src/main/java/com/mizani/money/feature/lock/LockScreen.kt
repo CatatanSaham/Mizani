@@ -179,9 +179,9 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                 Spacer(Modifier.height(Spacing.xl))
                 MizaniMark(size = 72)
                 Spacer(Modifier.height(Spacing.lg))
-                Text(stringResource(R.string.ui_b807833efc), style = MaterialTheme.typography.headlineMedium)
+                Text("Welcome back", style = MaterialTheme.typography.headlineMedium)
                 Text(
-                    stringResource(R.string.ui_0ced37e145),
+                    "Enter your 6-digit PIN to open Mizani",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -232,7 +232,7 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                                     BiometricPrompt.PromptInfo.Builder()
                                         .setTitle("Unlock Mizani")
                                         .setSubtitle("Use your fingerprint or face")
-                                        .setNegativeButtonText(stringResource(R.string.ui_0708da885b))
+                                        .setNegativeButtonText("Use PIN")
                                         .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                         .build(),
                                 )
@@ -245,7 +245,7 @@ fun LockScreen(vm: AppViewModel, biometricEnabled: Boolean) {
                     ) {
                         Icon(Icons.Rounded.Fingerprint, contentDescription = null)
                         Spacer(Modifier.width(Spacing.sm))
-                        Text(stringResource(R.string.ui_dbd1a345c2))
+                        Text("Unlock with biometrics")
                     }
                 }
                 if (!pinRecoveryNoteAtBottom) {
@@ -279,7 +279,7 @@ private fun PinRecoveryNote(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.width(4.dp))
         Text(
-            stringResource(R.string.ui_fa9ebb4345),
+            "If you forget your PIN, local data cannot be recovered without your encrypted backup.",
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -346,7 +346,7 @@ fun PinKeypad(
                         ) {
                             Icon(
                                 Icons.Rounded.Backspace,
-                                contentDescription = stringResource(R.string.ui_82e9232cab),
+                                contentDescription = "Delete last digit",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -430,7 +430,7 @@ fun PinSetupDialog(
                     )
                     Spacer(Modifier.height(Spacing.xs))
                     Text(
-                        stringResource(R.string.ui_b6d9a68ad1),
+                        "Mizani will ask for this when the app opens.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -455,7 +455,7 @@ fun PinSetupDialog(
                     )
                     Spacer(Modifier.height(Spacing.md))
                     TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.ui_77dfd2135f))
+                        Text("Cancel")
                     }
                 }
             }
@@ -513,7 +513,7 @@ fun PinVerifyDialog(
                         onBackspace = { pin = pin.dropLast(1) },
                     )
                     Spacer(Modifier.height(Spacing.md))
-                    TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.ui_77dfd2135f)) }
+                    TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text("Cancel") }
                 }
             }
         }

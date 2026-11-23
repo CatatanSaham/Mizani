@@ -35,7 +35,7 @@ private data class NoticeSection(val title: String, val introduction: String, va
 
 private val thirdPartyNotices = listOf(
     NoticeSection(
-        title = stringResource(R.string.ui_a8416f15f9),
+        title = "SQLCipher Community Edition",
         introduction = "SQLCipher for Android is used to encrypt Mizani's local database. " +
             "SQLCipher is Copyright (c) 2008-2026, ZETETIC, LLC. Zetetic lists additional " +
             "notices for integrated components such as SQLite and OpenSSL at " +
@@ -64,7 +64,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""",
     ),
     NoticeSection(
-        title = stringResource(R.string.ui_db78df19d1),
+        title = "Phosphor Icons",
         introduction = "The onboarding icons include artwork derived from Phosphor Icons.",
         license = """MIT License
 
@@ -114,9 +114,9 @@ fun ThirdPartyNoticesDialog(onClose: () -> Unit) {
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(stringResource(R.string.ui_a436c20f88), modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                        Text("Third-party notices", modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                         IconButton(onClick = onClose) {
-                            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.ui_b42f7c6889))
+                            Icon(Icons.Rounded.Close, contentDescription = "Close third-party notices")
                         }
                     }
                     LazyColumn(
