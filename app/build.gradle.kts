@@ -44,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.mizani.money"
+        applicationId = "com.catatankeuangan.app"
         minSdk = 24
         targetSdk = 37
         versionCode = mizaniVersionCode

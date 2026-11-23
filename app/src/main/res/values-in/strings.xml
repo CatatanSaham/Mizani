@@ -1,0 +1,163 @@
+<resources>
+    <string name="info_dialog_got_it">Mengerti</string>
+    <string name="info_liquid_title">Apa arti Saldo Cair?</string>
+    <string name="info_liquid_body">Saldo Cair adalah total saldo dari dompet aktif selain dompet utang. Total semua dompet sudah termasuk dompet utang.</string>
+    <string name="info_investment_gain_title">Bagaimana untung atau rugi dihitung?</string>
+    <string name="info_investment_gain_body">Untung atau rugi adalah nilai sekarang yang kamu isi dikurangi modal yang kamu isi, sesuai tanggal penilaian. Ini perkiraan manual, bukan imbal hasil dari penyedia.</string>
+    <string name="info_commitment_rate_title">Tentang kurs acuan</string>
+    <string name="info_commitment_rate_body">Angka rencana ini memakai kurs acuan harian yang disimpan saat tagihan dibuat. Penyedia pembayaranmu bisa memakai kurs yang berbeda.</string>
+    <string name="info_import_privacy_title">Apa yang terjadi dengan pesan?</string>
+    <string name="info_import_privacy_body">Aplikasi membaca pesan di HP ini lalu membuang isinya. Untuk mencegah data ganda, aplikasi menyimpan nomor referensi penyedia, atau sidik jari pesan jika tidak ada referensi. SMS tidak pernah dibaca otomatis.</string>
+    <string name="info_transaction_types_title">Jenis transaksi mana yang harus dipakai?</string>
+    <string name="info_transaction_types_body">Transfer memindahkan uang antar dompetmu; bukan pemasukan atau pengeluaran. Pengembalian adalah uang kembali dari pengeluaran sebelumnya. Penyesuaian memperbaiki saldo dompet tanpa mencatat pemasukan atau pengeluaran.</string>
+    <string name="info_personalised_checkins_title">Tentang pengingat catatan pribadi</string>
+    <string name="info_personalised_checkins_body">Ini pengingat sesekali berdasarkan jenis pengingat yang kamu aktifkan dan catatan di HP ini. Terpisah dari pengingat harian. Android bisa menunda atau memblokir notifikasi; tidak ada nama atau nominal di dalamnya.</string>
+    <string name="onboarding_currency_info_title">Tentang mata uang utama</string>
+    <string name="onboarding_currency_info_body">Mata uang ini dipakai untuk total, grafik, dan rencana. Tidak bisa diubah setelah pengaturan awal. Kamu tetap bisa mencatat uang dalam mata uang lain jika ada kurs acuan yang tersimpan.</string>
+    <string name="app_name">Catatan Keuangan</string>
+
+    <!-- Shared action / status copy -->
+    <string name="common_back">Kembali</string>
+    <string name="common_cancel">Batal</string>
+    <string name="common_ok">OK</string>
+    <string name="search_countries">Cari negara</string>
+    <string name="no_countries_match">Tidak ada negara yang cocok</string>
+    <string name="picker_no_matching_options">Tidak ada pilihan yang cocok</string>
+    <string name="country">Negara</string>
+    <string name="primary_currency">Mata uang utama</string>
+    <string name="suggestions">Saran</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_step_of">Langkah %1$d dari %2$d</string>
+    <string name="onboarding_error_balance">Isi saldo awal yang valid, atau lewati langkah ini.</string>
+    <string name="onboarding_error_workspace">Ruang kerja tidak bisa dibuat.</string>
+    <string name="onboarding_error_wallet_name">Beri nama dompet pertamamu.</string>
+    <string name="onboarding_welcome_title">Catat setiap arus uangmu.</string>
+    <string name="onboarding_welcome_subtitle">Catat uang masuk dan keluar dari tunai, dompet digital, dan rekening bank.</string>
+    <string name="onboarding_analysis_title">Lihat keuanganmu dengan jelas.</string>
+    <string name="onboarding_analysis_subtitle">Catat beberapa mata uang. Aplikasi mengonversinya ke mata uang pilihanmu, lalu kamu bisa melihat grafik atau mengekspor data.</string>
+    <string name="onboarding_review_legal">Baca Syarat dan Ketentuan serta Pemberitahuan Privasi sebelum mulai.</string>
+    <string name="onboarding_agree_legal">Dengan melanjutkan, kamu setuju dengan Syarat dan Ketentuan serta mengakui Pemberitahuan Privasi.</string>
+    <string name="onboarding_next">Lanjut</string>
+    <string name="onboarding_agree_setup">Setuju dan atur</string>
+    <string name="onboarding_country_continue">Lanjut</string>
+    <string name="onboarding_setup_title">Atur keuanganmu</string>
+    <string name="onboarding_setup_subtitle">Pilih negara, mata uang untuk total, dan tempat untuk mulai mencatat.</string>
+    <string name="onboarding_currency_explainer">Total dan grafikmu akan memakai %1$s. Kamu juga bisa mencatat uang dalam mata uang lain.</string>
+    <string name="onboarding_wallet_title">Di mana kamu menyimpan uang?</string>
+    <string name="onboarding_wallet_subtitle">Pilih jenis dompet, lalu beri nama. Kamu bisa menambah dompet nanti.</string>
+    <string name="onboarding_wallet_name_label">Nama dompet</string>
+    <string name="onboarding_wallet_type_label">Jenis dompet</string>
+    <string name="onboarding_wallet_name_ideas">Ide nama</string>
+    <string name="onboarding_ready_title">Tambahkan saldo saat ini</string>
+    <string name="onboarding_ready_illustration_description">Seseorang menabung uang di celengan.</string>
+    <string name="onboarding_ready_subtitle">Isi uang yang sudah ada di dompet ini agar saldo mulai dengan benar. Kosongkan untuk mulai dari hari ini.</string>
+    <string name="onboarding_ready_balance_label">Saldo saat ini (opsional)</string>
+    <string name="onboarding_ready_start">Mulai pakai Catatan Keuangan</string>
+    <string name="onboarding_ready_encrypted">Catatanmu tersimpan terenkripsi di HP ini. Kamu bisa membuat cadangan nanti.</string>
+    <string name="onboarding_ready_preparing">Menyiapkan ruang kerjamu…</string>
+
+    <!-- Home -->
+    <string name="home_get_started_title">Dompetmu sudah siap</string>
+    <string name="home_get_started_body">Mulai dengan satu pemasukan atau pengeluaran. Saldo dan Wawasan akan diperbarui saat kamu mencatat.</string>
+    <string name="home_loading">Memuat ringkasanmu…</string>
+    <string name="home_quick_add_title">Catat aktivitas</string>
+    <string name="home_quick_add_subtitle">Tambah pengeluaran atau pemasukan hanya dengan beberapa ketukan.</string>
+    <string name="home_quick_add_expense">Tambah pengeluaran</string>
+    <string name="home_quick_add_expense_description">Tambah pengeluaran</string>
+    <string name="home_quick_add_income">Tambah pemasukan</string>
+    <string name="home_quick_add_income_description">Tambah pemasukan</string>
+    <string name="home_quick_add_transfer">Transfer</string>
+    <string name="home_quick_add_transfer_description">Transfer antar dompet</string>
+    <string name="home_quick_add_import">Impor</string>
+    <string name="home_quick_add_import_description">Impor pesan</string>
+
+    <string name="home_hero_across_wallets">Semua dompet</string>
+    <string name="home_hero_income">Pemasukan</string>
+    <string name="home_hero_spending">Pengeluaran</string>
+    <string name="home_hero_net">Bersih</string>
+    <string name="home_hero_day_progress">Hari %1$d dari %2$d</string>
+
+    <string name="home_spending_title">Pengeluaran</string>
+    <string name="home_spending_empty_title">Belum ada pengeluaran</string>
+    <string name="home_spending_empty_body">Tambahkan pengeluaran untuk melihat pengeluaran per kategori.</string>
+    <string name="home_spending_other">Lainnya</string>
+    <string name="home_spending_pulse_label">7 hari terakhir</string>
+    <string name="home_spending_pulse_description">Pengeluaran 7 hari terakhir: %1$s</string>
+    <string name="home_recent_activity_title">Aktivitas terbaru</string>
+
+    <string name="home_coming_up_title">Akan datang</string>
+    <string name="home_coming_up_due_label">Jatuh tempo dalam 7 hari</string>
+    <string name="home_coming_up_expected_income">Diharapkan</string>
+    <string name="home_coming_up_bill">Tagihan</string>
+
+    <string name="home_wallets_title">Dompetmu</string>
+    <string name="home_wallets_action">Lihat semua</string>
+    <string name="home_insight_title">Wawasan</string>
+
+    <string name="home_momentum_title">Konsistensi harian</string>
+    <string name="home_momentum_subtitle">Hitung hari, bukan nominal · 10 poin per hari.</string>
+    <string name="home_momentum_points">%1$d poin</string>
+    <string name="home_momentum_days_tracked">hari tercatat</string>
+    <string name="home_momentum_day_streak">hari berturut-turut</string>
+    <string name="home_momentum_today_done">Kamu sudah mencatat hari ini.</string>
+    <string name="home_momentum_today_prompt">Catat satu aktivitas uang untuk menandai hari ini.</string>
+    <string name="home_momentum_record_action">Catat hari ini</string>
+    <string name="home_momentum_milestone">Pencapaian: %1$s</string>
+    <string name="home_momentum_next_one">Pencapaian berikutnya: %1$s · tinggal 1 hari</string>
+    <string name="home_momentum_next_many">Pencapaian berikutnya: %1$s · tinggal %2$d hari</string>
+    <string name="home_momentum_all_milestones">Semua pencapaian sudah tercapai — pertahankan kebiasaanmu.</string>
+
+    <!-- Insights -->
+    <string name="insights_subtitle">Apa yang ditunjukkan catatanmu</string>
+    <string name="insights_loading">Memuat wawasan…</string>
+
+    <!-- Daily reminders -->
+    <string name="settings_reminders_title">Pengingat</string>
+    <string name="settings_daily_reminder_title">Catat keuangan harian</string>
+    <string name="settings_daily_reminder_description">Aktif secara default pukul %1$s waktu setempat. Ingatkan saya untuk meninjau aktivitas uang hari ini jika belum ada yang dicatat; bisa dimatikan kapan saja.</string>
+    <string name="settings_reminder_time_label">Waktu pengingat</string>
+    <string name="settings_reminder_local_note">Waktu memakai zona waktu HP ini dan ditampilkan dengan AM atau PM. Android bisa menunda pengingat saat penghemat baterai atau pembatasan latar belakang aktif.</string>
+    <string name="settings_reminder_permission_denied">Izin notifikasi ditolak. Izinkan notifikasi untuk menerima pengingat.</string>
+    <string name="settings_reminder_notifications_disabled">Notifikasi untuk Catatan Keuangan sedang mati. Izinkan agar bisa menerima pengingat.</string>
+    <string name="settings_allow_notifications">Izinkan notifikasi</string>
+    <string name="settings_open_notification_settings">Buka pengaturan notifikasi</string>
+    <string name="settings_send_test_reminder">Kirim notifikasi uji</string>
+    <string name="settings_reminder_test_sent">Notifikasi uji terkirim. Jika tidak muncul, cek pengaturan notifikasi aplikasi di Android.</string>
+    <string name="settings_reminder_schedule_error">Pengingat tidak bisa diperbarui. Coba lagi.</string>
+    <string name="notification_channel_reminders">Pengingat uang</string>
+    <string name="notification_channel_reminders_description">Pengingat lokal opsional tentang mencatat aktivitas, pengecekan uang, dan tagihan yang akan datang.</string>
+    <string name="notification_daily_reminder_title">Catat keuangan harian</string>
+    <string name="notification_daily_reminder_body">Belum ada pemasukan atau pengeluaran yang dicatat hari ini. Buka aplikasi untuk meninjau atau menambahkan aktivitas.</string>
+    <string name="notification_commitment_reminder_title">Pembayaran akan datang</string>
+    <string name="notification_commitment_reminder_body">Buka aplikasi untuk meninjau pembayaran yang segera jatuh tempo.</string>
+    <string name="notification_test_reminder_title">Pengingat Catatan Keuangan aktif</string>
+    <string name="notification_test_reminder_body">Uji ini memastikan aplikasi bisa mengirim notifikasi pengingat.</string>
+    <string name="settings_habit_notifications_title">Pengingat catatan pribadi</string>
+    <string name="settings_habit_notifications_description">Pakai catatan lokalmu untuk menyarankan peninjauan saat ada pola atau item yang perlu perhatian.</string>
+    <string name="settings_habit_notifications_note">Semua dihitung di HP ini. Notifikasi tidak pernah menampilkan saldo, nominal, nama, atau detail transaksi.</string>
+    <string name="settings_habit_notifications_choose">Pilih pengingat</string>
+    <string name="settings_habit_spending_title">Tinjauan pengeluaran mingguan</string>
+    <string name="settings_habit_spending_description">Pengingat lembut tiap minggu setelah pengeluaran cukup untuk ditinjau.</string>
+    <string name="settings_habit_income_title">Pemasukan yang diharapkan</string>
+    <string name="settings_habit_income_description">Pengingat dekat tanggal pemasukan yang kamu catat.</string>
+    <string name="settings_habit_investment_title">Tinjauan investasi</string>
+    <string name="settings_habit_investment_description">Pengingat saat penilaian investasi yang dicatat perlu diperbarui.</string>
+    <string name="settings_habit_debt_title">Tinjauan pembayaran utang</string>
+    <string name="settings_habit_debt_description">Pengingat dekat tanggal pembayaran yang akan datang atau terlambat.</string>
+    <string name="settings_habit_goal_title">Tinjauan target tabungan</string>
+    <string name="settings_habit_goal_description">Pengingat saat target yang belum selesai mendekati tanggal tujuannya.</string>
+    <string name="notification_habit_title">Pengingat catatan keuangan</string>
+    <string name="notification_habit_body">Buka aplikasi untuk tinjauan keuangan pribadi.</string>
+
+    <!-- App lock -->
+    <string name="lock_error_pin">PIN salah. Coba lagi.</string>
+    <string name="lock_pin_digits">Input PIN, %1$d dari %2$d digit sudah dimasukkan</string>
+    <string name="lock_biometric_unavailable">Buka kunci biometrik sedang tidak tersedia.</string>
+
+    <!-- Charts -->
+    <string name="chart_spent">Dikeluarkan</string>
+    <string name="chart_no_spending">Belum ada pengeluaran</string>
+    <string name="donut_summary_prefix">Pengeluaran per kategori.</string>
+    <string name="donut_slice_summary">%1$s %2$s, %3$d persen</string>
+</resources>

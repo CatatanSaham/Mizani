@@ -14,7 +14,7 @@
     <string name="info_personalised_checkins_body">These are occasional prompts based on the check-in types you enable and records stored on this phone. They are separate from the daily reminder. Android may delay or block notifications; no names or amounts appear in them.</string>
     <string name="onboarding_currency_info_title">About your primary currency</string>
     <string name="onboarding_currency_info_body">This currency is used for your workspace totals, charts and planning. It is fixed after setup. You can still record money in other currencies when you have a saved reference rate.</string>
-    <string name="app_name">Mizani</string>
+    <string name="app_name">Catatan Keuangan</string>
 
     <!-- Shared action / status copy -->
     <string name="common_back">Back</string>
