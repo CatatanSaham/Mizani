@@ -34,10 +34,10 @@ class InsightEngine(
                 id = "start",
                 kind = InsightKind.DATA_COMPLETENESS,
                 tone = InsightTone.NEUTRAL,
-                title = "Start with one real transaction",
-                body = "Record money you actually received or spent. Insights appear once there is a little history to compare.",
-                explanation = "Mizani never estimates your income or spending without records. Add a transaction to begin.",
-                actionLabel = "Add transaction",
+                title = "Mulai dengan satu transaksi nyata",
+                body = "Catat uang yang benar-benar kamu terima atau keluarkan. Wawasan muncul setelah ada sedikit riwayat untuk dibandingkan.",
+                explanation = "Catatan Keuangan tidak pernah memperkirakan pemasukan atau pengeluaranmu tanpa catatan. Tambahkan transaksi untuk mulai.",
+                actionLabel = "Tambah transaksi",
             )
             return insights
         }
@@ -52,10 +52,10 @@ class InsightEngine(
                 id = "fees",
                 kind = InsightKind.FEE_TREND,
                 tone = InsightTone.ATTENTION,
-                title = "Fees are higher than last month",
-                body = "You paid ${money(feeNow)} in transaction and withdrawal fees this month, ${money(increase)} more than last month.",
-                explanation = "Compares the fees you recorded this month with last month. Fees are tracked separately from transaction amounts.",
-                actionLabel = "See fee trend",
+                title = "Biaya lebih tinggi dari bulan lalu",
+                body = "Kamu membayar ${money(feeNow)} biaya transaksi dan penarikan bulan ini, ${money(increase)} lebih banyak dari bulan lalu.",
+                explanation = "Membandingkan biaya yang kamu catat bulan ini dengan bulan lalu. Biaya dicatat terpisah dari nominal transaksi.",
+                actionLabel = "Lihat tren biaya",
             )
         }
 
@@ -80,9 +80,9 @@ class InsightEngine(
                     id = "income-concentration",
                     kind = InsightKind.INCOME_CONCENTRATION,
                     tone = InsightTone.NEUTRAL,
-                    title = "Most of this month's income came from one source",
-                    body = "${"%.0f".format(share * 100)}% of your recorded income came from $label.",
-                    explanation = "Compares this month's recorded income by source. This describes past activity and does not predict future income.",
+                    title = "Sebagian besar pemasukan bulan ini berasal dari satu sumber",
+                    body = "${"%.0f".format(share * 100)}% pemasukan yang tercatat berasal dari $label.",
+                    explanation = "Membandingkan pemasukan bulan ini per sumber. Ini menggambarkan aktivitas lalu dan tidak memprediksi pemasukan mendatang.",
                 )
             }
         }
@@ -102,10 +102,10 @@ class InsightEngine(
                     id = "quiet-week",
                     kind = InsightKind.DATA_COMPLETENESS,
                     tone = InsightTone.NEUTRAL,
-                    title = "No records for $days days",
-                    body = "Your analytics only reflect what you record. Add recent cash or mobile-money activity to keep the picture current.",
-                    explanation = "Based on the date of your most recent recorded transaction. Mizani does not estimate missing activity.",
-                    actionLabel = "Add transaction",
+                    title = "Tidak ada catatan selama $days hari",
+                    body = "Analisis hanya mencerminkan apa yang kamu catat. Tambahkan aktivitas tunai atau dompet digital terbaru agar gambarannya tetap terkini.",
+                    explanation = "Berdasarkan tanggal transaksi terakhir yang kamu catat. Catatan Keuangan tidak memperkirakan aktivitas yang hilang.",
+                    actionLabel = "Tambah transaksi",
                 )
             }
         }
@@ -142,15 +142,15 @@ class InsightEngine(
             }
         }
         val found = best ?: return null
-        val name = data.category(found.first)?.name ?: "A category"
+        val name = data.category(found.first)?.name ?: "Kategori"
         val delta = found.second - found.third
         return Insight(
             id = "trend-${found.first}",
             kind = InsightKind.SPENDING_TREND,
             tone = InsightTone.NEUTRAL,
-            title = "$name is above your usual monthly level",
-            body = "You have spent ${money(found.second)} on $name this month, about ${money(delta)} more than your recent median of ${money(found.third)}.",
-            explanation = "Compares this month's spending with recent months that had recorded spending in this category.",
+            title = "$name di atas level bulanan biasamu",
+            body = "Kamu sudah mengeluarkan ${money(found.second)} untuk $name bulan ini, sekitar ${money(delta)} lebih dari median terbaru ${money(found.third)}.",
+            explanation = "Membandingkan pengeluaran bulan ini dengan bulan terbaru yang punya catatan pengeluaran di kategori ini.",
         )
     }
 }

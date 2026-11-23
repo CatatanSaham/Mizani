@@ -52,10 +52,10 @@ enum class FeedbackTopic(
     val title: String,
     val subjectLabel: String,
 ) {
-    SUGGESTION("Suggestion", "suggestion"),
-    PROBLEM("Report a problem", "problem report"),
-    QUESTION("Question", "question"),
-    OTHER("Something else", "feedback"),
+    SUGGESTION("Saran", "suggestion"),
+    PROBLEM("Laporkan masalah", "problem report"),
+    QUESTION("Pertanyaan", "question"),
+    OTHER("Lainnya", "feedback"),
 }
 
 data class FeedbackValidationResult(
@@ -68,10 +68,10 @@ object FeedbackComposer {
     const val OFFICIAL_EMAIL = LegalDocuments.PRIVACY_CONTACT
 
     fun validate(topic: FeedbackTopic?, message: String): FeedbackValidationResult {
-        if (topic == null) return FeedbackValidationResult("Choose what you would like to share.")
-        if (message.isBlank()) return FeedbackValidationResult("Write a few words so we know how to help.")
+        if (topic == null) return FeedbackValidationResult("Pilih apa yang ingin kamu bagikan.")
+        if (message.isBlank()) return FeedbackValidationResult("Tulis beberapa kata agar kami tahu cara membantu.")
         if (message.length > MAX_MESSAGE_LENGTH) {
-            return FeedbackValidationResult("Keep your feedback under $MAX_MESSAGE_LENGTH characters.")
+            return FeedbackValidationResult("Batasi masukanmu hingga $MAX_MESSAGE_LENGTH karakter.")
         }
         return FeedbackValidationResult()
     }
@@ -136,23 +136,23 @@ fun FeedbackScreen(onBack: () -> Unit) {
             androidVersion = android.os.Build.VERSION.RELEASE ?: "unknown",
         )
         if (intent.resolveActivity(context.packageManager) == null) {
-            status = "No email app is available on this device. Install one to continue."
+            status = "Tidak ada aplikasi email di perangkat ini. Pasang satu untuk melanjutkan."
             statusIsError = true
             return
         }
         runCatching { context.startActivity(intent) }
             .onSuccess {
-                status = "Your email app is ready. Review the message and tap Send to deliver it."
+                status = "Aplikasi emailmu siap. Tinjau pesannya lalu ketuk Kirim."
                 statusIsError = false
             }
             .onFailure {
-                status = "We couldn't open an email app. Try again to continue."
+                status = "Aplikasi email tidak bisa dibuka. Coba lagi untuk melanjutkan."
                 statusIsError = true
             }
     }
 
     Column(Modifier.fillMaxSize()) {
-        MizaniTopBar(title = "Send feedback", onBack = onBack)
+        MizaniTopBar(title = "Kirim masukan", onBack = onBack)
         MizaniPageContent {
             MizaniCard(containerColor = MaterialTheme.colorScheme.primaryContainer) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -164,21 +164,21 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        "Help shape Mizani",
+                        "Bantu bentuk Catatan Keuangan",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "Tell us what is working, what could be clearer, or where you got stuck. Your feedback goes to the Mizani team.",
+                    "Beri tahu kami apa yang sudah baik, apa yang bisa lebih jelas, atau bagian mana yang membuatmu macet. Masukanmu dikirim ke tim Catatan Keuangan.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                Text("What would you like to share?", style = MaterialTheme.typography.titleMedium)
+                Text("Apa yang ingin kamu bagikan?", style = MaterialTheme.typography.titleMedium)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -241,14 +241,14 @@ fun FeedbackScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.width(Spacing.sm))
                     Text(
-                        "Mizani opens your email app with the address and message filled in. Review it before sending. Email delivery and spam filtering are managed by your email provider.",
+                        "Catatan Keuangan membuka aplikasi email dengan alamat dan pesan yang sudah terisi. Tinjau sebelum mengirim. Pengiriman dan filter spam diatur oleh penyedia email kamu.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
-                    "For your privacy, do not include balances, transaction details, PINs, or backup passphrases.",
+                    "Demi privasimu, jangan sertakan saldo, detail transaksi, PIN, atau frasa sandi cadangan.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

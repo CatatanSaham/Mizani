@@ -11,7 +11,7 @@ class FeedbackComposerTest {
     fun blankFeedbackIsRejected() {
         val result = FeedbackComposer.validate(FeedbackTopic.SUGGESTION, "   ")
 
-        assertEquals("Write a few words so we know how to help.", result.message)
+        assertEquals("Tulis beberapa kata agar kami tahu cara membantu.", result.message)
     }
 
     @Test
@@ -22,7 +22,7 @@ class FeedbackComposerTest {
         )
 
         assertEquals(
-            "Keep your feedback under ${FeedbackComposer.MAX_MESSAGE_LENGTH} characters.",
+            "Batasi masukanmu hingga ${FeedbackComposer.MAX_MESSAGE_LENGTH} karakter.",
             result.message,
         )
     }

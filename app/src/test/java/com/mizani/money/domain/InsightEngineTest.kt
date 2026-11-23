@@ -26,7 +26,7 @@ class InsightEngineTest {
         val result = insights(Fixtures.snapshot())
         assertEquals(1, result.size)
         assertEquals(InsightKind.DATA_COMPLETENESS, result.single().kind)
-        assertTrue(result.single().explanation.contains("never estimates"))
+        assertTrue(result.single().explanation.contains("tidak pernah memperkirakan"))
     }
 
     @Test
